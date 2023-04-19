@@ -1,19 +1,22 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoEngine.Rendering;
 
 namespace EngineTest
 {
-    public class Game1 : Game
+    public class TestGame : Game
     {
-        private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
+        private GraphicsDeviceManager graphics;
 
-        public Game1()
+        private RenderPipeline renderer;
+
+        public TestGame()
         {
-            _graphics = new GraphicsDeviceManager(this);
+            graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            renderer = new RenderPipeline();
         }
 
         protected override void Initialize()
@@ -25,8 +28,7 @@ namespace EngineTest
 
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
-
+            renderer.Init(GraphicsDevice, Content);
             // TODO: use this.Content to load your game content here
         }
 
@@ -42,9 +44,7 @@ namespace EngineTest
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            // TODO: Add your drawing code here
+            renderer.Render(GraphicsDevice);
 
             base.Draw(gameTime);
         }
