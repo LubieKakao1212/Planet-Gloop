@@ -2,24 +2,19 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoEngine.Math;
-using MonoEngine.Rendering.Data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MonoEngine.Rendering
 {
     public class RenderPipeline
     {
-        private Vector2 quadScale = new Vector2(0.1f, 0.1f);
+        private Vector2 quadScale = new Vector2(1f, 1f);
         private VertexBuffer quadVerts;
         private IndexBuffer quadInds;
 
         private VertexBuffer instances;
-        private const int InstanceCount = 1024*4;
+        private const int InstanceCount = 16 * 256;
         private VertexDeclaration InstanceVertexDeclaration;
         
         private Effect effect;
@@ -29,11 +24,11 @@ namespace MonoEngine.Rendering
         [StructLayout(LayoutKind.Sequential)]
         private struct InstanceData
         {
-            public Vector4 matrix;
+            public Matrix2x2 matrix;
             public Vector2 pos;
             public Vector4 color;
 
-            public InstanceData(Vector4 matrix, Vector2 pos, Color color)
+            public InstanceData(Matrix2x2 matrix, Vector2 pos, Color color)
             {
                 this.matrix = matrix;
                 this.pos = pos;
@@ -77,22 +72,28 @@ namespace MonoEngine.Rendering
             
             var random = new Random();
 
-            for(int i = 0; i< InstanceCount; i++)
+            Matrix2x2.Rotation(MathF.PI / 16f, out var mat);
+
+            var rot = mat;
+
+            var scaleStep = 0.99f;
+
+            Matrix2x2.Scale(new Vector2(scaleStep, scaleStep), out var stepScale);
+
+            Matrix2x2.Mul(rot, stepScale, out  var step);
+
+            for (int i = 0; i< InstanceCount; i++)
             {
                 instanceData[i] = new InstanceData(
-                    //new Vector4(1,0,0,1),
-                    new Vector4(
-                        random.RandomNormalised(),
-                        random.RandomNormalised(),
-                        random.RandomNormalised(),
-                        random.RandomNormalised()
-                        ),
+                    mat,
                     new Vector2(
-                        random.RandomNormalised(),
-                        random.RandomNormalised()
+                        0,0
                         ),
                     random.RandomColor()
                     );
+
+                Matrix2x2.Mul(mat, step, out var m1);
+                mat = m1;
             }
 
             instances.SetData(instanceData);

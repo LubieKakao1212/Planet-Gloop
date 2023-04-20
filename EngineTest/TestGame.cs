@@ -14,6 +14,10 @@ namespace EngineTest
         public TestGame()
         {
             graphics = new GraphicsDeviceManager(this);
+
+            graphics.PreferredBackBufferWidth = 512;
+            graphics.PreferredBackBufferHeight = 512;
+
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             renderer = new RenderPipeline();

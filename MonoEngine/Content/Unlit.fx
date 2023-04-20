@@ -53,8 +53,8 @@ VertexShaderOutput MainVS(in VertexShaderInput input, float2 pos : TEXCOORD1)
 	float4 rotScale = input.rotScale;
 
 	float2x2 rs = float2x2(
-		rotScale.x, rotScale.y, 
-		rotScale.z, rotScale.w);
+		rotScale.x, rotScale.z, 
+		rotScale.y, rotScale.w);
 
 	output.Position = float4(mul(rs, input.Position.xy) + pos, 0.f, 1.f);
 	//output.Position = input.Position + float4(pos, 0.f, 1.f);
