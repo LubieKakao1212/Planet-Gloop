@@ -20,12 +20,34 @@ namespace MonoEngine.Math
             m11 = j.Y;
         }
 
+        public float Determinant() => Determinant(this);
+
+        public Matrix2x2 Inverse()
+        {
+            Inverse(this, out var mOut);
+            return mOut;
+        }
+
+        public void SetIdentity()
+        {
+            m00 = 1;
+            m10 = 0;
+            m01 = 0;
+            m11 = 1;
+        }
+
         public static Vector2 operator *(in Matrix2x2 lhs, in Vector2 rhs)
         {
             Mul(lhs, rhs, out var vOut);
             return vOut;
         }
 
+        public static Vector2 operator *(in Vector2 lhs, in Matrix2x2 rhs)
+        {
+            Mul(rhs, lhs, out var vOut);
+            return vOut;
+        }
+        
         public static Matrix2x2 operator *(in Matrix2x2 lhs, in Matrix2x2 rhs)
         {
             Mul(lhs, rhs, out var mOut);
@@ -40,11 +62,48 @@ namespace MonoEngine.Math
 
         public static void Mul(in Matrix2x2 lhs, in Matrix2x2 rhs, out Matrix2x2 mOut)
         {
-            mOut.m00 = lhs.m00 * rhs.m00 + lhs.m10 * rhs.m01;
-            mOut.m10 = lhs.m00 * rhs.m10 + lhs.m10 * rhs.m11;
+            mOut.m00 = rhs.m00 * lhs.m00 + rhs.m10 * lhs.m01;
+            mOut.m10 = rhs.m00 * lhs.m10 + rhs.m10 * lhs.m11;
 
-            mOut.m01 = lhs.m01 * rhs.m00 + lhs.m11 * rhs.m01;
-            mOut.m11 = lhs.m01 * rhs.m10 + lhs.m11 * rhs.m11;
+            mOut.m01 = rhs.m01 * lhs.m00 + rhs.m11 * lhs.m01;
+            mOut.m11 = rhs.m01 * lhs.m10 + rhs.m11 * lhs.m11;
+        }
+
+        public static float Determinant(in Matrix2x2 mat)
+        {
+            return
+                mat.m00 * mat.m11 -
+                mat.m01 * mat.m10;
+        }
+
+        public static void Inverse(in Matrix2x2 mat, out Matrix2x2 mOut)
+        {
+            var det = Determinant(mat);
+            mOut.m00 = mat.m11 / det;
+            mOut.m01 = -mat.m01 / det;
+
+            mOut.m10 = -mat.m10 / det;
+            mOut.m11 = mat.m00 / det;
+        }
+
+        public static void Transpose(in Matrix2x2 mat, out Matrix2x2 mOut)
+        {
+            mOut.m00 = mat.m00;
+            mOut.m10 = mat.m01;
+            mOut.m01 = mat.m10;
+            mOut.m11 = mat.m11;
+        }
+
+        public static Matrix2x2 Rotation(float radians)
+        {
+            Rotation(radians, out var mat);
+            return mat;
+        }
+
+        public static Matrix2x2 Scale(Vector2 scale)
+        {
+            Scale(scale, out var mat);
+            return mat;
         }
 
         public static void Rotation(float radians, out Matrix2x2 mat)
@@ -63,6 +122,11 @@ namespace MonoEngine.Math
             mat.m10 = 0;
             mat.m01 = 0;
             mat.m11 = scale.Y;
+        }
+
+        public static Matrix2x2 RotationScale(float rotationRadians, Vector2 scale)
+        {
+            return Rotation(rotationRadians) * Scale(scale);
         }
     }
 }

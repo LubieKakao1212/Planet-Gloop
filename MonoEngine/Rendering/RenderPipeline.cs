@@ -9,7 +9,7 @@ namespace MonoEngine.Rendering
 {
     public class RenderPipeline
     {
-        private Vector2 quadScale = new Vector2(1f, 1f);
+        private Vector2 quadScale = new Vector2(0.5f, 0.5f);
         private VertexBuffer quadVerts;
         private IndexBuffer quadInds;
 
@@ -72,28 +72,17 @@ namespace MonoEngine.Rendering
             
             var random = new Random();
 
-            Matrix2x2.Rotation(MathF.PI / 16f, out var mat);
-
-            var rot = mat;
-
-            var scaleStep = 0.99f;
-
-            Matrix2x2.Scale(new Vector2(scaleStep, scaleStep), out var stepScale);
-
-            Matrix2x2.Mul(rot, stepScale, out  var step);
+            var rs = Matrix2x2.RotationScale(MathF.PI / 8f, new Vector2(0.5f, 1f));
 
             for (int i = 0; i< InstanceCount; i++)
             {
                 instanceData[i] = new InstanceData(
-                    mat,
+                    rs,
                     new Vector2(
                         0,0
                         ),
                     random.RandomColor()
                     );
-
-                Matrix2x2.Mul(mat, step, out var m1);
-                mat = m1;
             }
 
             instances.SetData(instanceData);
