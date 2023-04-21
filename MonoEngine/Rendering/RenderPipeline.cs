@@ -2,19 +2,21 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoEngine.Math;
+using MonoEngine.Scenes;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace MonoEngine.Rendering
 {
     public class RenderPipeline
     {
-        private Vector2 quadScale = new Vector2(0.5f, 0.5f);
+        private Vector2 quadScale = new Vector2(1f, 1f);
         private VertexBuffer quadVerts;
         private IndexBuffer quadInds;
 
-        private VertexBuffer instances;
-        private const int InstanceCount = 16 * 256;
+        private DynamicVertexBuffer instanceBuffer;
+        private const int MaxInstanceCount = 4096;
         private VertexDeclaration InstanceVertexDeclaration;
         
         private Effect effect;
@@ -24,14 +26,14 @@ namespace MonoEngine.Rendering
         [StructLayout(LayoutKind.Sequential)]
         private struct InstanceData
         {
-            public Matrix2x2 matrix;
-            public Vector2 pos;
+            public Vector4 sr;
+            public Vector2 t;
             public Vector4 color;
 
-            public InstanceData(Matrix2x2 matrix, Vector2 pos, Color color)
+            public InstanceData(TransformMatrix transform, Color color)
             {
-                this.matrix = matrix;
-                this.pos = pos;
+                this.sr = transform.RS.Flat();
+                this.t = transform.T;
                 this.color = color.ToVector4();
             }
         }
@@ -66,49 +68,74 @@ namespace MonoEngine.Rendering
                 new VertexElement(sizeof(float) * 6, VertexElementFormat.Vector4, VertexElementUsage.Color, 0)
                 );
 
-            instances = new VertexBuffer(graphics, InstanceVertexDeclaration, InstanceCount, BufferUsage.WriteOnly);
+            instanceBuffer = new DynamicVertexBuffer(graphics, InstanceVertexDeclaration, MaxInstanceCount, BufferUsage.WriteOnly);
 
-            InstanceData[] instanceData = new InstanceData[InstanceCount];
-            
-            var random = new Random();
+            InstanceData[] instanceData = new InstanceData[MaxInstanceCount];
 
-            var rs = Matrix2x2.RotationScale(MathF.PI / 8f, new Vector2(0.5f, 1f));
+            TransformMatrix zeroTransform = new TransformMatrix();
 
-            for (int i = 0; i< InstanceCount; i++)
+            for (int i = 0; i< MaxInstanceCount; i++)
             {
                 instanceData[i] = new InstanceData(
-                    rs,
-                    new Vector2(
-                        0,0
-                        ),
-                    random.RandomColor()
+                    zeroTransform,
+                    Color.White
                     );
             }
 
-            instances.SetData(instanceData);
+            instanceBuffer.SetData(instanceData);
             #endregion
 
             bindings = new VertexBufferBinding[2] 
             { 
                 new VertexBufferBinding(quadVerts),
-                new VertexBufferBinding(instances, 0 , 1)
+                new VertexBufferBinding(instanceBuffer, 0 , 1)
             };
         }
 
-        public void Render(GraphicsDevice graphics)
+        public void RenderScene(GraphicsDevice graphics, Scene scene)
+        {
+            var cameraMatrixInv = scene.Camera.CameraMatrix.Inverse();
+            foreach (var instanceCount in SetupSceneInstances(scene))
+            {
+                Render(graphics, cameraMatrixInv, instanceCount);
+            }
+        }
+
+        public void Render(GraphicsDevice graphics, TransformMatrix cameraMatrixInv, int instanceCount)
         {
             graphics.Clear(Color.Black);
 
-            //effect.CurrentTechnique = effect.Techniques["Simple"];
             effect.CurrentTechnique = effect.Techniques["Unlit"];
+            effect.Parameters["CameraRS"].SetValue(cameraMatrixInv.RS.Flat());
+            effect.Parameters["CameraT"].SetValue(cameraMatrixInv.T);
 
             graphics.Indices = quadInds;
 
             effect.CurrentTechnique.Passes[0].Apply();
 
             graphics.SetVertexBuffers(bindings);
-            graphics.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0, 2, InstanceCount);
-            //graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
+            graphics.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0, 2, instanceCount);
+        }
+
+        public IEnumerable<int> SetupSceneInstances(Scene scene)
+        {
+            int i = 0;
+            var instances = new InstanceData[MathHelper.Min(scene.Drawables.Count, MaxInstanceCount)];
+            foreach (var drawable in scene.Drawables)
+            {
+                var ltw = drawable.Transform.LocalToWorld;
+                InstanceData data = new InstanceData(ltw, drawable.Color);
+                instances[i++] = data;
+                if (i == MaxInstanceCount)
+                {
+                    instanceBuffer.SetData(0, instances, 0, i, InstanceVertexDeclaration.VertexStride, SetDataOptions.None);
+                    yield return i;
+                    i = 0;
+                }
+            }
+            instanceBuffer.SetData(instances, 0, i, SetDataOptions.None);
+            yield return i;
+            yield break;
         }
     }
 }

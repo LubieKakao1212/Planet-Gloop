@@ -90,7 +90,8 @@ namespace MonoEngine.Math
 
         public Transform()
         {
-
+            isDirtyLtW = true;
+            isDirtyWtL = true;
         }
 
         private void OnChanged()

@@ -7,22 +7,15 @@
 	#define PS_SHADERMODEL ps_4_0_level_9_1
 #endif
 
+float4 CameraRS;
+float2 CameraT;
+
 struct VertexShaderInput
 {
-	float4 Position : POSITION;
+	float2 Position : POSITION;
 	float4 rotScale : TEXCOORD0;
+	float2 pos : TEXCOORD1;
 	float4 color : COLOR0;
-};
-
-struct SimpleVSInput
-{
-	float3 Position : POSITION;
-};
-
-struct SimpleVSOutput
-{
-	float4 Position : SV_POSITION;
-	float4 Pos1 : TEXCOORD0;
 };
 
 struct VertexShaderOutput
@@ -31,33 +24,28 @@ struct VertexShaderOutput
 	float4 Color : COLOR0;
 };
 
-SimpleVSOutput SimpleVS(in SimpleVSInput input)
+float3x3 LocalToView(float4 rotScale, float2 pos)
 {
-	SimpleVSOutput output;
+	float3x3 camTRS = float3x3(
+		CameraRS.x, CameraRS.z, CameraT.x,
+		CameraRS.y, CameraRS.w, CameraT.y,
+		0         , 0         , 1);
 
-	output.Position = float4(input.Position, 1);
-	output.Pos1 = float4(input.Position, 1);
+	float3x3 trs = float3x3(
+		rotScale.x, rotScale.z, pos.x,
+		rotScale.y, rotScale.w, pos.y,
+		0         , 0         , 1);
 
-	return output;
+	return mul(camTRS, trs);
 }
 
-float4 SimplePS(SimpleVSOutput input) : COLOR
-{
-	return float4(1,1,1,1);
-}
-
-VertexShaderOutput MainVS(in VertexShaderInput input, float2 pos : TEXCOORD1)
+VertexShaderOutput MainVS(in VertexShaderInput input)
 {
 	VertexShaderOutput output;
 
-	float4 rotScale = input.rotScale;
+	float3x3 LtV = LocalToView(input.rotScale, input.pos);
 
-	float2x2 rs = float2x2(
-		rotScale.x, rotScale.z, 
-		rotScale.y, rotScale.w);
-
-	output.Position = float4(mul(rs, input.Position.xy) + pos, 0.f, 1.f);
-	//output.Position = input.Position + float4(pos, 0.f, 1.f);
+	output.Position = float4(mul(LtV, float3(input.pos, 1)).xy, 0, 0);
 	output.Color = input.color;
 
 	return output;
@@ -76,12 +64,3 @@ technique Unlit
 		PixelShader = compile PS_SHADERMODEL MainPS();
 	}
 };
-
-technique Simple
-{
-	pass Pass0
-	{
-		VertexShader = compile VS_SHADERMODEL SimpleVS();
-		PixelShader = compile PS_SHADERMODEL SimplePS();
-	}
-}

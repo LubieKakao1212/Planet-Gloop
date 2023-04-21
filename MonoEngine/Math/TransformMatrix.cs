@@ -12,6 +12,9 @@ namespace MonoEngine.Math
     [StructLayout(LayoutKind.Sequential)]
     public struct TransformMatrix
     {
+        internal Matrix2x2 RS => rotationScale;
+        internal Vector2 T => translation;
+
         private Matrix2x2 rotationScale;
         private Vector2 translation;
 

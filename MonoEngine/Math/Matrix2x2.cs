@@ -36,6 +36,11 @@ namespace MonoEngine.Math
             m11 = 1;
         }
 
+        public Vector4 Flat()
+        {
+            return new Vector4(m00, m10, m01, m11);
+        }
+
         public static Vector2 operator *(in Matrix2x2 lhs, in Vector2 rhs)
         {
             Mul(lhs, rhs, out var vOut);

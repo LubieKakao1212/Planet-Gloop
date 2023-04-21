@@ -13,6 +13,6 @@ namespace MonoEngine.Scenes
             }
         }
 
-        public float ViewSize { get; private set; }
+        public float ViewSize { get; set; }
     }
 }
