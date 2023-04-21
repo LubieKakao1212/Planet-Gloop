@@ -27,12 +27,41 @@ namespace MonoEngine.Math
             return mOut;
         }
 
-
         public void SetIdentity()
         {
             rotationScale.SetIdentity();
             translation.X = 0;
             translation.Y = 0;
+        }
+
+        public TransformMatrix Mul(in TransformMatrix rhs)
+        {
+            Mul(this, rhs, out var mOut);
+            return mOut;
+        }
+
+        public TransformMatrix Mul(in Matrix2x2 rhs)
+        {
+            Mul(this, rhs, out var mOut);
+            return mOut;
+        }
+        
+        public TransformMatrix Translate(in Vector2 rhs)
+        {
+            Translate(this, rhs, out var mOut);
+            return mOut;
+        }
+
+        public Vector2 TransformPoint(in Vector2 point)
+        {
+            TransformPoint(this, point, out var pOut);
+            return pOut;
+        }
+
+        public Vector2 TransformDirection(in Vector2 direction)
+        {
+            TransformDirection(this, direction, out var dOut);
+            return dOut;
         }
 
         public static TransformMatrix operator *(in TransformMatrix lhs, in TransformMatrix rhs)
@@ -41,6 +70,12 @@ namespace MonoEngine.Math
             return mOut;
         }
 
+        public static TransformMatrix operator *(in TransformMatrix lhs, in Matrix2x2 rhs)
+        {
+            Mul(lhs, rhs, out var mOut);
+            return mOut;
+        }
+        
         public static void Mul(in TransformMatrix lhs, in TransformMatrix rhs, out TransformMatrix mOut)
         {
             mOut = lhs;
@@ -62,10 +97,16 @@ namespace MonoEngine.Math
             mOut.translation += rhs;
         }
         
-        public static void Transform(in TransformMatrix lhs, in Vector2 rhs, out Vector2 mOut)
+        public static void TransformPoint(in TransformMatrix lhs, in Vector2 rhs, out Vector2 mOut)
         {
             mOut = (lhs.rotationScale * rhs) + lhs.translation;
         }
+
+        public static void TransformDirection(in TransformMatrix lhs, in Vector2 rhs, out Vector2 mOut)
+        {
+            mOut = (lhs.rotationScale * rhs);
+        }
+
 
         /// <summary>
         /// Apparently as simple as taking <see cref="TransformMatrix.rotationScale"/> determinant
