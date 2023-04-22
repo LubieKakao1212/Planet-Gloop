@@ -11,7 +11,7 @@ namespace MonoEngine.Rendering
 {
     public class RenderPipeline
     {
-        private Vector2 quadScale = new Vector2(1f, 1f);
+        private Vector2 quadScale = new Vector2(0.5f, 0.5f);
         private VertexBuffer quadVerts;
         private IndexBuffer quadInds;
 
@@ -26,14 +26,14 @@ namespace MonoEngine.Rendering
         [StructLayout(LayoutKind.Sequential)]
         private struct InstanceData
         {
-            public Vector4 sr;
-            public Vector2 t;
+            public Vector4 rotScale;
+            public Vector2 pos;
             public Vector4 color;
 
             public InstanceData(TransformMatrix transform, Color color)
             {
-                this.sr = transform.RS.Flat();
-                this.t = transform.T;
+                this.rotScale = transform.RS.Flat();
+                this.pos = transform.T;
                 this.color = color.ToVector4();
             }
         }
@@ -70,7 +70,7 @@ namespace MonoEngine.Rendering
 
             instanceBuffer = new DynamicVertexBuffer(graphics, InstanceVertexDeclaration, MaxInstanceCount, BufferUsage.WriteOnly);
 
-            InstanceData[] instanceData = new InstanceData[MaxInstanceCount];
+            /*InstanceData[] instanceData = new InstanceData[MaxInstanceCount];
 
             TransformMatrix zeroTransform = new TransformMatrix();
 
@@ -82,13 +82,13 @@ namespace MonoEngine.Rendering
                     );
             }
 
-            instanceBuffer.SetData(instanceData);
+            //instanceBuffer.SetData(instanceData);*/
             #endregion
 
             bindings = new VertexBufferBinding[2] 
             { 
                 new VertexBufferBinding(quadVerts),
-                new VertexBufferBinding(instanceBuffer, 0 , 1)
+                new VertexBufferBinding(instanceBuffer, 0, 1)
             };
         }
 
@@ -103,7 +103,12 @@ namespace MonoEngine.Rendering
 
         public void Render(GraphicsDevice graphics, TransformMatrix cameraMatrixInv, int instanceCount)
         {
-            graphics.Clear(Color.Black);
+            graphics.Clear(Color.Bisque);
+
+            graphics.RasterizerState = new RasterizerState() { 
+                CullMode = CullMode.None,
+                //FillMode = FillMode.WireFrame,
+            };
 
             effect.CurrentTechnique = effect.Techniques["Unlit"];
             effect.Parameters["CameraRS"].SetValue(cameraMatrixInv.RS.Flat());
@@ -128,12 +133,12 @@ namespace MonoEngine.Rendering
                 instances[i++] = data;
                 if (i == MaxInstanceCount)
                 {
-                    instanceBuffer.SetData(0, instances, 0, i, InstanceVertexDeclaration.VertexStride, SetDataOptions.None);
+                    instanceBuffer.SetData(instances, 0, i, SetDataOptions.None);
                     yield return i;
                     i = 0;
                 }
             }
-            instanceBuffer.SetData(instances, 0, i, SetDataOptions.None);
+            instanceBuffer.SetData(instances, 0, i,  SetDataOptions.None);
             yield return i;
             yield break;
         }

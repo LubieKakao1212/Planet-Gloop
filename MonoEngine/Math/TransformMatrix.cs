@@ -30,6 +30,11 @@ namespace MonoEngine.Math
             return mOut;
         }
 
+        public float Determinant()
+        {
+            return Determinant(this);
+        }
+
         public void SetIdentity()
         {
             rotationScale.SetIdentity();
@@ -78,20 +83,31 @@ namespace MonoEngine.Math
             Mul(lhs, rhs, out var mOut);
             return mOut;
         }
-        
+
+        public static TransformMatrix operator *(in Matrix2x2 lhs, in TransformMatrix rhs)
+        {
+            Mul(lhs, rhs, out var mOut);
+            return mOut;
+        }
+
         public static void Mul(in TransformMatrix lhs, in TransformMatrix rhs, out TransformMatrix mOut)
         {
             mOut = lhs;
             mOut.rotationScale *= rhs.rotationScale;
-            mOut.translation *= rhs.rotationScale;
-            mOut.translation += rhs.translation;
+            mOut.translation += lhs.rotationScale * rhs.translation;
         }
 
         public static void Mul(in TransformMatrix lhs, in Matrix2x2 rhs, out TransformMatrix mOut)
         {
             mOut = lhs;
             mOut.rotationScale *= rhs;
-            mOut.translation *= rhs;
+        }
+
+        public static void Mul(in Matrix2x2 lhs, in TransformMatrix rhs, out TransformMatrix mOut)
+        {
+            mOut = rhs;
+            mOut.rotationScale = rhs.rotationScale * lhs;
+            mOut.translation *= lhs;
         }
 
         public static void Translate(in TransformMatrix lhs, in Vector2 rhs, out TransformMatrix mOut)
@@ -156,7 +172,7 @@ namespace MonoEngine.Math
             Vector2 tOut;
 
             tOut.X = (rs.m01 * t.Y - rs.m11 * t.X) / det;
-            tOut.Y = (rs.m00 * t.Y - rs.m10 * t.X) / det;
+            tOut.Y = -(rs.m00 * t.Y - rs.m10 * t.X) / det;
 
             //Put everything together
             mOut.rotationScale = rsOut;
