@@ -38,13 +38,13 @@ namespace EngineTest
             scene = new Scene(camera);
             RotationRoot = new SceneObject();
 
-            var bar = new DrawableObject(Color.AliceBlue);
-            var bar2 = new DrawableObject(Color.GreenYellow);
-            var origin = new DrawableObject(Color.Black);
-            var blade1 = new DrawableObject(Color.BurlyWood);
-            var blade2 = new DrawableObject(Color.BurlyWood);
+            var bar = new DrawableObject(Color.AliceBlue, 0f);
+            var bar2 = new DrawableObject(Color.GreenYellow, 0f);
+            var origin = new DrawableObject(Color.Black, 0f);
+            var blade1 = new DrawableObject(Color.BurlyWood, 0f);
+            var blade2 = new DrawableObject(Color.BurlyWood, 0f);
 
-            Tip = new DrawableObject(Color.Red);
+            Tip = new DrawableObject(Color.Red, 0f);
 
             //Hierarchy RotationRoot -> bar -> bar2 -> tip -> blade1, blade2
             blade1.Parent = Tip;

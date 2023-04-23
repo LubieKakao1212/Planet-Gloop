@@ -17,8 +17,10 @@ namespace MonoEngine.Scenes
 
         private Camera camera;
 
-        //private HashSet<SceneObject> roots = new HashSet<SceneObject>();
-        private HashSet<DrawableObject> drawables = new HashSet<DrawableObject>();
+        private SortedSet<DrawableObject> drawables = new SortedSet<DrawableObject>();
+
+        private HashSet<SceneObject> objectsOnScene = new HashSet<SceneObject>();
+        private List<SceneObject> roots = new List<SceneObject>();
 
         public Scene(Camera camera)
         {
@@ -30,9 +32,9 @@ namespace MonoEngine.Scenes
             this.camera = camera;
         }
 
-        public void RegisterDrawable(DrawableObject obj)
+        internal void RegisterDrawable(DrawableObject obj)
         {
-            this.drawables.Add(obj);
+            drawables.Add(obj);
         }
     }
 }
