@@ -65,12 +65,12 @@ namespace EngineTest
 
             //RotationRoot.Transform.LocalScale = new Vector2(1f, 2f);
 
-            scene.RegisterDrawable(bar);
+            /*scene.RegisterDrawable(bar);
             scene.RegisterDrawable(bar2);
             scene.RegisterDrawable(Tip);
             scene.RegisterDrawable(origin);
             scene.RegisterDrawable(blade1);
-            scene.RegisterDrawable(blade2);
+            scene.RegisterDrawable(blade2);*/
 
             base.Initialize();
         }

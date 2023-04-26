@@ -6,12 +6,15 @@ namespace MonoEngine.Scenes
     {
         public Color Color => color;
         public float DrawOrder => drawOrder;
+        public long DrawLayerMask => drawLayerMask;
 
         private Color color;
 
         private float drawOrder;
 
-        public DrawableObject(Color color, float drawOrder)
+        private long drawLayerMask;
+
+        public DrawableObject(Color color, float drawOrder) : base()
         {
             this.color = color;
             this.drawOrder = drawOrder;
