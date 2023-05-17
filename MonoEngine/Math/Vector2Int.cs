@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -36,5 +37,10 @@ namespace MonoEngine.Math
         {
             return X == other.X && Y == other.Y;
         }
+
+        public static implicit operator Vector2(Vector2Int lhs)
+        {
+            return new Vector2(lhs.X, lhs.Y);
+        } 
     }
 }
