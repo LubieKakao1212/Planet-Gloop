@@ -73,6 +73,7 @@ namespace MonoEngine.Math
                 {
                     parent.Changed += OnChanged;
                 }
+                Changed?.Invoke();
             }
         }
 

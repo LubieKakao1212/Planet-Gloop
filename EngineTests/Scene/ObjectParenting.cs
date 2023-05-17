@@ -33,7 +33,7 @@ namespace EngineTests.Scene
             SetUpHierarchy();
 
             Assert.AreSame(parent.Transform, child.Transform.Parent);
-            Assert.AreSame(null, parent.Transform);
+            Assert.AreSame(null, parent.Transform.Parent);
         }
 
         [Test]
@@ -41,13 +41,17 @@ namespace EngineTests.Scene
         {
             SetUpHierarchy();
 
-            Assert.Throws<InvalidOperationException>(() => parent.Transform.Parent = child.Transform.Parent);
-        } 
+            Assert.Throws<InvalidOperationException>(
+                () =>
+                {
+                    parent.Transform.Parent = child.Transform.Parent;
+                });
+        }   
 
         private void SetUpHierarchy()
         {
-            var parent = new SceneObject();
-            var child = new SceneObject();
+            parent = new SceneObject();
+            child = new SceneObject();
 
             Assert.DoesNotThrow(() => child.Parent = parent);
         }
