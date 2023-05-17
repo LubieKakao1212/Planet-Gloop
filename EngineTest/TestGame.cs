@@ -13,9 +13,11 @@ namespace EngineTest
 
         private RenderPipeline renderer;
 
-        private Scene scene;
-        private SceneObject RotationRoot;
+        private Hierarchy scene;
+        private HierarchyObject RotationRoot;
         private DrawableObject Tip;
+
+        private Camera Camera;
 
         private float RootRotationSpeed = MathHelper.PiOver2;
         private float TipRotationSpeed = MathHelper.PiOver2;
@@ -34,9 +36,9 @@ namespace EngineTest
 
         protected override void Initialize()
         {
-            var camera = new Camera() { ViewSize = 5 };
-            scene = new Scene(camera);
-            RotationRoot = new SceneObject();
+            Camera = new Camera() { ViewSize = 5 };
+            scene = new Hierarchy();
+            RotationRoot = new HierarchyObject();
 
             var bar = new DrawableObject(Color.AliceBlue, -1f);
             var bar2 = new DrawableObject(Color.GreenYellow, 0f);
@@ -72,6 +74,7 @@ namespace EngineTest
             scene.RegisterDrawable(blade1);
             scene.RegisterDrawable(blade2);*/
 
+
             scene.AddObject(RotationRoot);
 
             base.Initialize();
@@ -97,7 +100,8 @@ namespace EngineTest
 
         protected override void Draw(GameTime gameTime)
         {
-            renderer.RenderScene(GraphicsDevice, scene);
+            GraphicsDevice.Clear(Color.DarkSlateGray);
+            renderer.RenderScene(GraphicsDevice, scene, Camera);
 
             base.Draw(gameTime);
         }

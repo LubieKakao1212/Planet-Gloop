@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace MonoEngine.Scenes
 {
-    public class SceneObject
+    public class HierarchyObject
     {
-        public SceneObject Parent
+        public HierarchyObject Parent
         {
             get => parent;
             set
@@ -29,7 +29,7 @@ namespace MonoEngine.Scenes
             }
         }
 
-        public Scene CurrentScene
+        public Hierarchy CurrentScene
         {
             get => currentScene;
             internal set
@@ -43,7 +43,7 @@ namespace MonoEngine.Scenes
             get => transform;
         }
 
-        public IReadOnlyList<SceneObject> Children => children;
+        public IReadOnlyList<HierarchyObject> Children => children;
 
         /// <summary>
         /// Returns all children as well as their ChildrenDeep <br/>
@@ -52,11 +52,11 @@ namespace MonoEngine.Scenes
         /// Child1 -> ChildrenDeep Of Child1 -> Child2 -> ChildrenDeep Of Child2 -> ... -> ChildN -> ChildrenDeep Of ChildN
         /// </summary>
         // Potentialy a lot of allocations
-        public IReadOnlyList<SceneObject> ChildrenDeep
+        public IReadOnlyList<HierarchyObject> ChildrenDeep
         {
             get
             {
-                var result = new List<SceneObject>();
+                var result = new List<HierarchyObject>();
 
                 foreach (var child in children)
                 {
@@ -68,11 +68,11 @@ namespace MonoEngine.Scenes
             }
         }
 
-        public IReadOnlyList<SceneObject> ChildrenDeepAndSelf
+        public IReadOnlyList<HierarchyObject> ChildrenDeepAndSelf
         {
             get
             {
-                var result = new List<SceneObject>
+                var result = new List<HierarchyObject>
                 {
                     this
                 };
@@ -87,13 +87,13 @@ namespace MonoEngine.Scenes
         }
 
         //Not optimal for larege amount of children
-        private readonly List<SceneObject> children = new();
+        private readonly List<HierarchyObject> children = new();
 
-        private Scene currentScene;
-        private SceneObject parent = null;
+        private Hierarchy currentScene;
+        private HierarchyObject parent = null;
         private readonly Transform transform = new();
 
-        public SceneObject()
+        public HierarchyObject()
         {
             transform.Changed += OnTransformChanged;
         }
@@ -102,11 +102,11 @@ namespace MonoEngine.Scenes
         {
             if (Transform.Parent != Parent?.Transform)
             {
-                throw new InvalidOperationException($"Cannot change transform's parent directly, use {nameof(SceneObject)}'s {nameof(Parent)} instead");
+                throw new InvalidOperationException($"Cannot change transform's parent directly, use {nameof(HierarchyObject)}'s {nameof(Parent)} instead");
             }
         }
 
-        private void PrivateSetScene(Scene scene)
+        private void PrivateSetScene(Hierarchy scene)
         {
             currentScene = scene;
             foreach (var child in children)
@@ -115,7 +115,7 @@ namespace MonoEngine.Scenes
             }
         }
 
-        private void AddChild(SceneObject child)
+        private void AddChild(HierarchyObject child)
         {
             if (children.Contains(child))
             {
@@ -124,7 +124,7 @@ namespace MonoEngine.Scenes
             children.Add(child);
         }
         
-        private void RemoveChild(SceneObject child)
+        private void RemoveChild(HierarchyObject child)
         {
             if (child.parent != this)
             {

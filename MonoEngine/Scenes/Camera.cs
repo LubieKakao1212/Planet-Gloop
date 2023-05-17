@@ -3,7 +3,7 @@ using MonoEngine.Math;
 
 namespace MonoEngine.Scenes
 {
-    public class Camera : SceneObject
+    public class Camera : HierarchyObject
     {
         public TransformMatrix CameraMatrix
         {

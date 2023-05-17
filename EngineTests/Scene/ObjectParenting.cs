@@ -11,8 +11,8 @@ namespace EngineTests.Scene
     [TestFixture]
     internal class SceneObjectTest
     {
-        SceneObject parent;
-        SceneObject child;
+        HierarchyObject parent;
+        HierarchyObject child;
 
         [Test]
         public void Parenting()
@@ -50,8 +50,8 @@ namespace EngineTests.Scene
 
         private void SetUpHierarchy()
         {
-            parent = new SceneObject();
-            child = new SceneObject();
+            parent = new HierarchyObject();
+            child = new HierarchyObject();
 
             Assert.DoesNotThrow(() => child.Parent = parent);
         }

@@ -5,12 +5,8 @@ namespace MonoEngine.Scenes
 {
     using Utils;
 
-    public class Scene
+    public class Hierarchy
     {
-        public Camera Camera => camera;
-
-        //public IReadOnlySet<SceneObject> Roots => roots;
-        
         public IReadOnlyCollection<DrawableObject> Drawables
         {
             get
@@ -43,29 +39,21 @@ namespace MonoEngine.Scenes
             }
         }
 
-        private Camera camera;
-
         //private HashSet<DrawableObject> drawables = new HashSet<DrawableObject>();
 
-        private HashSet<SceneObject> rootsSet = new HashSet<SceneObject>();
-        private List<SceneObject> roots = new List<SceneObject>();
+        private HashSet<HierarchyObject> rootsSet = new HashSet<HierarchyObject>();
+        private List<HierarchyObject> roots = new List<HierarchyObject>();
 
-        public Scene(Camera camera)
+        public Hierarchy()
         {
-            if (camera == null)
-            {
-                throw new ArgumentNullException("Cannot create a scene without a camera");
-            }
-
-            this.camera = camera;
         }
 
-        public void AddObject(SceneObject obj)
+        public void AddObject(HierarchyObject obj)
         {
             InsertObject(obj, roots.Count);
         }
 
-        public void InsertObject(SceneObject obj, int order)
+        public void InsertObject(HierarchyObject obj, int order)
         {
             if (obj.Parent != null)
             {
@@ -89,7 +77,7 @@ namespace MonoEngine.Scenes
             drawables.Add(obj);
         }*/
 
-        private void RemoveObject(SceneObject obj) 
+        private void RemoveObject(HierarchyObject obj) 
         {
             if (!rootsSet.Contains(obj))
             {

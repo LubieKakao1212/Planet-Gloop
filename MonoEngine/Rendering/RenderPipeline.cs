@@ -92,9 +92,9 @@ namespace MonoEngine.Rendering
             };
         }
 
-        public void RenderScene(GraphicsDevice graphics, Scene scene)
+        public void RenderScene(GraphicsDevice graphics, Hierarchy scene, Camera camera)
         {
-            var cameraMatrixInv = scene.Camera.CameraMatrix.Inverse();
+            var cameraMatrixInv = camera.CameraMatrix.Inverse();
             foreach (var instanceCount in SetupSceneInstances(scene))
             {
                 Render(graphics, cameraMatrixInv, instanceCount);
@@ -103,8 +103,6 @@ namespace MonoEngine.Rendering
 
         public void Render(GraphicsDevice graphics, TransformMatrix cameraMatrixInv, int instanceCount)
         {
-            graphics.Clear(Color.Bisque);
-
             graphics.RasterizerState = new RasterizerState() { 
                 CullMode = CullMode.None,
                 //FillMode = FillMode.WireFrame,
@@ -122,7 +120,7 @@ namespace MonoEngine.Rendering
             graphics.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0, 2, instanceCount);
         }
 
-        public IEnumerable<int> SetupSceneInstances(Scene scene)
+        public IEnumerable<int> SetupSceneInstances(Hierarchy scene)
         {
             int i = 0;
             var drawables = scene.Drawables;
@@ -139,8 +137,11 @@ namespace MonoEngine.Rendering
                     i = 0;
                 }
             }
-            instanceBuffer.SetData(instances, 0, i,  SetDataOptions.None);
-            yield return i;
+            if (i != 0)
+            {
+                instanceBuffer.SetData(instances, 0, i, SetDataOptions.None);
+                yield return i;
+            }
             yield break;
         }
     }
