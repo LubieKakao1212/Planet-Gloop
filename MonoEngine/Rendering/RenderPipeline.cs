@@ -125,8 +125,9 @@ namespace MonoEngine.Rendering
         public IEnumerable<int> SetupSceneInstances(Scene scene)
         {
             int i = 0;
-            var instances = new InstanceData[MathHelper.Min(scene.Drawables.Count, MaxInstanceCount)];
-            foreach (var drawable in scene.Drawables)
+            var drawables = scene.Drawables;
+            var instances = new InstanceData[MathHelper.Min(drawables.Count, MaxInstanceCount)];
+            foreach (var drawable in drawables)
             {
                 var ltw = drawable.Transform.LocalToWorld;
                 InstanceData data = new InstanceData(ltw, drawable.Color);

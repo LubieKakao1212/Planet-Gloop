@@ -1,26 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MonoEngine.Scenes
 {
+    using Utils;
+
     public class Scene
     {
         public Camera Camera => camera;
 
         //public IReadOnlySet<SceneObject> Roots => roots;
-        public IReadOnlySet<DrawableObject> Drawables => drawables;
+        
+        public IReadOnlyCollection<DrawableObject> Drawables
+        {
+            get
+            {
+                IDictionary<float, List<DrawableObject>> orderedDrawables = new SortedDictionary<float, List<DrawableObject>>();
+                
+                int count = 0;
+
+                foreach (var root in roots)
+                {
+                    foreach (var obj in root.ChildrenDeepAndSelf)
+                    {
+                        if (obj is DrawableObject drawable)
+                        {
+                            var list = orderedDrawables.GetOrSetToDefault(drawable.DrawOrder, new());
+                            list.Add(drawable);
+                            count++;
+                        }
+                    }
+                }
+
+                var listOut = new List<DrawableObject>(count);
+
+                foreach (var order in orderedDrawables)
+                {
+                    listOut.AddRange(order.Value);
+                }
+
+                return listOut;
+            }
+        }
 
         private Camera camera;
 
-        private HashSet<DrawableObject> drawables = new HashSet<DrawableObject>();
+        //private HashSet<DrawableObject> drawables = new HashSet<DrawableObject>();
 
-        private HashSet<SceneObject> objectsOnScene = new HashSet<SceneObject>();
+        private HashSet<SceneObject> rootsSet = new HashSet<SceneObject>();
         private List<SceneObject> roots = new List<SceneObject>();
 
         public Scene(Camera camera)
@@ -33,30 +60,42 @@ namespace MonoEngine.Scenes
             this.camera = camera;
         }
 
-        public void RegisterObject(SceneObject obj)
+        public void AddObject(SceneObject obj)
+        {
+            InsertObject(obj, roots.Count);
+        }
+
+        public void InsertObject(SceneObject obj, int order)
         {
             if (obj.Parent != null)
             {
                 throw new InvalidOperationException("Cannot change scene of non-root object");
             }
+            if (rootsSet.Contains(obj))
+            {
+                //TODO Inplement logger
+                Console.Out.WriteLine("Assigning object to scene it is alredy assigned, this may be a mistake");
+                return;
+            }
             obj.CurrentScene?.RemoveObject(obj);
 
             obj.CurrentScene = this;
-            objectsOnScene.Add(obj);
-
+            rootsSet.Add(obj);
+            roots.Insert(order, obj);
         }
 
-        internal void RegisterDrawable(DrawableObject obj)
+        /*internal void RegisterDrawable(DrawableObject obj)
         {
             drawables.Add(obj);
-        }
+        }*/
 
         private void RemoveObject(SceneObject obj) 
         {
-            if (!roots.Contains(obj))
+            if (!rootsSet.Contains(obj))
             {
                 throw new InvalidOperationException("Invalid object removal");
             }
+            rootsSet.Remove(obj);
             roots.Remove(obj);
         }
     }

@@ -38,10 +38,10 @@ namespace EngineTest
             scene = new Scene(camera);
             RotationRoot = new SceneObject();
 
-            var bar = new DrawableObject(Color.AliceBlue, 0f);
+            var bar = new DrawableObject(Color.AliceBlue, -1f);
             var bar2 = new DrawableObject(Color.GreenYellow, 0f);
             var origin = new DrawableObject(Color.Black, 0f);
-            var blade1 = new DrawableObject(Color.BurlyWood, 0f);
+            var blade1 = new DrawableObject(Color.BurlyWood, -0.5f);
             var blade2 = new DrawableObject(Color.BurlyWood, 0f);
 
             Tip = new DrawableObject(Color.Red, 0f);
@@ -60,7 +60,7 @@ namespace EngineTest
             blade2.Transform.LocalScale = new Vector2(4f, 0.25f);
             Tip.Transform.LocalScale = new Vector2(0.5f, 0.5f);
             origin.Transform.LocalScale = new Vector2(0.1f, 0.1f);
-            
+
             //camera.Parent = Tip;
 
             //RotationRoot.Transform.LocalScale = new Vector2(1f, 2f);
@@ -71,6 +71,8 @@ namespace EngineTest
             scene.RegisterDrawable(origin);
             scene.RegisterDrawable(blade1);
             scene.RegisterDrawable(blade2);*/
+
+            scene.AddObject(RotationRoot);
 
             base.Initialize();
         }

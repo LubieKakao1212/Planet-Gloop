@@ -43,9 +43,51 @@ namespace MonoEngine.Scenes
             get => transform;
         }
 
-        public IReadOnlySet<SceneObject> Children => children;
+        public IReadOnlyList<SceneObject> Children => children;
 
-        private readonly HashSet<SceneObject> children = new();
+        /// <summary>
+        /// Returns all children as well as their ChildrenDeep <br/>
+        /// 
+        /// Ordered as follows: <br/>
+        /// Child1 -> ChildrenDeep Of Child1 -> Child2 -> ChildrenDeep Of Child2 -> ... -> ChildN -> ChildrenDeep Of ChildN
+        /// </summary>
+        // Potentialy a lot of allocations
+        public IReadOnlyList<SceneObject> ChildrenDeep
+        {
+            get
+            {
+                var result = new List<SceneObject>();
+
+                foreach (var child in children)
+                {
+                    result.Add(child);
+                    result.AddRange(child.ChildrenDeep);
+                }
+
+                return result;
+            }
+        }
+
+        public IReadOnlyList<SceneObject> ChildrenDeepAndSelf
+        {
+            get
+            {
+                var result = new List<SceneObject>
+                {
+                    this
+                };
+
+                foreach (var child in children)
+                {
+                    result.AddRange(child.ChildrenDeepAndSelf);
+                }
+
+                return result;
+            }
+        }
+
+        //Not optimal for larege amount of children
+        private readonly List<SceneObject> children = new();
 
         private Scene currentScene;
         private SceneObject parent = null;
@@ -75,6 +117,10 @@ namespace MonoEngine.Scenes
 
         private void AddChild(SceneObject child)
         {
+            if (children.Contains(child))
+            {
+                throw new ArgumentException("Adding existing child, this should never happen");
+            }
             children.Add(child);
         }
         
