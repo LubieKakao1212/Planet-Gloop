@@ -38,6 +38,14 @@ namespace MonoEngine.Math
             return X == other.X && Y == other.Y;
         }
 
+        public static Vector2Int FloorDiv(Vector2Int lhs, int rhs)
+        {
+            return new Vector2Int(
+                MathUtil.FloorDiv(lhs.X, rhs),
+                MathUtil.FloorDiv(lhs.Y, rhs)
+                );
+        }
+
         public static implicit operator Vector2(Vector2Int lhs)
         {
             return new Vector2(lhs.X, lhs.Y);

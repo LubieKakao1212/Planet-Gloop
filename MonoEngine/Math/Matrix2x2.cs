@@ -11,6 +11,14 @@ namespace MonoEngine.Math
             m00, m10,
             m01, m11;
 
+        public Matrix2x2(float diag = 1)
+        {
+            m00 = diag;
+            m10 = 0;
+            m01 = 0;
+            m11 = diag;
+        }
+
         public Matrix2x2(Vector2 i, Vector2 j)
         {
             m00 = i.X;
