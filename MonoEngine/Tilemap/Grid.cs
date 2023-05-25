@@ -13,38 +13,38 @@ namespace MonoEngine.Tilemap
     {
         public Vector2 CellSize;
 
-        public Vector2Int WorldToCell(Vector2 worldPos)
+        public Point WorldToCell(Vector2 worldPos)
         {
             var localPos = Transform.WorldToLocal.TransformPoint(worldPos);
 
             return LocalToCell(localPos);
         }
 
-        public Vector2Int LocalToCell(Vector2 localPos)
+        public Point LocalToCell(Vector2 localPos)
         {
             localPos /= CellSize;
 
             return localPos.FloorToInt();
         }
 
-        public Vector2 CellCornerToLocal(Vector2Int gridPos)
+        public Vector2 GridToCellCornerLocal(Point gridPos)
         {
-            return (gridPos * CellSize);
+            return new Vector2(gridPos.X * CellSize.X, gridPos.Y * CellSize.Y);
         }
 
-        public Vector2 CellCornerToWorld(Vector2Int gridPos)
+        public Vector2 GridToCellCornerWorld(Point gridPos)
         {
-            return Transform.LocalToWorld.TransformPoint(CellCornerToLocal(gridPos));
+            return Transform.LocalToWorld.TransformPoint(GridToCellCornerLocal(gridPos));
         }
 
-        public Vector2 CellCenterToLocal(Vector2Int gridPos)
+        public Vector2 GridToCellCenterLocal(Point gridPos)
         {
-            return CellCornerToLocal(gridPos) + (CellSize / 2f);
+            return GridToCellCornerLocal(gridPos) + (CellSize / 2f);
         }
 
-        public Vector2 CellCenterToWorld(Vector2Int gridPos)
+        public Vector2 GridToCellCenterWorld(Point gridPos)
         {
-            return Transform.LocalToWorld.TransformPoint(CellCenterToLocal(gridPos));
+            return Transform.LocalToWorld.TransformPoint(GridToCellCenterLocal(gridPos));
         }
 
     }

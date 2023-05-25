@@ -17,28 +17,31 @@ namespace MonoEngine.Tilemap
         public const int chunkSizeMask = 31;
         public const int tileCount = chunkSize * chunkSize;
 
+        public Point ChunkPos { get; private init; }
+
         public TileInstance[] ChunkData => chunkData;
 
         private TileInstance[] chunkData;
 
-        public Chunk()
+        public Chunk(Point chunkPos)
         {
             chunkData = new TileInstance[tileCount];
+            ChunkPos = chunkPos;
         }
 
-        public TileInstance GetTile(Vector2Int pos)
+        public TileInstance GetTile(Point pos)
         {
             return chunkData[PosToIndex(pos)];
         }
 
-        public void SetTile(Vector2Int pos, TileInstance tile)
+        public void SetTile(Point pos, TileInstance tile)
         {
             chunkData[PosToIndex(pos)] = tile;
         }
 
         /// <summary>
         /// Sets a rectangle of tiles in chunk
-        /// Much faster than multiple <see cref="SetTile(Vector2Int, TileInstance)"/> calls
+        /// Much faster than multiple <see cref="Chunk.SetTile(Point, TileInstance)"/> calls
         /// Does perform bounds and data size checks
         /// </summary>
         /// <param name="start"></param>
@@ -71,25 +74,25 @@ namespace MonoEngine.Tilemap
             for (int i = 0; i < area.Y; i++)
             {
                 var slice = data.Slice(i * width, width);
-                
-                SetSliceUnsafe(new Vector2Int(x, y + i), slice);
+
+                SetSliceUnsafe(new Point(x, y + i), slice);
             }
         }
 
         /// <summary>
         /// Sets a horizontal slice of tiles to this chunk <br/>
-        /// Much faster than multiple <see cref="SetTile(Vector2Int, TileInstance)"/> calls <br/>
+        /// Much faster than multiple <see cref="Chunk.SetTile(Point, TileInstance)"/> calls <br/>
         /// DOES NOT perform any bounds checks
         /// </summary>
         /// <param name="start"></param>
         /// <param name="count"></param>
         /// <param name="slice"></param>
-        internal void SetSliceUnsafe(Vector2Int start, in ReadOnlySpan<TileInstance> slice)
+        internal void SetSliceUnsafe(Point start, in ReadOnlySpan<TileInstance> slice)
         {
             SetSliceUnsafe(PosToIndex(start), slice);
         }
 
-        /// <inheritdoc cref="SetSliceUnsafe(Vector2Int, in ReadOnlySpan{TileInstance})"/>
+        /// <inheritdoc cref="SetSliceUnsafe(Point, in ReadOnlySpan{TileInstance})"/>
         internal void SetSliceUnsafe(int startIdx, in ReadOnlySpan<TileInstance> slice)
         {
             var dstSpan = new Span<TileInstance>(chunkData, startIdx, slice.Length);
@@ -97,14 +100,14 @@ namespace MonoEngine.Tilemap
         }
 
 
-        public static int PosToIndex(Vector2Int pos)
+        public static int PosToIndex(Point pos)
         {
             return pos.Y * chunkSize + pos.X;
         }
 
-        public static Vector2Int IndexToPos(int index)
+        public static Point IndexToPos(int index)
         {
-            return new Vector2Int(index % chunkSize, index / chunkSize);
+            return new Point(index % chunkSize, index / chunkSize);
         }
     }
 }

@@ -10,6 +10,6 @@ namespace MonoEngine.Rendering
 {
     public interface ISpecialRenderer
     {
-        void Render(GraphicsDevice device, Camera camera);
+        void Render(Camera camera);
     }
 }

@@ -11,8 +11,13 @@ namespace MonoEngine.Scenes
 {
     public abstract class SpecialRenderedObject : DrawableObject, ISpecialRenderer
     {
-        public SpecialRenderedObject(Color color, float drawOrder) : base(color, drawOrder) { }
+        protected RenderPipeline Pipeline { get; }
 
-        public abstract void Render(GraphicsDevice device, Camera camera);
+        public SpecialRenderedObject(RenderPipeline pipeline, Color color, float drawOrder) : base(color, drawOrder) 
+        { 
+            this.Pipeline = pipeline;
+        }
+
+        public abstract void Render(Camera camera);
     }
 }

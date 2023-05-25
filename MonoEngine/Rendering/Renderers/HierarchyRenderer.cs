@@ -10,9 +10,7 @@ namespace MonoEngine.Rendering.Renderers
 {
     internal class HierarchyRenderer : ISpecialRenderer
     {
-
-
-        public void Render(GraphicsDevice device, Camera camera)
+        public void Render(Camera camera)
         {
             throw new NotImplementedException();
         }

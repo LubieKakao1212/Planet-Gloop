@@ -10,9 +10,7 @@ namespace MonoEngine.Rendering
     public class Sprite
     {
         public Rectangle TextureRect => textureRect;
-        public Color Tint => tint;
-
+        
         private Rectangle textureRect;
-        private Color tint;
     }
 }

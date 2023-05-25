@@ -9,10 +9,19 @@ namespace MonoEngine.Math
 {
     public static class Vector2Extensions
     {
-        public static Vector2Int FloorToInt(this Vector2 vect)
+        public static Point FloorToInt(this Vector2 vect)
         {
             vect.Floor();
-            return new Vector2Int((int)vect.X, (int)vect.Y);
+            return new Point((int)vect.X, (int)vect.Y);
         }
+
+        public static Point FloorDiv(this Point lhs, int rhs)
+        {
+            return new Point(
+                MathUtil.FloorDiv(lhs.X, rhs),
+                MathUtil.FloorDiv(lhs.Y, rhs)
+                );
+        }
+
     }
 }

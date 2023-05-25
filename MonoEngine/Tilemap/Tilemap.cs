@@ -1,5 +1,4 @@
-﻿using MonoEngine.Math;
-using MonoEngine.Utils;
+﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,31 +7,68 @@ using System.Threading.Tasks;
 
 namespace MonoEngine.Tilemap
 {
+    using Utils;
+    using Math;
+
     public class Tilemap
     {
-        public IEnumerable<KeyValuePair<Vector2Int, Chunk>> Chunks => chunks;
+        public IEnumerable<KeyValuePair<Point, Chunk>> Chunks => chunks;
 
-        private Dictionary<Vector2Int, Chunk> chunks = new Dictionary<Vector2Int, Chunk>();
+        private Dictionary<Point, Chunk> chunks = new Dictionary<Point, Chunk>();
 
         public Tilemap()
         {
             
         }
 
-        public void SetTile(Vector2Int pos, TileInstance tile)
+        public void SetTile(Point pos, TileInstance tile)
         {
-            var chunk = GetChunkAt(pos);
+            var chunk = GetChunkAt(pos, true);
+            var posInChunk = GridToPosInChunk(pos);
 
+            chunk.SetTile(posInChunk, tile);
         }
 
-        public Chunk GetChunkAt(Vector2Int pos)
+        public void SetTilesBlock(Rectangle rect, ReadOnlySpan<TileInstance> instance)
         {
-            return chunks.GetOrSetToDefaultLazy(Vector2Int.FloorDiv(pos, Chunk.chunkSize), () => new Chunk());
+            //Todo implement
+            throw new NotImplementedException("TODO, Not yet implemented");
         }
 
-        public static Vector2Int WorldToPosInChunk(Vector2Int worldPos)
+        public Chunk GetChunkAt(Point pos, bool createNew)
         {
-            return new Vector2Int(worldPos.X & Chunk.chunkSizeMask, worldPos.Y & Chunk.chunkSizeMask);
+            return GetChunk(GridToChunkPos(pos), createNew);
+        }
+
+        public IEnumerable<Chunk> GetChunksAt(Rectangle rect, bool createNew)
+        {
+            var c1 = GridToChunkPos(new Point(rect.X, rect.Y));
+            var c2 = GridToChunkPos(new Point(rect.X + rect.Width, rect.Y + rect.Height));
+
+            for(var x = c1.X; x <= c2.X; x++)
+                for (var y = c1.X; y <= c2.X; y++)
+                {
+                    Chunk chunk = GetChunk(new Point(x, y), createNew);
+                    if (chunk != null)
+                    {
+                        yield return chunk;
+                    }
+                }
+        }
+
+        public Chunk GetChunk(Point chunkPos, bool createNew)
+        {
+            return createNew ? chunks.GetOrSetToDefaultLazy(chunkPos, (cPos) => new Chunk(cPos)) : chunks.GetValueOrDefault(chunkPos);
+        }
+
+        public static Point GridToPosInChunk(Point gridPos)
+        {
+            return new Point(gridPos.X & Chunk.chunkSizeMask, gridPos.Y & Chunk.chunkSizeMask);
+        }
+
+        public static Point GridToChunkPos(Point gridPos)
+        {
+            return gridPos.FloorDiv(Chunk.chunkSize);
         }
 
     }
