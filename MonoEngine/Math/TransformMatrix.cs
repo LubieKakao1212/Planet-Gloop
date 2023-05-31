@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using System.Runtime.InteropServices;
 
 namespace MonoEngine.Math
@@ -12,6 +13,14 @@ namespace MonoEngine.Math
     [StructLayout(LayoutKind.Sequential)]
     public struct TransformMatrix
     {
+        public float this[int i, int j] => j switch
+        {
+            0 => RS[i, 0],
+            1 => RS[i, 1],
+            2 => i switch { 0 => T.X, 1 => T.Y, _ => throw new IndexOutOfRangeException() },
+            _ => throw new IndexOutOfRangeException()
+        };
+
         internal Matrix2x2 RS => rotationScale;
         internal Vector2 T => translation;
 

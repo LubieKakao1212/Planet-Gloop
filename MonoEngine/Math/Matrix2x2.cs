@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace MonoEngine.Math
@@ -7,6 +8,15 @@ namespace MonoEngine.Math
     [StructLayout(LayoutKind.Sequential)]
     public struct Matrix2x2
     {
+        public float this[int i, int j] => j switch
+        {
+            0 => i switch { 0 => m00, 1 => m10, _ => throw new IndexOutOfRangeException() },
+            1 => i switch { 0 => m01, 1 => m11, _ => throw new IndexOutOfRangeException() },
+            _ => throw new IndexOutOfRangeException()
+        };
+
+        public Vector4 Flat => new Vector4(m00, m10, m01, m11);
+
         public float
             m00, m10,
             m01, m11;
@@ -42,11 +52,6 @@ namespace MonoEngine.Math
             m10 = 0;
             m01 = 0;
             m11 = 1;
-        }
-
-        public Vector4 Flat()
-        {
-            return new Vector4(m00, m10, m01, m11);
         }
 
         public static Vector2 operator *(in Matrix2x2 lhs, in Vector2 rhs)

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using MonoEngine.Math;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,8 @@ namespace MonoEngine.Rendering
 {
     public class Sprite
     {
-        public Rectangle TextureRect => textureRect;
+        public BoundingRect TextureRect => textureRect;
         
-        private Rectangle textureRect;
+        private BoundingRect textureRect;
     }
 }

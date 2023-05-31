@@ -23,8 +23,6 @@ namespace MonoEngine.Scenes
         //All
         private long drawLayerMask = -1;
 
-        protected bool interuptQueue;
-
         public DrawableObject(Color color, float drawOrder) : base()
         {
             this.color = color;
@@ -33,7 +31,7 @@ namespace MonoEngine.Scenes
 
         public virtual DrawableObject SetInterupQueue(bool interuptQueue)
         {
-            this.interuptQueue = interuptQueue;
+            InteruptQueue = interuptQueue;
             return this;
         }
     }

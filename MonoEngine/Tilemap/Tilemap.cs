@@ -71,5 +71,10 @@ namespace MonoEngine.Tilemap
             return gridPos.FloorDiv(Chunk.chunkSize);
         }
 
+        public static Point ChunkToGridPos(Point chunkPos)
+        {
+            return new Point(chunkPos.X * Chunk.chunkSize, chunkPos.Y * Chunk.chunkSize);
+        }
+
     }
 }

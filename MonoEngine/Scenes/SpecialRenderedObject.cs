@@ -16,6 +16,7 @@ namespace MonoEngine.Scenes
         public SpecialRenderedObject(RenderPipeline pipeline, Color color, float drawOrder) : base(color, drawOrder) 
         { 
             this.Pipeline = pipeline;
+            this.SetInterupQueue(true);
         }
 
         public abstract void Render(Camera camera);

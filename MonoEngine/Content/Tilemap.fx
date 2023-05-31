@@ -1,4 +1,4 @@
-﻿#if OPENGL
+#if OPENGL
 	#define SV_POSITION POSITION
 	#define VS_SHADERMODEL vs_3_0
 	#define PS_SHADERMODEL ps_3_0
@@ -7,8 +7,11 @@
 	#define PS_SHADERMODEL ps_4_0_level_9_1
 #endif
 
-float4 CameraRS;
-float2 CameraT;
+#include "Transforms.fxh"
+#include "Camera.fxh"
+
+float4 GridRS;
+float2 GridT;
 
 struct VertexShaderInput
 {
@@ -19,32 +22,25 @@ struct VertexShaderOutput
 {
 	float4 Position : SV_POSITION;
 	float4 Color : COLOR0;
-	//float2 WPos : TEXCOORD2;
+	//float4 WPos : TEXCOORD2;
 };
 
-float3x3 LocalToView(float4 rotScale, float2 pos)
-{
-	float3x3 camTRS = float3x3(
-		CameraRS.x, CameraRS.z, CameraT.x,
-		CameraRS.y, CameraRS.w, CameraT.y,
-		0.0f       , 0.0f       , 1.0f);
-
-	float3x3 trs = float3x3(
-		rotScale.x, rotScale.z, pos.x,
-		rotScale.y, rotScale.w, pos.y,
-		0.f       , 0.f       , 1.f);
-
-	return mul(camTRS, trs);
-}
-
 VertexShaderOutput MainVS(in VertexShaderInput input,
-	float4 rotScale : TEXCOORD0,
-	float2 pos : TEXCOORD1,
-	float4 color : COLOR0)
+	float4 rotScale : POSITION1,
+	float2 pos : POSITION2,
+	float4 color : COLOR0,
+    float4 atlasPos : TEXCOORD0)
 {
 	VertexShaderOutput output;
 
-	float3x3 LtV = LocalToView(rotScale, pos);
+	//float3x3 LtV = LocalToView(rotScale, pos);
+
+    float3x3 GridLtW = ComposeTransform(GridRS, GridT);
+    float3x3 LocalToGrid = ComposeTransform(rotScale, pos);
+
+    float3x3 LtW = mul(GridLtW, LocalToGrid);
+
+    float3x3 LtV = mul(Projection(), LtW);
 
 	//output.WPos = input.Position.xy;
 

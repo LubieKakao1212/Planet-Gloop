@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using MonoEngine.Math;
 using MonoEngine.Rendering;
 using MonoEngine.Scenes;
+using MonoEngine.Tilemap;
 using System;
 using System.Collections.Generic;
 
@@ -43,6 +44,8 @@ namespace EngineTest
 
         protected override void Initialize()
         {
+            renderer.Init(GraphicsDevice);
+
             Camera = new Camera() { ViewSize = 5 };
             scene = new Hierarchy();
 
@@ -52,12 +55,26 @@ namespace EngineTest
                 var mat = Matrix2x2.Rotation(rot);
                 Tips.Add(CreateWindmill(scene, rot, Vector2.UnitY * 64f * mat));
             }
+
+            var grid = new Grid();
+
+            scene.AddObject(grid);
+
+            var tilemap = new Tilemap();
+
+            FIllTilemap(tilemap, new Rectangle(-128, -128, 256, 256));
+            //FIllTilemap(tilemap, new Rectangle(-2, -2, 4, 4));
+
+            var mapRenderer = new TilemapRenderer(tilemap, grid, renderer, Color.White, -1f);
+
+            mapRenderer.Parent = grid;
+
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            renderer.Init(GraphicsDevice, Content);
+            Effects.Init(Content);
             // TODO: use this.Content to load your game content here
         }
 
@@ -76,7 +93,7 @@ namespace EngineTest
 
             Camera.Transform.LocalRotation += CameraRotationSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            Camera.ViewSize += CameraZoomOutSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            //Camera.ViewSize += CameraZoomOutSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             base.Update(gameTime);
         }
@@ -122,6 +139,22 @@ namespace EngineTest
             hierarchy.AddObject(root);
 
             return tip;
+        }
+
+        public void FIllTilemap(Tilemap tilemap, Rectangle bounds)
+        {
+            var bucket = new TileInstance[]
+            {
+                new TileInstance(Tiles.Green, Tiles.GreenTransform),
+                new TileInstance(Tiles.OversizedRed, Tiles.OversizedRedTransform),
+                new TileInstance(Tiles.OversizedTransparentYellow, Tiles.OversizedTransparentYellowTransform),
+            };
+
+            for(int x = 0; x < bounds.Width; x++)
+                for(int y = 0; y < bounds.Height; y++)
+                {
+                    tilemap.SetTile(new Point(bounds.X + x, bounds.Y + y), bucket[Random.Shared.Next(bucket.Length)]);
+                }
         }
     }
 }

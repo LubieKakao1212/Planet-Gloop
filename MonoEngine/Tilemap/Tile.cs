@@ -7,12 +7,11 @@ namespace MonoEngine.Tilemap
 {
     public class Tile
     {
-        public Sprite Sprite { get; init; }
+        public Sprite Sprite { get; init; } = new Sprite();
         //private Matrix2x2 transform;
         public float Order { get; init; }
 
-        public Color Tint => tint;
-        private Color tint;
+        public Color Tint { get; init; }
     }
 
     public readonly struct TileInstance

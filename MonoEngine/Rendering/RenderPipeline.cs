@@ -17,12 +17,14 @@ namespace MonoEngine.Rendering
         public Renderer Rendering { get; }
         public GraphicsDevice Graphics { get; private set; }
 
+        public const int MaxInstanceCount = 4096 * 4;
+
         private Vector2 quadScale = new Vector2(0.5f, 0.5f);
         private VertexBuffer quadVerts;
         private IndexBuffer quadInds;
 
         private DynamicVertexBuffer instanceBuffer;
-        private const int MaxInstanceCount = 4096;
+       
         private VertexDeclaration InstanceVertexDeclaration;
 
         public RenderPipeline()
@@ -31,11 +33,11 @@ namespace MonoEngine.Rendering
             Rendering = new Renderer(this);
         }
 
-        public void Init(GraphicsDevice graphicsDevice, ContentManager content)
+        public void Init(GraphicsDevice graphicsDevice)
         {
             Graphics = graphicsDevice;
 
-            CurrentState.CurrentEffect = content.Load<Effect>("Unlit");
+            //CurrentState.CurrentEffect = Effects.Default;
 
             #region quad
             quadVerts = new VertexBuffer(Graphics, VertexPosition.VertexDeclaration, 4, BufferUsage.WriteOnly);
@@ -58,8 +60,8 @@ namespace MonoEngine.Rendering
             #region Instances
 
             InstanceVertexDeclaration = new VertexDeclaration(
-                new VertexElement(0, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 0),
-                new VertexElement(sizeof(float) * 4, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 1),
+                new VertexElement(0, VertexElementFormat.Vector4, VertexElementUsage.Position, 1),
+                new VertexElement(sizeof(float) * 4, VertexElementFormat.Vector2, VertexElementUsage.Position, 2),
                 new VertexElement(sizeof(float) * 6, VertexElementFormat.Vector4, VertexElementUsage.Color, 0)
                 );
 
@@ -84,19 +86,33 @@ namespace MonoEngine.Rendering
         public void RenderScene(Hierarchy scene, Camera camera)
         {
             using var camScope = new CameraScope(this, camera);
-            foreach (var instanceCount in SetupSceneInstances(scene))
+            using var effectScope = new EffectScope(this, Effects.Default);
+            foreach (var instanceCount in SetupSceneInstances(scene, camera))
             {
                 Rendering.DrawInstancedQuads(instanceBuffer, instanceCount);
             }
         }
 
-        public IEnumerable<int> SetupSceneInstances(Hierarchy scene)
+        //TODO find a better name or merge with render scene
+        public IEnumerable<int> SetupSceneInstances(Hierarchy scene, Camera camera)
         {
             int i = 0;
             var drawables = scene.Drawables;
             var instances = new InstanceData[MathHelper.Min(drawables.Count, MaxInstanceCount)];
             foreach (var drawable in drawables)
             {
+                if(drawable.InteruptQueue) 
+                {
+                    instanceBuffer.SetData(instances, 0, i, SetDataOptions.None);
+                    yield return i;
+                    i = 0;
+
+                    if (drawable is SpecialRenderedObject special)
+                    {
+                        special.Render(camera);
+                        continue;
+                    }
+                }
                 var ltw = drawable.Transform.LocalToWorld;
                 InstanceData data = new InstanceData(ltw, drawable.Color);
                 instances[i++] = data;
@@ -139,10 +155,10 @@ namespace MonoEngine.Rendering
                 
                 var graphics = pipeline.Graphics;
                 var effect = pipeline.CurrentState.CurrentEffect;
-                var cameraMatrixInv = pipeline.CurrentState.CurrentCamMatInv;
+                var cameraMatrixInv = pipeline.CurrentState.CurrentProjection;
 
-                effect.CurrentTechnique = effect.Techniques["Unlit"];
-                effect.Parameters["CameraRS"].SetValue(cameraMatrixInv.RS.Flat());
+                //effect.CurrentTechnique = effect.Techniques["Unlit"];
+                effect.Parameters["CameraRS"].SetValue(cameraMatrixInv.RS.Flat);
                 effect.Parameters["CameraT"].SetValue(cameraMatrixInv.T);
 
                 graphics.Indices = pipeline.quadInds;
@@ -174,7 +190,7 @@ namespace MonoEngine.Rendering
 
                     if (i == stripSize)
                     {
-                        buffer.SetData(data, 0, i);
+                        buffer.SetData(data, 0, i, SetDataOptions.None);
 
                         DrawInstancedQuads(buffer, i);
                     }
@@ -182,23 +198,24 @@ namespace MonoEngine.Rendering
 
                 if (i != 0)
                 {
-                    buffer.SetData(instances, 0, i, SetDataOptions.None);
+                    buffer.SetData(data, 0, i, SetDataOptions.None);
+                    DrawInstancedQuads(buffer, i);
                 }
             }
         }
 
         public struct State
         {
-            public TransformMatrix CurrentCamMatInv { get; set; }
+            public TransformMatrix CurrentProjection { get; set; }
             public Effect CurrentEffect { get; set; }
             public void SetCamera(Camera cam)
             {
-                CurrentCamMatInv = cam.CameraMatrix.Inverse();
+                CurrentProjection = cam.ProjectionMatrix;
             }
 
             public void SetCameraMatrix(TransformMatrix cam)
             {
-                CurrentCamMatInv = cam.Inverse();
+                CurrentProjection = cam.Inverse();
             }
         }
 
@@ -211,7 +228,7 @@ namespace MonoEngine.Rendering
 
             public InstanceData(TransformMatrix transform, Color color)
             {
-                this.rotScale = transform.RS.Flat();
+                this.rotScale = transform.RS.Flat;
                 this.pos = transform.T;
                 this.color = color.ToVector4();
             }
@@ -219,10 +236,10 @@ namespace MonoEngine.Rendering
 
         public class CameraScope : IDisposable 
         {
-            private TransformMatrix restoreCam;
+            private TransformMatrix restoreProj;
             private RenderPipeline renderPipeline;
 
-            public CameraScope(RenderPipeline pipeline, Camera cam) : this(pipeline, cam.CameraMatrix)
+            public CameraScope(RenderPipeline pipeline, Camera cam) : this(pipeline, cam.ProjectionMatrix)
             {
 
             }
@@ -230,14 +247,33 @@ namespace MonoEngine.Rendering
             public CameraScope(RenderPipeline pipeline, TransformMatrix cam)
             {
                 renderPipeline = pipeline;
-                restoreCam = renderPipeline.CurrentState.CurrentCamMatInv;
-                renderPipeline.CurrentState.CurrentCamMatInv = cam.Inverse();
+                restoreProj = renderPipeline.CurrentState.CurrentProjection;
+                renderPipeline.CurrentState.CurrentProjection = cam;
             }
 
             public void Dispose()
             {
-                renderPipeline.CurrentState.CurrentCamMatInv = restoreCam;
+                renderPipeline.CurrentState.CurrentProjection = restoreProj;
             }
         }
+
+        public class EffectScope : IDisposable
+        {
+            private RenderPipeline renderPipeline;
+            private Effect oldEffect;
+
+            public EffectScope(RenderPipeline pipeline, Effect effect)
+            {
+                oldEffect = pipeline.CurrentState.CurrentEffect;
+                pipeline.CurrentState.CurrentEffect = effect;
+                renderPipeline = pipeline;
+            }
+
+            public void Dispose()
+            {
+                renderPipeline.CurrentState.CurrentEffect = oldEffect;
+            }
+        }
+
     }
 }
