@@ -81,8 +81,8 @@ namespace MonoEngine.Math
                     float b = mat[i, j] * max.Get(j);
                     var minI = rectMin.Get(i);
                     var maxI = rectMax.Get(i);
-                    rectMin.Set(i, minI + a < b ? a : b);
-                    rectMax.Set(i, maxI + a < b ? b : a);
+                    rectMin.Set(i, minI + (a < b ? a : b));
+                    rectMax.Set(i, maxI + (a < b ? b : a));
                 }
 
             X = rectMin.X;

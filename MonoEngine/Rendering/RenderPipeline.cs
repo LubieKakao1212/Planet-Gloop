@@ -103,9 +103,12 @@ namespace MonoEngine.Rendering
             {
                 if(drawable.InteruptQueue) 
                 {
-                    instanceBuffer.SetData(instances, 0, i, SetDataOptions.None);
-                    yield return i;
-                    i = 0;
+                    if (i != 0)
+                    {
+                        instanceBuffer.SetData(instances, 0, i, SetDataOptions.None);
+                        yield return i;
+                        i = 0;
+                    }
 
                     if (drawable is SpecialRenderedObject special)
                     {
@@ -169,18 +172,26 @@ namespace MonoEngine.Rendering
                 graphics.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0, 2, instanceCount);
             }
 
+            public void DrawSortedLayerQuads<T>(DynamicVertexBuffer buffer, Ordered<T>[] instances) where T : struct
+            {
+                DrawSortedLayerQuadsNoAlloc(buffer, instances, new T[MathHelper.Min(buffer.VertexCount, instances.Length)]);
+            }
+
             /// <summary>
             /// Sorts and draws given <paramref name="instances"/> as quads
             /// </summary>
             /// <typeparam name="T">Type of instance data</typeparam>
             /// <param name="buffer">Vertex buffer, does not need to be the same length as <paramref name="instances"/>, but must be compatible with T</param>
+            /// <param name="sortedInstancesArr">Must be the same length as <paramref name="buffer"/></param>
             /// <param name="instances"></param>
-            public void DrawSortedLayerQuads<T>(DynamicVertexBuffer buffer, Ordered<T>[] instances) where T : struct
+            public void DrawSortedLayerQuadsNoAlloc<T>(DynamicVertexBuffer buffer, Ordered<T>[] instances, T[] sortedInstancesArr) where T : struct
             {
                 var sorted = Ordered<T>.SortByOrder(instances);
 
                 var stripSize = MathHelper.Min(buffer.VertexCount, instances.Length);
-                var data = new T[stripSize];
+                //var data = new T[stripSize];
+
+                var data = sortedInstancesArr;
 
                 var i = 0;
 
@@ -193,6 +204,8 @@ namespace MonoEngine.Rendering
                         buffer.SetData(data, 0, i, SetDataOptions.None);
 
                         DrawInstancedQuads(buffer, i);
+
+                        i = 0;
                     }
                 }
 

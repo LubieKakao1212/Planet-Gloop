@@ -4,6 +4,7 @@ using MonoEngine.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +13,11 @@ namespace MonoEngine.Tilemap
     public class Grid : HierarchyObject
     {
         public Vector2 CellSize;
+        
+        public Grid(Vector2 cellSize)
+        {
+            CellSize = cellSize;
+        }
 
         public Point WorldToCell(Vector2 worldPos)
         {

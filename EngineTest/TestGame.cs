@@ -7,6 +7,7 @@ using MonoEngine.Scenes;
 using MonoEngine.Tilemap;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace EngineTest
 {
@@ -22,13 +23,18 @@ namespace EngineTest
 
         private Camera Camera;
 
-        private float CameraRotationSpeed = MathHelper.PiOver4;
-        private float CameraZoomOutSpeed = 4f;
+        private float CameraSpeed = 1f;
+        private float CameraZoomSpeed = 1f;
+        private float CameraRotSpeed = MathHelper.ToRadians(90f);
+
         private float TipRotationSpeed = MathHelper.PiOver2;
 
         private float bladeLength = 32f;
 
         private const int WindmillCount = 4096;
+
+        private Tilemap tilemap;
+        private Grid grid;
 
         public TestGame()
         {
@@ -46,23 +52,23 @@ namespace EngineTest
         {
             renderer.Init(GraphicsDevice);
 
-            Camera = new Camera() { ViewSize = 5 };
+            Camera = new Camera() { ViewSize = 16 };
             scene = new Hierarchy();
 
-            for (int i = 0; i < WindmillCount; i++) 
+            /*for (int i = 0; i < WindmillCount; i++) 
             {
                 var rot = MathHelper.Pi * WindmillCount / i;
                 var mat = Matrix2x2.Rotation(rot);
                 Tips.Add(CreateWindmill(scene, rot, Vector2.UnitY * 64f * mat));
-            }
+            }*/
 
-            var grid = new Grid();
+            grid = new Grid(Vector2.One);
 
             scene.AddObject(grid);
 
-            var tilemap = new Tilemap();
+            tilemap = new Tilemap();
 
-            FIllTilemap(tilemap, new Rectangle(-128, -128, 256, 256));
+            FIllTilemap(tilemap, new Rectangle(-64, -64, 128, 128));
             //FIllTilemap(tilemap, new Rectangle(-2, -2, 4, 4));
 
             var mapRenderer = new TilemapRenderer(tilemap, grid, renderer, Color.White, -1f);
@@ -83,17 +89,15 @@ namespace EngineTest
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            //RotationRoot.Transform.LocalRotation += RootRotationSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            //RotationRoot.Transform.LocalPosition = Vector2.UnitY * MathF.Sin((float)gameTime.TotalGameTime.TotalSeconds);
-
             foreach (var windmill in Tips)
             {
                 windmill.Transform.LocalRotation += TipRotationSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
 
-            Camera.Transform.LocalRotation += CameraRotationSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            HandleCameraControls(gameTime);
+            HandlePlaceControls();
 
-            //Camera.ViewSize += CameraZoomOutSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            //Debug.WriteLine($"Fps: {1.0 / gameTime.ElapsedGameTime.TotalSeconds}");
 
             base.Update(gameTime);
         }
@@ -143,18 +147,78 @@ namespace EngineTest
 
         public void FIllTilemap(Tilemap tilemap, Rectangle bounds)
         {
-            var bucket = new TileInstance[]
-            {
-                new TileInstance(Tiles.Green, Tiles.GreenTransform),
-                new TileInstance(Tiles.OversizedRed, Tiles.OversizedRedTransform),
-                new TileInstance(Tiles.OversizedTransparentYellow, Tiles.OversizedTransparentYellowTransform),
-            };
-
             for(int x = 0; x < bounds.Width; x++)
                 for(int y = 0; y < bounds.Height; y++)
                 {
-                    tilemap.SetTile(new Point(bounds.X + x, bounds.Y + y), bucket[Random.Shared.Next(bucket.Length)]);
+                    tilemap.SetTile(new Point(bounds.X + x, bounds.Y + y), Tiles.bucket[Random.Shared.Next(Tiles.bucket.Length)]);
                 }
+        }
+
+        private void HandleCameraControls(GameTime gameTime)
+        {
+            KeyAction(Keys.Up, 
+                () => Camera.ViewSize *= (1 + CameraZoomSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds));
+
+            KeyAction(Keys.Down,
+                () => Camera.ViewSize *= (1 - CameraZoomSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds));
+
+            var t = Camera.Transform;
+
+            KeyAction(Keys.W,
+                () => t.GlobalPosition += t.Up * CamMoveSpeed(gameTime));
+
+            KeyAction(Keys.S,
+                () => t.GlobalPosition += -t.Up * CamMoveSpeed(gameTime));
+
+            KeyAction(Keys.A,
+                () => t.GlobalPosition += -t.Right * CamMoveSpeed(gameTime));
+
+            KeyAction(Keys.D,
+                () => t.GlobalPosition += t.Right * CamMoveSpeed(gameTime));
+
+            KeyAction(Keys.Q,
+                () => t.LocalRotation += -CameraRotSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
+            
+            KeyAction(Keys.E,
+                () => t.LocalRotation += CameraRotSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
+        }
+
+        private void HandlePlaceControls()
+        {
+            var targetGridPos = grid.WorldToCell(MousePosWorld());
+
+            if (Mouse.GetState(Window).LeftButton == ButtonState.Pressed)
+            {
+                tilemap.SetTile(targetGridPos, Tiles.bucket[0]);//Tiles.bucket[Random.Shared.Next(Tiles.bucket.Length)]);
+            }
+            else if(Mouse.GetState(Window).RightButton == ButtonState.Pressed)
+            {
+                tilemap.SetTile(targetGridPos, new TileInstance(null, new Matrix2x2(1f)));
+            }
+        }
+
+        private Vector2 MousePosView()
+        {
+            var m = Mouse.GetState(Window);
+            return new Vector2(m.X / (float)Window.ClientBounds.Width, m.Y / (float) Window.ClientBounds.Height);
+        }
+
+        private Vector2 MousePosWorld()
+        {
+            return Camera.ViewToWorldPos(MousePosView());
+        }
+
+        private float CamMoveSpeed(GameTime time)
+        {
+            return Camera.ViewSize * CameraSpeed * (float)time.ElapsedGameTime.TotalSeconds; 
+        }
+
+        private void KeyAction(Keys key, Action action)
+        {
+            if (Keyboard.GetState().IsKeyDown(key))
+            {
+                action();
+            }
         }
     }
 }

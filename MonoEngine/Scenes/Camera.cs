@@ -20,7 +20,8 @@ namespace MonoEngine.Scenes
 
         public static BoundingRect CullingRect { get; } = BoundingRect.Normal
             //For debugging
-            .Scaled(0.2f);
+            //.Scaled(0.2f);
+            ;
 
         public TransformMatrix ProjectionMatrix
         {
@@ -34,10 +35,11 @@ namespace MonoEngine.Scenes
             }
         }
 
+        public float ViewSize { get => viewSize; set { viewSize = value; projectionMatrix = null; } }
+
         private TransformMatrix? projectionMatrix;
         private BoundingRect? worldBounds;
-
-        public float ViewSize { get; set; }
+        private float viewSize = 1f;
 
         public Camera()
         {
@@ -55,6 +57,12 @@ namespace MonoEngine.Scenes
             rect.Intersects(CullingRect);
 
             return false;
+        }
+
+        public Vector2 ViewToWorldPos(Vector2 viewPos)
+        {
+            //TODO Cache inverse?
+            return ProjectionMatrix.Inverse().TransformPoint(viewPos);
         }
     }
 }

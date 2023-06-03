@@ -18,5 +18,13 @@ namespace EngineTest
         public static readonly Matrix2x2 GreenTransform = new Matrix2x2(1);
         public static readonly Matrix2x2 OversizedRedTransform = new Matrix2x2(1.25f);
         public static readonly Matrix2x2 OversizedTransparentYellowTransform = new Matrix2x2(Vector2.UnitX, Vector2.One);
+
+        public static readonly TileInstance[] bucket = new TileInstance[]
+            {
+                new TileInstance(Green, GreenTransform),
+                new TileInstance(OversizedRed, OversizedRedTransform),
+                new TileInstance(OversizedTransparentYellow, OversizedTransparentYellowTransform),
+                //new TileInstance(null, Matrix2x2.Scale(new Vector2(1f)))
+            };
     }
 }

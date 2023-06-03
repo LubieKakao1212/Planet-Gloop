@@ -46,7 +46,7 @@ namespace MonoEngine.Tilemap
             var c2 = GridToChunkPos(new Point(rect.X + rect.Width, rect.Y + rect.Height));
 
             for(var x = c1.X; x <= c2.X; x++)
-                for (var y = c1.X; y <= c2.X; y++)
+                for (var y = c1.Y; y <= c2.Y; y++)
                 {
                     Chunk chunk = GetChunk(new Point(x, y), createNew);
                     if (chunk != null)

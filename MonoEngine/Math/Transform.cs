@@ -11,6 +11,15 @@ namespace MonoEngine.Math
     {
         public event Action Changed;
 
+        public Vector2 Right => localToWorld.TransformDirection(Vector2.UnitX);
+        public Vector2 Up => localToWorld.TransformDirection(Vector2.UnitY);
+
+        public Vector2 GlobalPosition
+        {
+            get => Parent != null ? Parent.LocalToWorld.TransformPoint(LocalPosition) : LocalPosition;
+            set => LocalPosition = Parent != null ? Parent.WorldToLocal.TransformPoint(value) : value;
+        }
+        
         public Vector2 LocalPosition
         {
             get => translation;

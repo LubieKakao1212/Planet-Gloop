@@ -23,7 +23,12 @@ namespace MonoEngine.Tilemap
         private Grid grid;
 
         private DynamicVertexBuffer instanceBuffer;
-        
+
+        #region Preallocations
+        private TileInstanceRenderData[] renderDataArray = new TileInstanceRenderData[RenderPipeline.MaxInstanceCount];
+        private List<Ordered<TileInstanceRenderData>> ordersList = new(RenderPipeline.MaxInstanceCount);
+        #endregion
+
         public TilemapRenderer(Tilemap tilemap, Grid grid, RenderPipeline pipeline, Color color, float drawOrder) : base(pipeline, color, drawOrder)
         {
             this.tilemap = tilemap;
@@ -33,26 +38,30 @@ namespace MonoEngine.Tilemap
 
         public override void Render(Camera camera)
         {
-            var gridWTL = grid.Transform.WorldToLocal;
-            var camProjInv = camera.ProjectionMatrix.Inverse();
+            var gridWtL = grid.Transform.WorldToLocal;
+            var camVtW = camera.ProjectionMatrix.Inverse();
 
-            var mat = camProjInv * gridWTL;
+            var mat = gridWtL * camVtW;
 
             var rect = Camera.CullingRect.Transformed(mat);
 
-            var dataOrders = new List<Ordered<TileInstanceRenderData>>();
+            ordersList.Clear();
+            //ordersList = new(RenderPipeline.MaxInstanceCount);
 
             foreach (var chunk in tilemap.GetChunksAt(rect.ToInt(), false))
             {
-                //TODO Cache Tiles
-                dataOrders.Capacity += Chunk.tileCount;
+                ////TODO Cache Tiles
+                if(ordersList.Capacity - ordersList.Count < Chunk.tileCount)
+                {
+                    ordersList.Capacity += Chunk.tileCount;
+                }
 
                 var chunkPos = chunk.ChunkPos;
                 var chunkGridPos = Tilemap.ChunkToGridPos(chunkPos);
 
                 var i = 0;
                 
-                dataOrders.AddRange(chunk.ChunkData.SelectMany((tile) =>
+                ordersList.AddRange(chunk.ChunkData.SelectMany((tile) =>
                 {
                     if(tile.Tile == null)
                     {
@@ -78,7 +87,7 @@ namespace MonoEngine.Tilemap
             using var effectScope = new RenderPipeline.EffectScope(Pipeline, effect);
             using var cameraScope = new RenderPipeline.CameraScope(Pipeline, camera);
 
-            Pipeline.Rendering.DrawSortedLayerQuads(instanceBuffer, dataOrders.ToArray());
+            Pipeline.Rendering.DrawSortedLayerQuads(instanceBuffer, ordersList.ToArray());
         }
 
         [StructLayout(LayoutKind.Sequential)]
