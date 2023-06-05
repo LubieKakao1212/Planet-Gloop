@@ -16,7 +16,7 @@ namespace MonoEngine.Math
         /// <param name="b">Bust be positive</param>
         public static int FloorDiv(int a, int b)
         {
-            return a / b + (a >> 31);
+            return (a - (a >> 31)) / b + (a >> 31);
         }
 
     }

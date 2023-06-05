@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoEngine.Math;
 using MonoEngine.Rendering;
 using MonoEngine.Scenes;
 using MonoEngine.Util;
@@ -38,7 +39,7 @@ namespace MonoEngine.Tilemap
 
         public override void Render(Camera camera)
         {
-            var gridWtL = grid.Transform.WorldToLocal;
+            var gridWtL = Matrix2x2.Scale(grid.CellSize).Inverse() * grid.Transform.WorldToLocal;
             var camVtW = camera.ProjectionMatrix.Inverse();
 
             var mat = gridWtL * camVtW;
@@ -46,7 +47,6 @@ namespace MonoEngine.Tilemap
             var rect = Camera.CullingRect.Transformed(mat);
 
             ordersList.Clear();
-            //ordersList = new(RenderPipeline.MaxInstanceCount);
 
             foreach (var chunk in tilemap.GetChunksAt(rect.ToInt(), false))
             {
@@ -63,14 +63,18 @@ namespace MonoEngine.Tilemap
                 
                 ordersList.AddRange(chunk.ChunkData.SelectMany((tile) =>
                 {
-                    if(tile.Tile == null)
+                    i++;
+                    if (tile.Tile == null)
                     {
                         return Enumerable.Empty<Ordered<TileInstanceRenderData>>();
                     }
+                    var pos = Chunk.IndexToPos(i - 1);
+                    var position = pos.ToVector2() + chunkGridPos.ToVector2();
+                    position *= grid.CellSize;
                     return Enumerable.Repeat(new Ordered<TileInstanceRenderData>() { Value = new TileInstanceRenderData()
                     {
                         RotScale = tile.Transform.Flat,
-                        Position = Chunk.IndexToPos(i++).ToVector2() + chunkGridPos.ToVector2(),
+                        Position = position,
                         Color = tile.Tile.Tint.ToVector4(),
                         TexCoord = tile.Tile.Sprite.TextureRect.Flat
                     }, Order = tile.Tile.Order }

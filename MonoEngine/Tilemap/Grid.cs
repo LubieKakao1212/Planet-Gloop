@@ -29,7 +29,7 @@ namespace MonoEngine.Tilemap
         public Point LocalToCell(Vector2 localPos)
         {
             localPos /= CellSize;
-
+            
             return localPos.FloorToInt();
         }
 

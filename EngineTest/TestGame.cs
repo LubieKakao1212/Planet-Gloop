@@ -99,6 +99,10 @@ namespace EngineTest
 
             //Debug.WriteLine($"Fps: {1.0 / gameTime.ElapsedGameTime.TotalSeconds}");
 
+            //grid.Transform.LocalScale = new Vector2(
+            //    MathF.Cos((float)gameTime.TotalGameTime.TotalSeconds) / 2f + 0.5f,
+            //    MathF.Sin((float)gameTime.TotalGameTime.TotalSeconds) / 2f + 0.5f);
+
             base.Update(gameTime);
         }
 
@@ -200,7 +204,7 @@ namespace EngineTest
         private Vector2 MousePosView()
         {
             var m = Mouse.GetState(Window);
-            return new Vector2(m.X / (float)Window.ClientBounds.Width, m.Y / (float) Window.ClientBounds.Height);
+            return new Vector2((m.X / (float)Window.ClientBounds.Width) * 2f - 1f, -((m.Y / (float) Window.ClientBounds.Height) * 2f - 1f));
         }
 
         private Vector2 MousePosWorld()

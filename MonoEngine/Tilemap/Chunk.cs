@@ -107,7 +107,7 @@ namespace MonoEngine.Tilemap
 
         public static Point IndexToPos(int index)
         {
-            return new Point(index % chunkSize, index / chunkSize);
+            return new Point(index & chunkSizeMask, index / chunkSize);
         }
     }
 }
