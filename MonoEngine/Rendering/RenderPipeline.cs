@@ -159,6 +159,7 @@ namespace MonoEngine.Rendering
                 var graphics = pipeline.Graphics;
                 var effect = pipeline.CurrentState.CurrentEffect;
                 var cameraMatrixInv = pipeline.CurrentState.CurrentProjection;
+                graphics.BlendState = BlendState.AlphaBlend;
 
                 //effect.CurrentTechnique = effect.Techniques["Unlit"];
                 effect.Parameters["CameraRS"].SetValue(cameraMatrixInv.RS.Flat);

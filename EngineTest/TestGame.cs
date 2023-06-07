@@ -108,7 +108,7 @@ namespace EngineTest
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.DarkSlateGray);
+            GraphicsDevice.Clear(Color.Black);
             renderer.RenderScene(scene, Camera);
 
             base.Draw(gameTime);

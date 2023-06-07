@@ -71,11 +71,21 @@ namespace MonoEngine.Tilemap
                     var pos = Chunk.IndexToPos(i - 1);
                     var position = pos.ToVector2() + chunkGridPos.ToVector2();
                     position *= grid.CellSize;
+                    position += grid.CellSize / 2f;
+
+                    #region Tmp
+                    var tint = tile.Tile.Tint.ToVector4();
+
+                    tint.X *= tint.W;
+                    tint.Y *= tint.W;
+                    tint.Z *= tint.W;
+                    #endregion
+
                     return Enumerable.Repeat(new Ordered<TileInstanceRenderData>() { Value = new TileInstanceRenderData()
                     {
                         RotScale = tile.Transform.Flat,
                         Position = position,
-                        Color = tile.Tile.Tint.ToVector4(),
+                        Color = tint,
                         TexCoord = tile.Tile.Sprite.TextureRect.Flat
                     }, Order = tile.Tile.Order }
                     , 1);
