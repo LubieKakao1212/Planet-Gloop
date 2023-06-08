@@ -9,9 +9,11 @@ namespace MonoEngine.Tilemap
     {
         public Sprite Sprite { get; init; } = new Sprite();
         //private Matrix2x2 transform;
-        public float Order { get; init; }
+        public float Order { get; set; }
 
-        public Color Tint { get; init; }
+        public Color Tint { get; set; }
+
+        public TransformMatrix Transform { get; set; } = TransformMatrix.Identity;
     }
 
     public readonly struct TileInstance

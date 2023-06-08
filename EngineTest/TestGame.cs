@@ -36,16 +36,29 @@ namespace EngineTest
         private Tilemap tilemap;
         private Grid grid;
 
+        private Stopwatch timer = new Stopwatch();
+        private TimeSpan lastFrameStamp;
+
+        private double smoothDelta;
+
         public TestGame()
         {
             graphics = new GraphicsDeviceManager(this);
 
-            graphics.PreferredBackBufferWidth = 512;
-            graphics.PreferredBackBufferHeight = 512;
+            graphics.PreferredBackBufferWidth = 1920;
+            graphics.PreferredBackBufferHeight = 1080;
+
+            /*graphics.PreferredBackBufferWidth = 512;
+            graphics.PreferredBackBufferHeight = 512;*/
+
+            //graphics.ToggleFullScreen();
 
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             renderer = new RenderPipeline();
+
+            IsFixedTimeStep = false;
+            graphics.SynchronizeWithVerticalRetrace = false;
         }
 
         protected override void Initialize()
@@ -68,12 +81,15 @@ namespace EngineTest
 
             tilemap = new Tilemap();
 
-            FIllTilemap(tilemap, new Rectangle(-64, -64, 128, 128));
+            //FIllTilemap(tilemap, new Rectangle(-256, -256, 512, 512));
+            FIllTilemap(tilemap, new Rectangle(-128, -128, 256, 256));
             //FIllTilemap(tilemap, new Rectangle(-2, -2, 4, 4));
 
             var mapRenderer = new TilemapRenderer(tilemap, grid, renderer, Color.White, -1f);
 
             mapRenderer.Parent = grid;
+
+            timer.Start();
 
             base.Initialize();
         }
@@ -97,8 +113,12 @@ namespace EngineTest
             HandleCameraControls(gameTime);
             HandlePlaceControls();
 
-            //Debug.WriteLine($"Fps: {1.0 / gameTime.ElapsedGameTime.TotalSeconds}");
+            var t = (float)gameTime.TotalGameTime.TotalSeconds;
 
+            Tiles.OversizedRed.Transform = TransformMatrix.TranslationRotationScale(
+                Vector2.Zero, 0f,
+                new Vector2(MathF.Cos(t) + 1f, MathF.Sin(t) / 2f + 1f));
+            
             //grid.Transform.LocalScale = new Vector2(
             //    MathF.Cos((float)gameTime.TotalGameTime.TotalSeconds) / 2f + 0.5f,
             //    MathF.Sin((float)gameTime.TotalGameTime.TotalSeconds) / 2f + 0.5f);
@@ -110,6 +130,19 @@ namespace EngineTest
         {
             GraphicsDevice.Clear(Color.Black);
             renderer.RenderScene(scene, Camera);
+
+            //Console.WriteLine($"Fps: {1.0 / gameTime.ElapsedGameTime.TotalSeconds}");
+
+            var newStamp = timer.Elapsed;
+
+            var delta = newStamp - lastFrameStamp;
+
+            lastFrameStamp = newStamp;
+
+            smoothDelta = smoothDelta * 0.95 + delta.TotalSeconds * 0.05;
+
+            Console.WriteLine($"Smooth Fps: {1.0 / smoothDelta}");
+            Console.WriteLine($"Fps: {1.0 / delta.TotalSeconds}");
 
             base.Draw(gameTime);
         }

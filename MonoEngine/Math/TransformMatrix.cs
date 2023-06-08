@@ -13,6 +13,8 @@ namespace MonoEngine.Math
     [StructLayout(LayoutKind.Sequential)]
     public struct TransformMatrix
     {
+        public static TransformMatrix Identity => new TransformMatrix(new Matrix2x2(1f), Vector2.Zero);
+
         public float this[int i, int j] => j switch
         {
             0 => RS[i, 0],

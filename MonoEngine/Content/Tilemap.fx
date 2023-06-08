@@ -18,6 +18,14 @@ struct VertexShaderInput
 	float4 Position : POSITION0;
 };
 
+struct TileTransformInput
+{
+	//Rotation Scale Skew
+	float4 RSS : POSITION3;
+	//Translation
+	float2 T : POSITION4;
+};
+
 struct VertexShaderOutput
 {
 	float4 Position : SV_POSITION;
@@ -25,26 +33,33 @@ struct VertexShaderOutput
 	//float4 WPos : TEXCOORD2;
 };
 
-VertexShaderOutput MainVS(in VertexShaderInput input,
+VertexShaderOutput MainVS(
+	in VertexShaderInput input,
+	in TileTransformInput tileInput,
 	float4 rotScale : POSITION1,
 	float2 pos : POSITION2,
+	
 	float4 color : COLOR0,
     float4 atlasPos : TEXCOORD0)
 {
 	VertexShaderOutput output;
 
-	//float3x3 LtV = LocalToView(rotScale, pos);
+    float3x3 GridToWorld = ComposeTransform(GridRS, GridT);
+	//float3x3 TileToGrid = ComposeTransform(tileInput.RSS, tileInput.T);
+    float3x3 LocalToTile = ComposeTransform(rotScale, float2(0,0));
+    //float3x3 Translation = ComposeTransform(float4(1,0,0,1), pos);
 
-    float3x3 GridLtW = ComposeTransform(GridRS, GridT);
-    float3x3 LocalToGrid = ComposeTransform(rotScale, pos);
+    float3x3 LtG = LocalToTile;//mul(TileToGrid, LocalToTile);
 
-    float3x3 LtW = mul(GridLtW, LocalToGrid);
-
-    float3x3 LtV = mul(Projection(), LtW);
+    float3x3 GtV = mul(Projection(), GridToWorld);
 
 	//output.WPos = input.Position.xy;
 
-	output.Position = float4(mul(LtV, float3(input.Position.xy, 1.0f)).xy, 0.0f, 1.0f);
+	float3 position = mul(LtG, float3(input.Position.xy, 1.0f));
+	position.xy += pos;
+
+	output.Position = float4(mul(GtV, position).xy, 0.0f, 1.0f);
+
 	output.Color = color;
 
 	//mul(LtV, float3(input.Position.xy, 1.0f)).xy;

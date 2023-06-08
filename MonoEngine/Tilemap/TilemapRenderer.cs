@@ -14,10 +14,16 @@ namespace MonoEngine.Tilemap
     public class TilemapRenderer : SpecialRenderedObject
     {
         private static VertexDeclaration TileInstanceDeclaration { get; } = new VertexDeclaration(
-            new VertexElement(0, VertexElementFormat.Vector4, VertexElementUsage.Position, 1), //2x2 RotScale
+            
+            new VertexElement(sizeof(float) * 0, VertexElementFormat.Vector4, VertexElementUsage.Position, 1), //2x2 RotScale
             new VertexElement(sizeof(float) * 4, VertexElementFormat.Vector2, VertexElementUsage.Position, 2), //2 Position
-            new VertexElement(sizeof(float) * (4 + 2), VertexElementFormat.Vector4, VertexElementUsage.Color, 0), //Position
-            new VertexElement(sizeof(float) * (4 + 2 + 4), VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 0) //[2, 2] Texture Rext
+
+            new VertexElement(sizeof(float) * (4 + 2), VertexElementFormat.Vector4, VertexElementUsage.Position, 3), //2x2 TileRotScale
+            new VertexElement(sizeof(float) * (4 + 2 + 4), VertexElementFormat.Vector2, VertexElementUsage.Position, 4), //2 TileOffset
+            
+            new VertexElement(sizeof(float) * (4 + 2 + 4 + 2), VertexElementFormat.Vector4, VertexElementUsage.Color, 0), //4 Tint
+            
+            new VertexElement(sizeof(float) * (4 + 2 + 4 + 2 + 4), VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 0) //[2, 2] Texture Rext
             );
 
         private Tilemap tilemap;
@@ -42,9 +48,11 @@ namespace MonoEngine.Tilemap
             var gridWtL = Matrix2x2.Scale(grid.CellSize).Inverse() * grid.Transform.WorldToLocal;
             var camVtW = camera.ProjectionMatrix.Inverse();
 
-            var mat = gridWtL * camVtW;
+            var VtG = gridWtL * camVtW;
 
-            var rect = Camera.CullingRect.Transformed(mat);
+            var rect = Camera.CullingRect.Transformed(VtG);
+
+            var GtV = VtG.Inverse();
 
             ordersList.Clear();
 
@@ -73,6 +81,7 @@ namespace MonoEngine.Tilemap
                     position *= grid.CellSize;
                     position += grid.CellSize / 2f;
 
+                    //TODO
                     #region Tmp
                     var tint = tile.Tile.Tint.ToVector4();
 
@@ -85,6 +94,8 @@ namespace MonoEngine.Tilemap
                     {
                         RotScale = tile.Transform.Flat,
                         Position = position,
+                        TileRotScale = tile.Tile.Transform.RS.Flat,
+                        TilePosition = tile.Tile.Transform.T,
                         Color = tint,
                         TexCoord = tile.Tile.Sprite.TextureRect.Flat
                     }, Order = tile.Tile.Order }
@@ -99,7 +110,7 @@ namespace MonoEngine.Tilemap
             effect.Parameters[Effects.GridT].SetValue(grid.Transform.LocalToWorld.T);
 
             using var effectScope = new RenderPipeline.EffectScope(Pipeline, effect);
-            using var cameraScope = new RenderPipeline.CameraScope(Pipeline, camera);
+            using var cameraScope = new RenderPipeline.CameraScope(Pipeline, GtV);
 
             Pipeline.Rendering.DrawSortedLayerQuads(instanceBuffer, ordersList.ToArray());
         }
@@ -109,6 +120,10 @@ namespace MonoEngine.Tilemap
         {
             public Vector4 RotScale;
             public Vector2 Position;
+            
+            public Vector4 TileRotScale;
+            public Vector2 TilePosition;
+            
             public Vector4 Color;
             public Vector4 TexCoord;
         }
