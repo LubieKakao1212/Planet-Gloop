@@ -106,5 +106,24 @@ namespace MonoEngine.Utils
             var list = dict.GetOrSetToDefaultLazy(key, (k) => new());
             list.Add(value);
         }
+
+        /// <summary>
+        /// Removes a nested elements from this mult-idictionary
+        /// </summary>
+        /// <typeparam name="K"></typeparam>
+        /// <typeparam name="V"></typeparam>
+        /// <param name="dict"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="cleanup">Should the nested list be removed if empty</param>
+        public static void RemoveNested<K, V>(this IDictionary<K, List<V>> dict, K key, V value, bool cleanup = true)
+        {
+            var l = dict[key];
+            l.Remove(value);
+            if (cleanup && l.Count == 0)
+            {
+                dict.Remove(key);
+            }
+        }
     }
 }

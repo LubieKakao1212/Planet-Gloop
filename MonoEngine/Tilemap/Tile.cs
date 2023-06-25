@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using MonoEngine.Math;
-using MonoEngine.Rendering;
+using MonoEngine.Rendering.Sprites;
 using System.Data;
 
 namespace MonoEngine.Tilemap

@@ -6,12 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MonoEngine.Rendering
+namespace MonoEngine.Rendering.Sprites
 {
     public class Sprite
     {
-        public BoundingRect TextureRect => textureRect;
-        
-        private BoundingRect textureRect;
+        public BoundingRect TextureRect { get; internal set; }
+        public int TextureIndex { get; internal set; }
     }
 }
