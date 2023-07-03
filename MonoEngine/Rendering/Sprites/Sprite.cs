@@ -10,7 +10,7 @@ namespace MonoEngine.Rendering.Sprites
 {
     public class Sprite
     {
-        public BoundingRect TextureRect { get; internal set; }
-        public int TextureIndex { get; internal set; }
+        public BoundingRect TextureRect { get; set; }
+        public int TextureIndex { get; set; }
     }
 }

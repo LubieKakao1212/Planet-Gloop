@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoEngine.Math;
+using MonoEngine.Rendering.Sprites;
 using MonoEngine.Scenes;
 using MonoEngine.Util;
 using MonoEngine.Utils;
@@ -13,6 +14,11 @@ namespace MonoEngine.Rendering
 {
     public class RenderPipeline
     {
+        public Texture2D SpriteAtlas
+        {
+            get => CurrentState.SpriteAtlas;
+            set => CurrentState.SpriteAtlas = value;
+        }
         private State CurrentState;
         public Renderer Rendering { get; }
         public GraphicsDevice Graphics { get; private set; }
@@ -40,14 +46,22 @@ namespace MonoEngine.Rendering
             //CurrentState.CurrentEffect = Effects.Default;
 
             #region quad
-            quadVerts = new VertexBuffer(Graphics, VertexPosition.VertexDeclaration, 4, BufferUsage.WriteOnly);
+            quadVerts = new VertexBuffer(Graphics, VertexPositionTexture.VertexDeclaration, 4, BufferUsage.WriteOnly);
 
-            quadVerts.SetData(new VertexPosition[4] 
+            quadVerts.SetData(new VertexPositionTexture[4] 
             {
-                new VertexPosition(new Vector3(-quadScale.X, -quadScale.Y, 0)),
-                new VertexPosition(new Vector3(quadScale.X, -quadScale.Y, 0)),
-                new VertexPosition(new Vector3(quadScale.X, quadScale.Y, 0)),
-                new VertexPosition(new Vector3(-quadScale.X, quadScale.Y, 0))
+                new VertexPositionTexture(
+                    new Vector3(-quadScale.X, -quadScale.Y, 0), 
+                    new Vector2(0f, 0f)),
+                new VertexPositionTexture(
+                    new Vector3(quadScale.X, -quadScale.Y, 0),
+                    new Vector2(1f, 0f)),
+                new VertexPositionTexture(
+                    new Vector3(quadScale.X, quadScale.Y, 0),
+                    new Vector2(1f, 1f)),
+                new VertexPositionTexture(
+                    new Vector3(-quadScale.X, quadScale.Y, 0),
+                    new Vector2(0f, 1f)),
             });
 
             quadInds = new IndexBuffer(Graphics, typeof(short), 6, BufferUsage.WriteOnly);
@@ -62,7 +76,8 @@ namespace MonoEngine.Rendering
             InstanceVertexDeclaration = new VertexDeclaration(
                 new VertexElement(0, VertexElementFormat.Vector4, VertexElementUsage.Position, 1),
                 new VertexElement(sizeof(float) * 4, VertexElementFormat.Vector2, VertexElementUsage.Position, 2),
-                new VertexElement(sizeof(float) * 6, VertexElementFormat.Vector4, VertexElementUsage.Color, 0)
+                new VertexElement(sizeof(float) * 6, VertexElementFormat.Vector4, VertexElementUsage.Color, 0),
+                new VertexElement(sizeof(float) * (6 + 4), VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1)
                 );
 
             instanceBuffer = new DynamicVertexBuffer(Graphics, InstanceVertexDeclaration, MaxInstanceCount, BufferUsage.WriteOnly);
@@ -117,7 +132,7 @@ namespace MonoEngine.Rendering
                     }
                 }
                 var ltw = drawable.Transform.LocalToWorld;
-                InstanceData data = new InstanceData(ltw, drawable.Color);
+                InstanceData data = new InstanceData(ltw, drawable.Color) { sprite = drawable.Sprite };
                 instances[i++] = data;
                 if (i == MaxInstanceCount)
                 {
@@ -164,6 +179,7 @@ namespace MonoEngine.Rendering
                 //effect.CurrentTechnique = effect.Techniques["Unlit"];
                 effect.Parameters["CameraRS"].SetValue(cameraMatrixInv.RS.Flat);
                 effect.Parameters["CameraT"].SetValue(cameraMatrixInv.T);
+                effect.Parameters[Effects.SpriteAtlas].SetValue(pipeline.CurrentState.SpriteAtlas);
 
                 graphics.Indices = pipeline.quadInds;
 
@@ -222,6 +238,9 @@ namespace MonoEngine.Rendering
         {
             public TransformMatrix CurrentProjection { get; set; }
             public Effect CurrentEffect { get; set; }
+
+            public Texture2D SpriteAtlas { get; set; }
+
             public void SetCamera(Camera cam)
             {
                 CurrentProjection = cam.ProjectionMatrix;
@@ -236,9 +255,18 @@ namespace MonoEngine.Rendering
         [StructLayout(LayoutKind.Sequential)]
         private struct InstanceData
         {
+            public Sprite sprite 
+            { 
+                init
+                {
+                    atlasPos = new Vector4(value.TextureRect.X + value.TextureIndex, value.TextureRect.Y, value.TextureRect.Width, value.TextureRect.Height);
+                } 
+            }
+
             public Vector4 rotScale;
             public Vector2 pos;
             public Vector4 color;
+            public Vector4 atlasPos;
 
             public InstanceData(TransformMatrix transform, Color color)
             {

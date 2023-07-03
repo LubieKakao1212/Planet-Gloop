@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoEngine.Math;
 using MonoEngine.Rendering;
+using MonoEngine.Rendering.Sprites;
 using MonoEngine.Rendering.Sprites.Atlas;
 using MonoEngine.Scenes;
 using MonoEngine.Tilemap;
@@ -12,7 +13,7 @@ using System.Diagnostics;
 
 namespace EngineTest
 {
-    public class TestGame : Game
+    public class TestGameDX : Game
     {
         private GraphicsDeviceManager graphics;
 
@@ -44,12 +45,14 @@ namespace EngineTest
 
         private double smoothDelta;
 
-        public TestGame()
+        public TestGameDX()
         {
             graphics = new GraphicsDeviceManager(this);
 
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1080;
+            graphics.GraphicsProfile = GraphicsProfile.HiDef;
+
+            graphics.PreferredBackBufferWidth = 512;
+            graphics.PreferredBackBufferHeight = 512;
 
             /*graphics.PreferredBackBufferWidth = 512;
             graphics.PreferredBackBufferHeight = 512;*/
@@ -71,6 +74,19 @@ namespace EngineTest
             Camera = new Camera() { ViewSize = 16 };
             scene = new Hierarchy();
 
+            var atlasDisplay = new DrawableObject(Color.White, 0f)
+            {
+                Sprite = new Sprite()
+                {
+                    TextureIndex = 0,
+                    TextureRect = new BoundingRect(Vector2.Zero, Vector2.One)
+                } 
+            };
+
+            atlasDisplay.Transform.LocalScale = new Vector2(128f, 128f);
+
+            scene.AddObject(atlasDisplay);
+
             /*for (int i = 0; i < WindmillCount; i++) 
             {
                 var rot = MathHelper.Pi * WindmillCount / i;
@@ -78,19 +94,19 @@ namespace EngineTest
                 Tips.Add(CreateWindmill(scene, rot, Vector2.UnitY * 64f * mat));
             }*/
 
-            grid = new Grid(Vector2.One);
+            //grid = new Grid(Vector2.One);
 
-            scene.AddObject(grid);
+            //scene.AddObject(grid);
 
-            tilemap = new Tilemap();
+            //tilemap = new Tilemap();
 
             //FIllTilemap(tilemap, new Rectangle(-256, -256, 512, 512));
-            FIllTilemap(tilemap, new Rectangle(-128, -128, 256, 256));
+            //FIllTilemap(tilemap, new Rectangle(-128, -128, 256, 256));
             //FIllTilemap(tilemap, new Rectangle(-2, -2, 4, 4));
 
-            var mapRenderer = new TilemapRenderer(tilemap, grid, renderer, Color.White, -1f);
+            //var mapRenderer = new TilemapRenderer(tilemap, grid, renderer, Color.White, -1f);
 
-            mapRenderer.Parent = grid;
+            //mapRenderer.Parent = grid;
 
             timer.Start();
 
@@ -103,7 +119,22 @@ namespace EngineTest
 
             atlas = new SpriteAtlas<Color>(GraphicsDevice);
 
-            //atlas.AddTextureRects();
+            var snek = Content.Load<Texture2D>("Texture");
+
+            var w = snek.Bounds.Width;
+            var h = snek.Bounds.Height;
+
+            for (int i = 0; i < 1024; i++)
+            {
+                var x = Random.Shared.Next(0, w);
+                var y = Random.Shared.Next(0, h);
+                atlas.AddTextureRects(snek, new Rectangle(x, y,
+                    Random.Shared.Next(0, w - x) + 1,
+                    Random.Shared.Next(0, h - y) + 1
+                    ));
+            }
+
+            atlas.Compact();
 
             renderer.SpriteAtlas = atlas.AtlasTextures;
             // TODO: use this.Content to load your game content here
@@ -124,10 +155,9 @@ namespace EngineTest
 
             var t = (float)gameTime.TotalGameTime.TotalSeconds;
 
-            Tiles.OversizedRed.Transform = TransformMatrix.TranslationRotationScale(
+            /*Tiles.OversizedRed.Transform = TransformMatrix.TranslationRotationScale(
                 Vector2.Zero, 0f,
-                new Vector2(MathF.Cos(t) + 1f, MathF.Sin(t) / 2f + 1f));
-            
+                new Vector2(MathF.Cos(t) + 1f, MathF.Sin(t) / 2f + 1f));*/
             //grid.Transform.LocalScale = new Vector2(
             //    MathF.Cos((float)gameTime.TotalGameTime.TotalSeconds) / 2f + 0.5f,
             //    MathF.Sin((float)gameTime.TotalGameTime.TotalSeconds) / 2f + 0.5f);
@@ -191,18 +221,18 @@ namespace EngineTest
             return tip;
         }
 
-        public void FIllTilemap(Tilemap tilemap, Rectangle bounds)
+        /*public void FIllTilemap(Tilemap tilemap, Rectangle bounds)
         {
-            for(int x = 0; x < bounds.Width; x++)
-                for(int y = 0; y < bounds.Height; y++)
+            for (int x = 0; x < bounds.Width; x++)
+                for (int y = 0; y < bounds.Height; y++)
                 {
                     tilemap.SetTile(new Point(bounds.X + x, bounds.Y + y), Tiles.bucket[Random.Shared.Next(Tiles.bucket.Length)]);
                 }
-        }
+        }*/
 
         private void HandleCameraControls(GameTime gameTime)
         {
-            KeyAction(Keys.Up, 
+            KeyAction(Keys.Up,
                 () => Camera.ViewSize *= (1 + CameraZoomSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds));
 
             KeyAction(Keys.Down,
@@ -224,29 +254,29 @@ namespace EngineTest
 
             KeyAction(Keys.Q,
                 () => t.LocalRotation += -CameraRotSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
-            
+
             KeyAction(Keys.E,
                 () => t.LocalRotation += CameraRotSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
         }
 
         private void HandlePlaceControls()
         {
-            var targetGridPos = grid.WorldToCell(MousePosWorld());
+            //var targetGridPos = grid.WorldToCell(MousePosWorld());
 
-            if (Mouse.GetState(Window).LeftButton == ButtonState.Pressed)
+            /*if (Mouse.GetState(Window).LeftButton == ButtonState.Pressed)
             {
                 tilemap.SetTile(targetGridPos, Tiles.bucket[0]);//Tiles.bucket[Random.Shared.Next(Tiles.bucket.Length)]);
             }
-            else if(Mouse.GetState(Window).RightButton == ButtonState.Pressed)
+            else if (Mouse.GetState(Window).RightButton == ButtonState.Pressed)
             {
                 tilemap.SetTile(targetGridPos, new TileInstance(null, new Matrix2x2(1f)));
-            }
+            }*/
         }
 
         private Vector2 MousePosView()
         {
             var m = Mouse.GetState(Window);
-            return new Vector2((m.X / (float)Window.ClientBounds.Width) * 2f - 1f, -((m.Y / (float) Window.ClientBounds.Height) * 2f - 1f));
+            return new Vector2((m.X / (float)Window.ClientBounds.Width) * 2f - 1f, -((m.Y / (float)Window.ClientBounds.Height) * 2f - 1f));
         }
 
         private Vector2 MousePosWorld()
@@ -256,7 +286,7 @@ namespace EngineTest
 
         private float CamMoveSpeed(GameTime time)
         {
-            return Camera.ViewSize * CameraSpeed * (float)time.ElapsedGameTime.TotalSeconds; 
+            return Camera.ViewSize * CameraSpeed * (float)time.ElapsedGameTime.TotalSeconds;
         }
 
         private void KeyAction(Keys key, Action action)

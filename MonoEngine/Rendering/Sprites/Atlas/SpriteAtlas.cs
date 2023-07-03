@@ -12,6 +12,8 @@ namespace MonoEngine.Rendering.Sprites.Atlas
 {
     public class SpriteAtlas<T> : ISpriteAtlas where T : struct
     {
+        public Texture2D AtlasTextures => atlasTextures;
+
         private const int maxSizeInternal = 8192;
 
         private List<AtlasRegion> regions = new List<AtlasRegion>();
@@ -93,6 +95,8 @@ namespace MonoEngine.Rendering.Sprites.Atlas
                 throw new ApplicationException($"Atlas already compacted");
             }
 
+            textureCount = 1;
+
             regions.Sort((a, b) => b.sourceRect.Height - a.sourceRect.Height);
 
             SortedDictionary<int, List<Rectangle>> spaces = new SortedDictionary<int, List<Rectangle>>();
@@ -148,7 +152,7 @@ namespace MonoEngine.Rendering.Sprites.Atlas
                                 {
                                     Rectangle newSpace = new Rectangle(space[k].X, space[k].Y + sourceRect.Height, space[k].Width, spaceHeight - sourceRect.Height);
                                     spaces.RemoveNested(spaceHeight, space[k]);
-                                    spaces.AddNested(spaceHeight, newSpace);
+                                    spaces.AddNested(newSpace.Height, newSpace);
                                 }
                                 else
                                 {

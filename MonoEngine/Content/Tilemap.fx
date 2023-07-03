@@ -16,6 +16,7 @@ float2 GridT;
 struct VertexShaderInput
 {
 	float4 Position : POSITION0;
+	float2 UV : TEXCOORD0;
 };
 
 struct TileTransformInput
@@ -30,6 +31,7 @@ struct VertexShaderOutput
 {
 	float4 Position : SV_POSITION;
 	float4 Color : COLOR0;
+	float2 WorldPosition : POSITION1;
 	//float4 WPos : TEXCOORD2;
 };
 
@@ -40,7 +42,7 @@ VertexShaderOutput MainVS(
 	float2 pos : POSITION2,
 	
 	float4 color : COLOR0,
-    float4 atlasPos : TEXCOORD0)
+    float4 atlasPos : TEXCOORD1)
 {
 	VertexShaderOutput output;
 
