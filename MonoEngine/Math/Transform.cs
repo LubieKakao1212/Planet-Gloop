@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace MonoEngine.Math
 {
+    //TODO Cache LocalToParent
+    //TODO Add Origin
+    //TODO Add Split
+    //TODO Add Shear
     public class Transform
     {
         public event Action Changed;

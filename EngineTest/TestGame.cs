@@ -29,9 +29,9 @@ namespace EngineTest
 
         private float TipRotationSpeed = MathHelper.PiOver2;
 
-        private float bladeLength = 32f;
+        private float bladeLength = 1f;
 
-        private const int WindmillCount = 4096;
+        private const int WindmillCount = 1;
 
         private Tilemap tilemap;
         private Grid grid;
@@ -45,8 +45,8 @@ namespace EngineTest
         {
             graphics = new GraphicsDeviceManager(this);
 
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1080;
+            graphics.PreferredBackBufferWidth = 512;
+            graphics.PreferredBackBufferHeight = 512;
 
             /*graphics.PreferredBackBufferWidth = 512;
             graphics.PreferredBackBufferHeight = 512;*/
@@ -65,15 +65,15 @@ namespace EngineTest
         {
             renderer.Init(GraphicsDevice);
 
-            Camera = new Camera() { ViewSize = 16 };
+            Camera = new Camera() { ViewSize = 4 };
             scene = new Hierarchy();
 
-            /*for (int i = 0; i < WindmillCount; i++) 
+            for (int i = 0; i < WindmillCount; i++) 
             {
-                var rot = MathHelper.Pi * WindmillCount / i;
+                var rot = i / MathHelper.Pi * WindmillCount;
                 var mat = Matrix2x2.Rotation(rot);
-                Tips.Add(CreateWindmill(scene, rot, Vector2.UnitY * 64f * mat));
-            }*/
+                Tips.Add(CreateWindmill(scene, rot, Vector2.UnitY * 0f * mat));
+            }
 
             grid = new Grid(Vector2.One);
 
@@ -82,12 +82,12 @@ namespace EngineTest
             tilemap = new Tilemap();
 
             //FIllTilemap(tilemap, new Rectangle(-256, -256, 512, 512));
-            FIllTilemap(tilemap, new Rectangle(-128, -128, 256, 256));
+            //FIllTilemap(tilemap, new Rectangle(-128, -128, 256, 256));
             //FIllTilemap(tilemap, new Rectangle(-2, -2, 4, 4));
 
-            var mapRenderer = new TilemapRenderer(tilemap, grid, renderer, Color.White, -1f);
+            //var mapRenderer = new TilemapRenderer(tilemap, grid, renderer, Color.White, -10f);
 
-            mapRenderer.Parent = grid;
+            //mapRenderer.Parent = grid;
 
             timer.Start();
 
@@ -171,9 +171,13 @@ namespace EngineTest
 
             bar.Transform.LocalPosition = new Vector2(0f, 0.5f);
             bar2.Transform.LocalPosition = new Vector2(0f, 1f);
+            bar2.Transform.LocalScale = new Vector2(1f, 2f);
 
             blade1.Transform.LocalScale = new Vector2(0.25f, bladeLength);
             blade2.Transform.LocalScale = new Vector2(bladeLength, 0.25f);
+
+            blade1.Transform.LocalPosition = new Vector2(2f, 2f);
+
             tip.Transform.LocalScale = new Vector2(0.5f, 0.5f);
             origin.Transform.LocalScale = new Vector2(0.1f, 0.1f);
 

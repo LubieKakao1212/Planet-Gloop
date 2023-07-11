@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace MonoEngine.Math
@@ -53,6 +52,17 @@ namespace MonoEngine.Math
             m01 = 0;
             m11 = 1;
         }
+        
+        /// <inheritdoc cref="Deconstruct(in Matrix2x2, out float, out Vector2, out float)"/>
+        public void Deconstruct(out float rotation, out float xShear, out Vector2 scale)
+        {
+            Deconstruct(this, out rotation, out xShear, out scale);
+        }
+
+        public override string ToString()
+        {
+            return $"[{m00}, {m10} | {m01}, {m11}";
+        }
 
         public static Vector2 operator *(in Matrix2x2 lhs, in Vector2 rhs)
         {
@@ -65,7 +75,7 @@ namespace MonoEngine.Math
             Mul(rhs, lhs, out var vOut);
             return vOut;
         }
-        
+
         public static Matrix2x2 operator *(in Matrix2x2 lhs, in Matrix2x2 rhs)
         {
             Mul(lhs, rhs, out var mOut);
@@ -74,17 +84,35 @@ namespace MonoEngine.Math
 
         public static void Mul(in Matrix2x2 mat, in Vector2 vIn, out Vector2 vOut)
         {
-            vOut.X = mat.m00 * vIn.X + mat.m01 * vIn.Y;
-            vOut.Y = mat.m10 * vIn.X + mat.m11 * vIn.Y;
+            //      |   x   |
+            //      |   y   |
+            // |a b| ax + by 
+            // |c d| cx + dy
+            vOut.X = mat.m00 * vIn.X + mat.m10 * vIn.Y;
+            vOut.Y = mat.m01 * vIn.X + mat.m11 * vIn.Y;
         }
 
         public static void Mul(in Matrix2x2 lhs, in Matrix2x2 rhs, out Matrix2x2 mOut)
         {
-            mOut.m00 = rhs.m00 * lhs.m00 + rhs.m10 * lhs.m01;
-            mOut.m10 = rhs.m00 * lhs.m10 + rhs.m10 * lhs.m11;
+            // rotataion * xShear
+            //               | r00             r10 |
+            //               | r01             r11 |
+            //
+            // |l00 l10| |l00r00 + l10r01 l00r10 + l10r11|
+            // |l01 l11| |l01r00 + l11r01 l01r10 + l11r11|
 
-            mOut.m01 = rhs.m01 * lhs.m00 + rhs.m11 * lhs.m01;
-            mOut.m11 = rhs.m01 * lhs.m10 + rhs.m11 * lhs.m11;
+            mOut.m00 = rhs.m00 * lhs.m00 + rhs.m01 * lhs.m10;
+            mOut.m10 = rhs.m10 * lhs.m00 + rhs.m11 * lhs.m10;
+            
+            mOut.m01 = rhs.m00 * lhs.m01 + rhs.m01 * lhs.m11;
+            mOut.m11 = rhs.m10 * lhs.m01 + rhs.m11 * lhs.m11;
+            
+
+            //mOut.m00 = rhs.m00 * lhs.m00 + rhs.m10 * lhs.m01;
+            //mOut.m10 = rhs.m00 * lhs.m10 + rhs.m10 * lhs.m11;
+
+            //mOut.m01 = rhs.m01 * lhs.m00 + rhs.m11 * lhs.m01;
+            //mOut.m11 = rhs.m01 * lhs.m10 + rhs.m11 * lhs.m11;
         }
 
         public static float Determinant(in Matrix2x2 mat)
@@ -112,15 +140,21 @@ namespace MonoEngine.Math
             mOut.m11 = mat.m11;
         }
 
-        public static Matrix2x2 Rotation(float radians)
+        public static Matrix2x2 Rotation(float theta)
         {
-            Rotation(radians, out var mat);
+            Rotation(theta, out var mat);
             return mat;
         }
 
         public static Matrix2x2 Scale(Vector2 scale)
         {
             Scale(scale, out var mat);
+            return mat;
+        }
+
+        public static Matrix2x2 Skew(float xAngle, float yAngle)
+        {
+            Skew(xAngle, yAngle, out var mat);
             return mat;
         }
 
@@ -142,9 +176,55 @@ namespace MonoEngine.Math
             mat.m11 = scale.Y;
         }
 
+        public static void Skew(float xAngle, float yAngle, out Matrix2x2 mat)
+        {
+            mat.m00 = 1f;
+            mat.m10 = MathF.Tan(MathF.PI - xAngle);
+            mat.m01 = MathF.Tan(MathF.PI - yAngle);
+            mat.m11 = 1f;
+        }
+
+        /// <summary>
+        /// Deconstructs a <see cref="Matrix2x2"/> into rotation, shear and scale. Original matrix can be recreated using <see cref="RotationSkewScale(float, float, Vector2)"/> with values returned by this function 
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="rotation"></param>
+        /// <param name="xShear"></param>
+        /// <param name="scale"></param>
+        public static void Deconstruct(in Matrix2x2 mat, out float rotation, out float xShear, out Vector2 scale)
+        {
+            // rotataion * xShear
+            //         | 1     t |
+            //         | 0     1 |
+            //
+            // |c -s|  | c   ct-s| 
+            // |s  c|  | s   st+c|
+
+            rotation = MathF.Atan2(mat.m01, mat.m00);
+
+            xShear = MathUtil.Loop(MathF.Atan2(mat.m11, mat.m10) - MathF.PI / 2f - rotation, MathF.PI * 2f);
+
+            scale = new Vector2(
+                MathF.Sqrt(mat.m00 * mat.m00 + mat.m01 * mat.m01),
+                MathF.Sqrt(mat.m10 * mat.m10 + mat.m11 * mat.m11) * MathF.Cos(xShear)
+                );
+        }
+
         public static Matrix2x2 RotationScale(float rotationRadians, Vector2 scale)
         {
             return Rotation(rotationRadians) * Scale(scale);
+        }
+
+        /// <summary>
+        /// Composes a <see cref="Matrix2x2"/> from represents first scaling by <paramref name="scale"/>, than shearing by <paramref name="xShear"/> and then rotating by <paramref name="rotationRadians"/>
+        /// </summary>
+        /// <param name="rotationRadians">Angle to rotate by</param>
+        /// <param name="xShear">Shear angle</param>
+        /// <param name="scale">Per axis scale</param>
+        /// <returns></returns>
+        public static Matrix2x2 RotationSkewScale(float rotationRadians, float xShear, Vector2 scale)
+        {
+            return Rotation(rotationRadians) * Skew(xShear, 0f) * Scale(scale);
         }
     }
 }
