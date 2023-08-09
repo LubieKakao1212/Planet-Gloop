@@ -30,7 +30,7 @@ namespace EngineTests.Math
             var sk = MathF.PI / 8f;
             var sc = new Vector2(2f, 0.5f);
 
-            var mat = Matrix2x2.RotationSkewScale(r, sk, sc);
+            var mat = Matrix2x2.RotationShearScale(r, sk, sc);
 
             var (r0, sk0, sc0) = mat;
 
@@ -56,7 +56,7 @@ namespace EngineTests.Math
             Assert.AreEqual(s.X, scale.X, epsilon, "scale X");
             Assert.AreEqual(s.Y, scale.Y, epsilon, "scale Y");*/
 
-            var reconstructed = Matrix2x2.RotationSkewScale(theta, sh, sc);
+            var reconstructed = Matrix2x2.RotationShearScale(theta, sh, sc);
 
             var vX1 = reconstructed * Vector2.UnitX;
             var vY1 = reconstructed * Vector2.UnitY;

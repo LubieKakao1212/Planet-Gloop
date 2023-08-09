@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace MonoEngine.Math
@@ -83,6 +84,11 @@ namespace MonoEngine.Math
             return dOut;
         }
 
+        public void Deconstruct(out Vector2 translation, out float rotation, out float xShear, out Vector2 scale)
+        {
+            Deconstruct(this, out translation, out rotation, out xShear, out scale);
+        }
+        
         public static TransformMatrix operator *(in TransformMatrix lhs, in TransformMatrix rhs)
         {
             Mul(lhs, rhs, out var mOut);
@@ -135,6 +141,12 @@ namespace MonoEngine.Math
         public static void TransformDirection(in TransformMatrix lhs, in Vector2 rhs, out Vector2 mOut)
         {
             mOut = (lhs.rotationScale * rhs);
+        }
+
+        public static void Deconstruct(in TransformMatrix mat, out Vector2 translation, out float rotation, out float xShear, out Vector2 scale)
+        {
+            translation = mat.translation;
+            (rotation, xShear, scale) = mat.rotationScale;
         }
 
 
@@ -196,6 +208,14 @@ namespace MonoEngine.Math
             trs.rotationScale = Matrix2x2.RotationScale(rotationRadians, scale);
             trs.translation = translation;
             return trs;
+        }
+
+        public static TransformMatrix TranslationRotationShearScale(Vector2 translation, float rotationRadians, float xShear, Vector2 scale)
+        {
+            TransformMatrix trss;
+            trss.rotationScale = Matrix2x2.RotationShearScale(rotationRadians, xShear, scale);
+            trss.translation = translation;
+            return trss;
         }
     }
 }

@@ -185,7 +185,7 @@ namespace MonoEngine.Math
         }
 
         /// <summary>
-        /// Deconstructs a <see cref="Matrix2x2"/> into rotation, shear and scale. Original matrix can be recreated using <see cref="RotationSkewScale(float, float, Vector2)"/> with values returned by this function 
+        /// Deconstructs a <see cref="Matrix2x2"/> into rotation, shear and scale. Original matrix can be recreated using <see cref="RotationShearScale(float, float, Vector2)"/> with values returned by this function 
         /// </summary>
         /// <param name="mat"></param>
         /// <param name="rotation"></param>
@@ -222,7 +222,7 @@ namespace MonoEngine.Math
         /// <param name="xShear">Shear angle</param>
         /// <param name="scale">Per axis scale</param>
         /// <returns></returns>
-        public static Matrix2x2 RotationSkewScale(float rotationRadians, float xShear, Vector2 scale)
+        public static Matrix2x2 RotationShearScale(float rotationRadians, float xShear, Vector2 scale)
         {
             return Rotation(rotationRadians) * Skew(xShear, 0f) * Scale(scale);
         }
