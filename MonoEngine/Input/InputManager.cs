@@ -25,6 +25,8 @@ namespace MonoEngine.Input
         private BoolInput[] mouseButtons;
         private PointInput cursorPosition;
 
+        private HashSet<IBindingInput> inputBindings;
+
         /// <summary>
         /// Used for MouseInput
         /// </summary>
@@ -32,6 +34,9 @@ namespace MonoEngine.Input
 
         public InputManager(GameWindow window)
         {
+            this.window = window;
+            inputBindings = new HashSet<IBindingInput>();
+
             keys = new Dictionary<Keys, KeyInput>();
 
             mouseButtons = new BoolInput[5]
@@ -42,6 +47,8 @@ namespace MonoEngine.Input
                 new BoolInput("Mouse 4"),
                 new BoolInput("Mouse 5")
             };
+
+            cursorPosition = new PointInput("Mouse");
 
             foreach (var key in (Keys[])typeof(Keys).GetEnumValues())
             {
@@ -68,7 +75,7 @@ namespace MonoEngine.Input
             #endregion
 
             #region Mouse
-            var mouse = Mouse.GetState();
+            var mouse = Mouse.GetState(window);
 
             SetInput(mouseButtons[0], mouse.LeftButton == ButtonState.Pressed);
             SetInput(mouseButtons[1], mouse.RightButton == ButtonState.Pressed);
@@ -78,14 +85,21 @@ namespace MonoEngine.Input
 
             cursorPosition.UpdateState(new Point(mouse.X, mouse.Y));
             #endregion
+
+            #region Bindings
+            foreach (var input in inputBindings)
+            {
+                input.Update();
+            }
+            #endregion
         }
 
-        public IInput GetKey(Keys key)
+        public ValueInputBase<bool> GetKey(Keys key)
         {
             return keys[key];
         }
 
-        public IInput GetMouse(MouseButton button) => button switch
+        public ValueInputBase<bool> GetMouse(MouseButton button) => button switch
         {
             MouseButton.Left => mouseButtons[0],
             MouseButton.Right => mouseButtons[1],
@@ -94,6 +108,16 @@ namespace MonoEngine.Input
             MouseButton.Button5 => mouseButtons[4],
             _ => throw new ArgumentException($"Invalid mouse button {button}")
         };
+
+        public void RegisterBinding(IBindingInput binding)
+        {
+            inputBindings.Add(binding);
+        }
+
+        public void RemoveBinding(IBindingInput binding)
+        {
+            inputBindings.Remove(binding);
+        }
 
         private void SetInput(BoolInput input, bool state)
         {

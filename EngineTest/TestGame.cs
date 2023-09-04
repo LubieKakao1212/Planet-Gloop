@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoEngine.Input;
+using MonoEngine.Input.Binding;
 using MonoEngine.Math;
 using MonoEngine.Rendering;
 using MonoEngine.Scenes;
@@ -16,6 +18,7 @@ namespace EngineTest
         private GraphicsDeviceManager graphics;
 
         private RenderPipeline renderer;
+        private InputManager inputManager;
 
         private Hierarchy scene;
 
@@ -23,8 +26,13 @@ namespace EngineTest
 
         private Camera Camera;
 
+        private CompoundAxixBindingInput input_horizontal;
+        private CompoundAxixBindingInput input_vertical;
+        private CompoundAxixBindingInput input_scale;
+        private CompoundAxixBindingInput input_rotation;
+
         private float CameraSpeed = 1f;
-        private float CameraZoomSpeed = 1f;
+        private float CameraZoomSpeed = 0.1f;
         private float CameraRotSpeed = MathHelper.ToRadians(90f);
 
         private float TipRotationSpeed = MathHelper.PiOver2;
@@ -41,15 +49,17 @@ namespace EngineTest
 
         private double smoothDelta;
 
+        private GameTime GameTime;
+
         public TestGame()
         {
             graphics = new GraphicsDeviceManager(this);
 
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1080;
+            //graphics.PreferredBackBufferWidth = 1920;
+            //graphics.PreferredBackBufferHeight = 1080;
 
-            /*graphics.PreferredBackBufferWidth = 512;
-            graphics.PreferredBackBufferHeight = 512;*/
+            graphics.PreferredBackBufferWidth = 512;
+            graphics.PreferredBackBufferHeight = 512;
 
             //graphics.ToggleFullScreen();
 
@@ -57,23 +67,58 @@ namespace EngineTest
             IsMouseVisible = true;
             renderer = new RenderPipeline();
 
-            IsFixedTimeStep = false;
-            graphics.SynchronizeWithVerticalRetrace = false;
+            IsFixedTimeStep = true;
+            graphics.SynchronizeWithVerticalRetrace = true;
         }
 
         protected override void Initialize()
         {
             renderer.Init(GraphicsDevice);
 
+            #region Inputs
+            inputManager = new InputManager(Window);
+
+            input_horizontal = new CompoundAxixBindingInput("Horizontal");
+            input_vertical = new CompoundAxixBindingInput("Vertical");
+            input_scale = new CompoundAxixBindingInput("Scale");
+            input_rotation = new CompoundAxixBindingInput("Rotation");
+
+            inputManager.RegisterBinding(input_horizontal);
+            inputManager.RegisterBinding(input_vertical);
+            inputManager.RegisterBinding(input_scale);
+            inputManager.RegisterBinding(input_rotation);
+
+            #region Bind
+            input_horizontal.Bind(new AxisBindingInput("").SetValues(0f, 1f).Bind(inputManager.GetKey(Keys.D)));
+            input_horizontal.Bind(new AxisBindingInput("").SetValues(0f, -1f).Bind(inputManager.GetKey(Keys.A)));
+
+            input_vertical.Bind(new AxisBindingInput("").SetValues(0f, 1f).Bind(inputManager.GetKey(Keys.W)));
+            input_vertical.Bind(new AxisBindingInput("").SetValues(0f, -1f).Bind(inputManager.GetKey(Keys.S)));
+
+            input_scale.Bind(new AxisBindingInput("").SetValues(0f, 1f).Bind(inputManager.GetKey(Keys.Add)));
+            input_scale.Bind(new AxisBindingInput("").SetValues(0f, -1f).Bind(inputManager.GetKey(Keys.Subtract)));
+
+            input_rotation.Bind(new AxisBindingInput("").SetValues(0f, 1f).Bind(inputManager.GetKey(Keys.Q)));
+            input_rotation.Bind(new AxisBindingInput("").SetValues(0f, -1f).Bind(inputManager.GetKey(Keys.E)));
+            #endregion
+
+            #region BindCallbacks
+            input_horizontal.Performed += (input) => Camera.Transform.GlobalPosition += Camera.Transform.Right * (CamMoveSpeed(GameTime) * input.GetCurrentValue<float>().LogThis("Horizongtal: "));
+
+            input_vertical.Performed += (input) => Camera.Transform.GlobalPosition += Camera.Transform.Up * (CamMoveSpeed(GameTime) * input.GetCurrentValue<float>().LogThis("Vertical: "));
+
+            input_scale.Performed += (input) => Camera.Transform.LocalScale *= 1f + (CameraZoomSpeed * input.GetCurrentValue<float>().LogThis("Zoom: ") * (float)GameTime.ElapsedGameTime.TotalSeconds);
+
+            input_rotation.Performed += (input) => Camera.Transform.LocalRotation += CameraRotSpeed * input.GetCurrentValue<float>().LogThis("Rotation: ") * (float)GameTime.ElapsedGameTime.TotalSeconds;
+
+            inputManager.GetMouse(MouseButton.Left).Performed += (input) => tilemap.SetTile(grid.WorldToCell(MousePosWorld()), Tiles.bucket[0]);
+            inputManager.GetMouse(MouseButton.Right).Performed += (input) => tilemap.SetTile(grid.WorldToCell(MousePosWorld()), new TileInstance(null, new Matrix2x2(1f)));
+            #endregion
+
+            #endregion
+
             Camera = new Camera() { ViewSize = 16 };
             scene = new Hierarchy();
-
-            /*for (int i = 0; i < WindmillCount; i++) 
-            {
-                var rot = MathHelper.Pi * WindmillCount / i;
-                var mat = Matrix2x2.Rotation(rot);
-                Tips.Add(CreateWindmill(scene, rot, Vector2.UnitY * 64f * mat));
-            }*/
 
             grid = new Grid(Vector2.One);
 
@@ -81,9 +126,7 @@ namespace EngineTest
 
             tilemap = new Tilemap();
 
-            //FIllTilemap(tilemap, new Rectangle(-256, -256, 512, 512));
             FIllTilemap(tilemap, new Rectangle(-128, -128, 256, 256));
-            //FIllTilemap(tilemap, new Rectangle(-2, -2, 4, 4));
 
             var mapRenderer = new TilemapRenderer(tilemap, grid, renderer, Color.White, -1f);
 
@@ -105,12 +148,18 @@ namespace EngineTest
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            this.GameTime = gameTime;
+
+            inputManager.UpdateState();
+
+            //HandleKeyBinding();
+
             foreach (var windmill in Tips)
             {
                 windmill.Transform.LocalRotation += TipRotationSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
 
-            HandleCameraControls(gameTime);
+            //HandleCameraControls(gameTime);
             HandlePlaceControls();
 
             var t = (float)gameTime.TotalGameTime.TotalSeconds;
@@ -131,8 +180,6 @@ namespace EngineTest
             GraphicsDevice.Clear(Color.Black);
             renderer.RenderScene(scene, Camera);
 
-            //Console.WriteLine($"Fps: {1.0 / gameTime.ElapsedGameTime.TotalSeconds}");
-
             var newStamp = timer.Elapsed;
 
             var delta = newStamp - lastFrameStamp;
@@ -141,8 +188,10 @@ namespace EngineTest
 
             smoothDelta = smoothDelta * 0.95 + delta.TotalSeconds * 0.05;
 
-            Console.WriteLine($"Smooth Fps: {1.0 / smoothDelta}");
-            Console.WriteLine($"Fps: {1.0 / delta.TotalSeconds}");
+            delta.TotalMilliseconds.LogThis("Frame Duration: ");
+
+            /*Console.WriteLine($"Smooth Fps: {1.0 / smoothDelta}");
+            Console.WriteLine($"Fps: {1.0 / delta.TotalSeconds}");*/
 
             base.Draw(gameTime);
         }
@@ -191,53 +240,25 @@ namespace EngineTest
                 }
         }
 
-        private void HandleCameraControls(GameTime gameTime)
-        {
-            KeyAction(Keys.Up, 
-                () => Camera.ViewSize *= (1 + CameraZoomSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds));
-
-            KeyAction(Keys.Down,
-                () => Camera.ViewSize *= (1 - CameraZoomSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds));
-
-            var t = Camera.Transform;
-
-            KeyAction(Keys.W,
-                () => t.GlobalPosition += t.Up * CamMoveSpeed(gameTime));
-
-            KeyAction(Keys.S,
-                () => t.GlobalPosition += -t.Up * CamMoveSpeed(gameTime));
-
-            KeyAction(Keys.A,
-                () => t.GlobalPosition += -t.Right * CamMoveSpeed(gameTime));
-
-            KeyAction(Keys.D,
-                () => t.GlobalPosition += t.Right * CamMoveSpeed(gameTime));
-
-            KeyAction(Keys.Q,
-                () => t.LocalRotation += -CameraRotSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
-            
-            KeyAction(Keys.E,
-                () => t.LocalRotation += CameraRotSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
-        }
-
         private void HandlePlaceControls()
         {
-            var targetGridPos = grid.WorldToCell(MousePosWorld());
+            //var targetGridPos = ;
 
             if (Mouse.GetState(Window).LeftButton == ButtonState.Pressed)
             {
-                tilemap.SetTile(targetGridPos, Tiles.bucket[0]);//Tiles.bucket[Random.Shared.Next(Tiles.bucket.Length)]);
+                //Tiles.bucket[Random.Shared.Next(Tiles.bucket.Length)]);
             }
             else if(Mouse.GetState(Window).RightButton == ButtonState.Pressed)
             {
-                tilemap.SetTile(targetGridPos, new TileInstance(null, new Matrix2x2(1f)));
+                //tilemap.SetTile(targetGridPos, new TileInstance(null, new Matrix2x2(1f)));
             }
         }
 
         private Vector2 MousePosView()
         {
-            var m = Mouse.GetState(Window);
-            return new Vector2((m.X / (float)Window.ClientBounds.Width) * 2f - 1f, -((m.Y / (float) Window.ClientBounds.Height) * 2f - 1f));
+            var screenPos = inputManager.CursorPosition.GetCurrentValue<Point>();
+
+            return new Vector2((screenPos.X / (float)Window.ClientBounds.Width) * 2f - 1f, -((screenPos.Y / (float)Window.ClientBounds.Height) * 2f - 1f));
         }
 
         private Vector2 MousePosWorld()
@@ -247,15 +268,17 @@ namespace EngineTest
 
         private float CamMoveSpeed(GameTime time)
         {
-            return Camera.ViewSize * CameraSpeed * (float)time.ElapsedGameTime.TotalSeconds; 
+            return Camera.ViewSize * CameraSpeed * (float)time.ElapsedGameTime.TotalSeconds;
         }
+    }
 
-        private void KeyAction(Keys key, Action action)
+    public static class Debug 
+    {
+        public static T LogThis<T>(this T value, string prefix = "") where T : struct 
         {
-            if (Keyboard.GetState().IsKeyDown(key))
-            {
-                action();
-            }
+            Console.WriteLine(prefix + value);
+
+            return value;
         }
     }
 }

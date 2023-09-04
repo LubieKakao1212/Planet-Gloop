@@ -47,5 +47,9 @@ namespace MonoEngine.Input
                 }
             }
         }
+
+        protected void PassStarted(IInput _) => Started?.Invoke(this);
+        protected void PassPerformed(IInput _) => Performed?.Invoke(this);
+        protected void PassCanceled(IInput _) => Canceled?.Invoke(this);
     }
 }
