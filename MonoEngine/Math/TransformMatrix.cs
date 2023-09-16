@@ -149,6 +149,15 @@ namespace MonoEngine.Math
             (rotation, xShear, scale) = mat.rotationScale;
         }
 
+        /// <summary>
+        /// Creates a <see cref="TransformMatrix"/> which transfroms spase from <paramref name="fromMat"/> to <paramref name="toMat"/>
+        /// </summary>
+        /// <returns></returns>
+        public static void FromTo(in TransformMatrix fromMat, in TransformMatrix toMat, out TransformMatrix fromToMat)
+        {
+            Inverse(fromMat, out var fromInv);
+            fromToMat = toMat * fromInv;
+        }
 
         /// <summary>
         /// Apparently as simple as taking <see cref="TransformMatrix.rotationScale"/> determinant

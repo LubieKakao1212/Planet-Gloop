@@ -140,6 +140,26 @@ namespace MonoEngine.Math
             mOut.m11 = mat.m11;
         }
 
+        /// <summary>
+        /// Creates a <see cref="Matrix2x2"/> which transfroms spase from <paramref name="fromMat"/> to <paramref name="toMat"/>
+        /// </summary>
+        /// <returns></returns>
+        public static void FromTo(in Matrix2x2 fromMat, in Matrix2x2 toMat, out Matrix2x2 fromToMat)
+        {
+            Inverse(fromMat, out var fromInv);
+            fromToMat = fromInv * toMat;
+        }
+
+        /// <summary>
+        /// Creates a <see cref="Matrix2x2"/> which transfroms spase from <paramref name="fromMat"/> to <paramref name="toMat"/>
+        /// </summary>
+        /// <returns></returns>
+        public static Matrix2x2 FromTo(in Matrix2x2 fromMat, in Matrix2x2 toMat)
+        {
+            Inverse(fromMat, out var fromInv);
+            return fromInv * toMat;
+        }
+
         public static Matrix2x2 Rotation(float theta)
         {
             Rotation(theta, out var mat);
