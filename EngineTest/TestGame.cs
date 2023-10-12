@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using MarchingSquares.MarchingSquares;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoEngine.Input;
@@ -7,6 +8,7 @@ using MonoEngine.Math;
 using MonoEngine.Rendering;
 using MonoEngine.Scenes;
 using MonoEngine.Tilemap;
+using MonoEngine.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -32,7 +34,7 @@ namespace EngineTest
         private CompoundAxixBindingInput input_rotation;
 
         private float CameraSpeed = 1f;
-        private float CameraZoomSpeed = 0.1f;
+        private float CameraZoomSpeed = 1f;
         private float CameraRotSpeed = MathHelper.ToRadians(90f);
 
         private float TipRotationSpeed = MathHelper.PiOver2;
@@ -50,6 +52,8 @@ namespace EngineTest
         private double smoothDelta;
 
         private GameTime GameTime;
+
+        private Effect DepthMarchedColor;
 
         public TestGame()
         {
@@ -126,12 +130,11 @@ namespace EngineTest
 
             tilemap = new Tilemap();
 
-            FIllTilemap(tilemap, new Rectangle(-128, -128, 256, 256));
+            //FIllTilemap(tilemap, new Rectangle(-128, -128, 256, 256));
 
             var mapRenderer = new TilemapRenderer(tilemap, grid, renderer, Color.White, -1f);
 
             mapRenderer.Parent = grid;
-
             timer.Start();
 
             base.Initialize();
@@ -140,7 +143,24 @@ namespace EngineTest
         protected override void LoadContent()
         {
             Effects.Init(Content);
-            // TODO: use this.Content to load your game content here
+            DepthMarchedColor = Content.Load<Effect>("DepthMarchedColor");
+
+            var random = new Random(1337);
+
+            var scalars = new FiniteGrid<float>(new Point(32, 32));
+            scalars.Fill((v) => -(v - new Vector2(15.5f, 15.5f)).Length() / 15f + 1f);
+
+            Marcher2D.MarchDepthGrid(scalars, out var verts, out var inds);
+
+            var marchingDSS = new DepthStencilState();
+            marchingDSS.DepthBufferWriteEnable = true;
+            marchingDSS.DepthBufferEnable = true;
+            marchingDSS.DepthBufferFunction = CompareFunction.Always;
+
+            var mesh = MeshObject.CreateNew(renderer, VertexPosition.VertexDeclaration, verts, inds, Color.White, -10, DepthMarchedColor, marchingDSS);
+
+            scene.AddObject(mesh);
+
         }
 
         protected override void Update(GameTime gameTime)
@@ -177,7 +197,7 @@ namespace EngineTest
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.Cyan);
             renderer.RenderScene(scene, Camera);
 
             var newStamp = timer.Elapsed;

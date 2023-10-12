@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MonoEngine.Utils
+namespace MonoEngine.Util
 {
     //One of my premade utilities
     public static class DictionaryExtensions

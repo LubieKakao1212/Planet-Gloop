@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MonoEngine.Tilemap
 {
-    using Utils;
+    using Util;
     using Math;
 
     public class Tilemap

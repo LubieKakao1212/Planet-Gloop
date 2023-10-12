@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MonoEngine.Scenes
 {
-    using Utils;
+    using Util;
 
     public class Hierarchy
     {
