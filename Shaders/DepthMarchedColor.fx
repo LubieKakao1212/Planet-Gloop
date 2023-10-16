@@ -35,17 +35,17 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 
 	float3x3 LtV = LocalToView(ObjRSS, ObjT);
 
-	output.Position = float4(mul(LtV, float3(input.Position.xy, 1.0f)).xy, input.Position.z, 1.0f);
+	output.Position = float4(mul(LtV, float3(input.Position.xy, 1.0f)).xy, input.Position.z / 512.0f + 0.5f, 1.0f);
 	output.Color = Color;
-    output.DepthValue = input.Position.z;
+    output.DepthValue = -input.Position.z;
 
 	return output;
 }
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-    //clip(input.DepthValue + ClipOffset);
-	return float4(0, 0, 0, 1.0f);
+    clip(input.DepthValue + ClipOffset);
+	return /*float4(input.DepthValue, input.DepthValue, input.DepthValue, 1.0f) */ input.Color;
 }
 
 technique Unlit

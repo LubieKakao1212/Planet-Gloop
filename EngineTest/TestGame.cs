@@ -132,7 +132,7 @@ namespace EngineTest
 
             //FIllTilemap(tilemap, new Rectangle(-128, -128, 256, 256));
 
-            var mapRenderer = new TilemapRenderer(tilemap, grid, renderer, Color.White, -1f);
+            var mapRenderer = new TilemapRenderer(tilemap, grid, renderer, Color.White, -11f);
 
             mapRenderer.Parent = grid;
             timer.Start();
@@ -144,23 +144,36 @@ namespace EngineTest
         {
             Effects.Init(Content);
             DepthMarchedColor = Content.Load<Effect>("DepthMarchedColor");
-
-            var random = new Random(1337);
-
-            var scalars = new FiniteGrid<float>(new Point(32, 32));
-            scalars.Fill((v) => -(v - new Vector2(15.5f, 15.5f)).Length() / 15f + 1f);
-
-            Marcher2D.MarchDepthGrid(scalars, out var verts, out var inds);
+            DepthMarchedColor.Parameters["Color"].SetValue(Color.Green.ToVector4());
 
             var marchingDSS = new DepthStencilState();
             marchingDSS.DepthBufferWriteEnable = true;
             marchingDSS.DepthBufferEnable = true;
-            marchingDSS.DepthBufferFunction = CompareFunction.Always;
+            marchingDSS.DepthBufferFunction = CompareFunction.Less;
 
+            var effect2 = DepthMarchedColor.Clone();
+            effect2.Parameters["Color"].SetValue(Color.YellowGreen.ToVector4());
+
+            var random = new Random(1337);
+
+            //Green
+            var scalars = new FiniteGrid<float>(new Point(32, 32));
+            scalars.Fill((v) => (v - new Vector2(15.5f, 15.5f)).Length() / 16f - 1.1f + random.NextSingle() * 0.5f - 0.25f);
+
+            Marcher2D.MarchDepthGrid(scalars, out var verts, out var inds);
+           
             var mesh = MeshObject.CreateNew(renderer, VertexPosition.VertexDeclaration, verts, inds, Color.White, -10, DepthMarchedColor, marchingDSS);
+            
+            //Yellow
+            scalars.Fill((v) => (v - new Vector2(15.5f, 15.5f)).Length() / 16f - 0.9f + random.NextSingle() * 0.5f - 0.25f);
+            Marcher2D.MarchDepthGrid(scalars, out verts, out inds);
+
+            var mesh2 = MeshObject.CreateNew(renderer, VertexPosition.VertexDeclaration, verts, inds, Color.White, -10, effect2, marchingDSS);
+
+            mesh2.Transform.LocalPosition = new Vector2(5f, 5f);
 
             scene.AddObject(mesh);
-
+            scene.AddObject(mesh2);
         }
 
         protected override void Update(GameTime gameTime)
@@ -209,7 +222,7 @@ namespace EngineTest
             smoothDelta = smoothDelta * 0.95 + delta.TotalSeconds * 0.05;
 
             delta.TotalMilliseconds.LogThis("Frame Duration: ");
-
+            
             /*Console.WriteLine($"Smooth Fps: {1.0 / smoothDelta}");
             Console.WriteLine($"Fps: {1.0 / delta.TotalSeconds}");*/
 
