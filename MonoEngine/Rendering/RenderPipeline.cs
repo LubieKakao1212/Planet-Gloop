@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoEngine.Math;
 using MonoEngine.Scenes;
 using MonoEngine.Util;
-using MonoEngine.Utils;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -162,8 +161,8 @@ namespace MonoEngine.Rendering
                 graphics.BlendState = BlendState.AlphaBlend;
 
                 //effect.CurrentTechnique = effect.Techniques["Unlit"];
-                effect.Parameters["CameraRS"].SetValue(cameraMatrixInv.RS.Flat);
-                effect.Parameters["CameraT"].SetValue(cameraMatrixInv.T);
+                effect.Parameters[Effects.CameraRS].SetValue(cameraMatrixInv.RS.Flat);
+                effect.Parameters[Effects.CameraT].SetValue(cameraMatrixInv.T);
 
                 graphics.Indices = pipeline.quadInds;
 
