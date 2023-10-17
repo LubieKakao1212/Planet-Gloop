@@ -3,10 +3,8 @@ using System;
 
 namespace MonoEngine.Math
 {
-    //TODO Cache LocalToParent
     //TODO Add Origin
-    //TODO Add Split
-    //TODO Add Shear
+    //TODO Add Split ??
     public class Transform
     {
         public event Action Changed;
@@ -30,6 +28,12 @@ namespace MonoEngine.Math
             }
         }
 
+        public float GlobalRotation
+        {
+            get => LocalToWorldData.Rotation;
+            set => LocalRotation = MathUtil.LoopAngle(value- Parent.LocalToWorldData.Rotation);
+        }
+
         public float LocalRotation
         {
             get => rotation;
@@ -40,6 +44,20 @@ namespace MonoEngine.Math
             }
         }
 
+        public float GlobalShear => LocalToWorldData.Shear;
+
+        public float LocalShear
+        {
+            get => shear;
+            set
+            {
+                shear = value;
+                OnSelfChanged();
+            }
+        }
+
+        public Vector2 GlobalScale => LocalToWorldData.Scale;
+
         public Vector2 LocalScale
         {
             get => scale;
@@ -47,6 +65,15 @@ namespace MonoEngine.Math
             {
                 scale = value;
                 OnSelfChanged();
+            }
+        }
+
+        public TransformData LocalToWorldData
+        {
+            get
+            {
+                CalculateLocalToWrorld();
+                return localToWorld.Value;
             }
         }
 
@@ -100,6 +127,18 @@ namespace MonoEngine.Math
         public Transform()
         {
             
+        }
+
+        public void SetRelativePosition(Transform relativeTo, Vector2 position)
+        {
+            var pos = relativeTo.LocalToWorld.TransformPoint(position);
+            GlobalPosition = pos;
+        }
+
+        public TransformMatrix GetRelativeMatrix(Transform relativeTo)
+        {
+            TransformMatrix.FromTo(LocalToWorld, relativeTo.LocalToWorld, out var mOut);
+            return mOut;
         }
 
         private void OnChanged()
@@ -193,8 +232,7 @@ namespace MonoEngine.Math
                     return scale;
                 }
             }
-
-
+            
             private Vector2 position;
             private float rotation;
             private float shear;

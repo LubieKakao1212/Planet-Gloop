@@ -118,11 +118,10 @@ namespace EngineTest
             Tiles.OversizedRed.Transform = TransformMatrix.TranslationRotationScale(
                 Vector2.Zero, 0f,
                 new Vector2(MathF.Cos(t) + 1f, MathF.Sin(t) / 2f + 1f));
-            
+
             //grid.Transform.LocalScale = new Vector2(
             //    MathF.Cos((float)gameTime.TotalGameTime.TotalSeconds) / 2f + 0.5f,
             //    MathF.Sin((float)gameTime.TotalGameTime.TotalSeconds) / 2f + 0.5f);
-
             base.Update(gameTime);
         }
 

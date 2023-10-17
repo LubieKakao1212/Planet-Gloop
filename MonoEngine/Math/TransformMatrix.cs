@@ -150,13 +150,14 @@ namespace MonoEngine.Math
         }
 
         /// <summary>
-        /// Creates a <see cref="TransformMatrix"/> which transfroms spase from <paramref name="fromMat"/> to <paramref name="toMat"/>
+        /// Creates a <see cref="TransformMatrix"/> which transfroms spase from <paramref name="fromMat"/> to <paramref name="toMat"/> <br/>
+        /// <paramref name="fromToMat"/> * <paramref name="fromMat"/> = <paramref name="toMat"/>
         /// </summary>
         /// <returns></returns>
         public static void FromTo(in TransformMatrix fromMat, in TransformMatrix toMat, out TransformMatrix fromToMat)
         {
             Inverse(fromMat, out var fromInv);
-            fromToMat = toMat * fromInv;
+            fromToMat = fromInv * toMat;
         }
 
         /// <summary>
