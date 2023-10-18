@@ -41,7 +41,7 @@ namespace MonoEngine.Math
             Inverse(this, out var mOut);
             return mOut;
         }
-
+        
         public float Determinant()
         {
             return Determinant(this);
@@ -82,6 +82,16 @@ namespace MonoEngine.Math
         {
             TransformDirection(this, direction, out var dOut);
             return dOut;
+        }
+
+        public Matrix ToMatrixXNA()
+        {
+            return new Matrix(
+                new Vector4(RS.m00, RS.m10, 0, 0),
+                new Vector4(RS.m01, RS.m11, 0, 0),
+                new Vector4(T.X   , T.Y   , 0, 0),
+                new Vector4(0     , 0     , 0, 1)
+                );
         }
 
         public void Deconstruct(out Vector2 translation, out float rotation, out float xShear, out Vector2 scale)

@@ -11,6 +11,7 @@ using MonoEngine.Scenes;
 using MonoEngine.Scenes.Events;
 using MonoEngine.Tilemap;
 using MonoEngine.Util;
+using nkast.Aether.Physics2D.Diagnostics;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
 using System.Collections.Generic;
@@ -59,6 +60,8 @@ namespace EngineTest
         private Effect DepthMarchedColor;
 
         private World physicsWorld;
+
+        private DebugView debug;
 
         public TestGame()
         {
@@ -226,6 +229,8 @@ namespace EngineTest
             GraphicsDevice.Clear(Color.Cyan);
             renderer.RenderScene(scene, Camera);
 
+            //debug.RenderDebugData(Camera.ProjectionMatrix.ToMatrixXNA(), Matrix.Identity);
+
             //var newStamp = timer.Elapsed;
 
             //var delta = newStamp - lastFrameStamp;
@@ -235,7 +240,7 @@ namespace EngineTest
             //smoothDelta = smoothDelta * 0.95 + delta.TotalSeconds * 0.05;
 
             //delta.TotalMilliseconds.LogThis("Frame Duration: ");
-            
+
             /*Console.WriteLine($"Smooth Fps: {1.0 / smoothDelta}");
             Console.WriteLine($"Fps: {1.0 / delta.TotalSeconds}");*/
 
@@ -246,6 +251,10 @@ namespace EngineTest
         {
             physicsWorld = new(new Vector2(0, 1f));
 
+            debug = new DebugView(physicsWorld);
+
+            debug.LoadContent(GraphicsDevice, Content);
+            
             CreateBox(Vector2.Zero);
         }
 
@@ -256,9 +265,9 @@ namespace EngineTest
             boxObj.AddDrawableRectFixture(new(1.5f, 1f), Vector2.Zero, 0f, out var fixture, 1f);
 
             boxObj.Transform.LocalPosition = pos;
+            box.AngularVelocity = 5f;//.ApplyTorque(50f);
 
             scene.AddObject(boxObj);
-            box.ApplyTorque(5f);
         }
 
         private HierarchyObject CreateWindmill(Hierarchy hierarchy, float rotation, Vector2 position)

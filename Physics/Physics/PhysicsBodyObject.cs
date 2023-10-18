@@ -50,7 +50,7 @@ namespace MonoEngine.Physics
 
         public DrawableObject AddDrawableRectFixture(Vector2 size, Vector2 offset, float rotation, out Fixture fixture, float density = 1f)
         {
-            var verts = PolygonTools.CreateRectangle(size.X, size.Y);
+            var verts = PolygonTools.CreateRectangle(size.X / 2f, size.Y / 2f);
             verts.Rotate(rotation);
             verts.Translate(offset);
             fixture = PhysicsBody.CreatePolygon(verts, density);
