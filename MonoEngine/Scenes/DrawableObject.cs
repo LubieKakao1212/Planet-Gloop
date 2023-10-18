@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
+using MonoEngine.Scenes.Events;
 
 namespace MonoEngine.Scenes
 {
     public class DrawableObject : HierarchyObject
     {
-        public Color Color => color;
-        public float DrawOrder => drawOrder;
+        public Color Color { get; set; }
+        public float DrawOrder { get; set; }
         public long DrawLayerMask => drawLayerMask;
         /// <summary>
         /// Can this object be batched with other Objects?
@@ -16,17 +17,13 @@ namespace MonoEngine.Scenes
             protected set;
         }
 
-        private Color color;
-
-        private float drawOrder;
-
         //All
         private long drawLayerMask = -1;
 
         public DrawableObject(Color color, float drawOrder) : base()
         {
-            this.color = color;
-            this.drawOrder = drawOrder;
+            Color = color;
+            DrawOrder = drawOrder;
         }
 
         public virtual DrawableObject SetInterupQueue(bool interuptQueue)

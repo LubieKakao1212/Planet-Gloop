@@ -5,10 +5,13 @@ using Microsoft.Xna.Framework.Input;
 using MonoEngine.Input;
 using MonoEngine.Input.Binding;
 using MonoEngine.Math;
+using MonoEngine.Physics;
 using MonoEngine.Rendering;
 using MonoEngine.Scenes;
+using MonoEngine.Scenes.Events;
 using MonoEngine.Tilemap;
 using MonoEngine.Util;
+using nkast.Aether.Physics2D.Dynamics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -54,6 +57,8 @@ namespace EngineTest
         private GameTime GameTime;
 
         private Effect DepthMarchedColor;
+
+        private World physicsWorld;
 
         public TestGame()
         {
@@ -115,8 +120,8 @@ namespace EngineTest
 
             input_rotation.Performed += (input) => Camera.Transform.LocalRotation += CameraRotSpeed * input.GetCurrentValue<float>().LogThis("Rotation: ") * (float)GameTime.ElapsedGameTime.TotalSeconds;
 
-            inputManager.GetMouse(MouseButton.Left).Performed += (input) => tilemap.SetTile(grid.WorldToCell(MousePosWorld()), Tiles.bucket[0]);
-            inputManager.GetMouse(MouseButton.Right).Performed += (input) => tilemap.SetTile(grid.WorldToCell(MousePosWorld()), new TileInstance(null, new Matrix2x2(1f)));
+            inputManager.GetMouse(MouseButton.Left).Performed += (input) => CreateBox(MousePosWorld());
+            inputManager.GetMouse(MouseButton.Right).Performed += (input) => tilemap.SetTile(grid.WorldToCell(MousePosWorld()), Tiles.bucket[0]);
             #endregion
 
             #endregion
@@ -174,6 +179,8 @@ namespace EngineTest
 
             scene.AddObject(mesh);
             scene.AddObject(mesh2);
+
+            CreateWorld();
         }
 
         protected override void Update(GameTime gameTime)
@@ -195,11 +202,18 @@ namespace EngineTest
             //HandleCameraControls(gameTime);
             HandlePlaceControls();
 
-            var t = (float)gameTime.TotalGameTime.TotalSeconds;
+            //var t = (float)gameTime.TotalGameTime.TotalSeconds;
 
-            Tiles.OversizedRed.Transform = TransformMatrix.TranslationRotationScale(
+            /*Tiles.OversizedRed.Transform = TransformMatrix.TranslationRotationScale(
                 Vector2.Zero, 0f,
-                new Vector2(MathF.Cos(t) + 1f, MathF.Sin(t) / 2f + 1f));
+                new Vector2(MathF.Cos(t) + 1f, MathF.Sin(t) / 2f + 1f));*/
+
+            physicsWorld.Step(gameTime.ElapsedGameTime);
+
+            foreach (var updatable in scene.OrderedInstancesOf<IUpdatable>())
+            {
+                updatable.Update(gameTime);
+            }
 
             //grid.Transform.LocalScale = new Vector2(
             //    MathF.Cos((float)gameTime.TotalGameTime.TotalSeconds) / 2f + 0.5f,
@@ -212,20 +226,39 @@ namespace EngineTest
             GraphicsDevice.Clear(Color.Cyan);
             renderer.RenderScene(scene, Camera);
 
-            var newStamp = timer.Elapsed;
+            //var newStamp = timer.Elapsed;
 
-            var delta = newStamp - lastFrameStamp;
+            //var delta = newStamp - lastFrameStamp;
 
-            lastFrameStamp = newStamp;
+            //lastFrameStamp = newStamp;
 
-            smoothDelta = smoothDelta * 0.95 + delta.TotalSeconds * 0.05;
+            //smoothDelta = smoothDelta * 0.95 + delta.TotalSeconds * 0.05;
 
-            delta.TotalMilliseconds.LogThis("Frame Duration: ");
+            //delta.TotalMilliseconds.LogThis("Frame Duration: ");
             
             /*Console.WriteLine($"Smooth Fps: {1.0 / smoothDelta}");
             Console.WriteLine($"Fps: {1.0 / delta.TotalSeconds}");*/
 
             base.Draw(gameTime);
+        }
+
+        private void CreateWorld()
+        {
+            physicsWorld = new(new Vector2(0, 1f));
+
+            CreateBox(Vector2.Zero);
+        }
+
+        private void CreateBox(Vector2 pos)
+        {
+            var box = physicsWorld.CreateBody(Vector2.Zero, 1f, BodyType.Dynamic);
+            var boxObj = new PhysicsBodyObject(box);
+            boxObj.AddDrawableRectFixture(new(1.5f, 1f), Vector2.Zero, 0f, out var fixture, 1f);
+
+            boxObj.Transform.LocalPosition = pos;
+
+            scene.AddObject(boxObj);
+            box.ApplyTorque(5f);
         }
 
         private HierarchyObject CreateWindmill(Hierarchy hierarchy, float rotation, Vector2 position)
