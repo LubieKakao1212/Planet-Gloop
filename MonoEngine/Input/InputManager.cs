@@ -3,10 +3,6 @@ using Microsoft.Xna.Framework.Input;
 using MonoEngine.Input.Binding;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MonoEngine.Input
 {
@@ -117,6 +113,22 @@ namespace MonoEngine.Input
         public void RemoveBinding(IBindingInput binding)
         {
             inputBindings.Remove(binding);
+        }
+
+        /// <summary>
+        /// Creates a simple (-1, 0, 1) binding input
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="negative"></param>
+        /// <param name="positive"></param>
+        /// <returns>returned binding must still be registered via <see cref="RegisterBinding(IBindingInput)"/></returns>
+        public CompoundAxixBindingInput CreateSimpleAxisBinding(string name, Keys negative, Keys positive)
+        {
+            var binding = new CompoundAxixBindingInput(name);
+            binding.Bind(new AxisBindingInput("").SetValues(0f, 1f).Bind(GetKey(positive)));
+            binding.Bind(new AxisBindingInput("").SetValues(0f, -1f).Bind(GetKey(negative)));
+
+            return binding;
         }
 
         private void SetInput(BoolInput input, bool state)

@@ -16,7 +16,7 @@ namespace EngineTests.Math
         {
             var r = MathF.PI / 8f;
 
-            var mat = MonoEngine.Math.Matrix2x2.Rotation(r);
+            var mat = Matrix2x2.Rotation(r);
 
             var (r0, sk0, sc0) = mat;
 
@@ -41,8 +41,8 @@ namespace EngineTests.Math
         public void DeconstructRSR()
         {
             var scale = new Vector2(1f, 0.5f);
-            var r = MonoEngine.Math.Matrix2x2.Rotation(MathF.PI / 2f);
-            var rs = MonoEngine.Math.Matrix2x2.RotationScale(MathF.PI / 4f, scale);
+            var r = Matrix2x2.Rotation(MathF.PI / 2f);
+            var rs = Matrix2x2.RotationScale(MathF.PI / 4f, scale);
 
             var rsr = rs * r;
 
@@ -56,13 +56,28 @@ namespace EngineTests.Math
             Assert.AreEqual(s.X, scale.X, epsilon, "scale X");
             Assert.AreEqual(s.Y, scale.Y, epsilon, "scale Y");*/
 
-            var reconstructed = MonoEngine.Math.Matrix2x2.RotationShearScale(theta, sh, sc);
+            var reconstructed = Matrix2x2.RotationShearScale(theta, sh, sc);
 
             var vX1 = reconstructed * Vector2.UnitX;
             var vY1 = reconstructed * Vector2.UnitY;
 
             Assert.AreEqual(epsilon, (vX - vX1).Length(), epsilon);
             Assert.AreEqual(epsilon, (vY - vY1).Length(), epsilon);
+        }
+
+        [Test]
+        public void RSSMulInverse()
+        {
+            var r = MathF.PI / 8f;
+            var sk = MathF.PI / 8f;
+            var sc = new Vector2(2f, 0.5f);
+
+            var mat = Matrix2x2.RotationShearScale(r, sk, sc);
+
+            var inv = mat.Inverse();
+            var result = mat * inv;
+
+            TestHelper.AssertIdentity(result);
         }
 
         private void ValidateParams(float r, float rD, float sk, float skD, Vector2 sc, Vector2 scD)

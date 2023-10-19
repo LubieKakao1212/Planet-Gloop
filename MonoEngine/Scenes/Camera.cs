@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using MonoEngine.Math;
+using System;
 using System.Data;
 
 namespace MonoEngine.Scenes
@@ -29,7 +30,7 @@ namespace MonoEngine.Scenes
             {
                 if (!projectionMatrix.HasValue)
                 {
-                    projectionMatrix = (Transform.LocalToWorld * Matrix2x2.Scale(new Vector2(ViewSize, ViewSize))).Inverse();
+                    projectionMatrix = /*TransformMatrix.TranslationRotationShearScale(Vector2.One * 8f, MathF.PI / 2f, 0f, Vector2.One * 8f).Inverse();*/(Transform.LocalToWorld * Matrix2x2.Scale(new Vector2(ViewSize * aspectRatio, ViewSize))).Inverse();
                 }
                 return projectionMatrix.Value;
             }
@@ -37,9 +38,12 @@ namespace MonoEngine.Scenes
 
         public float ViewSize { get => viewSize; set { viewSize = value; projectionMatrix = null; } }
 
+        public float AspectRatio { get => aspectRatio; set { aspectRatio = value; projectionMatrix = null; } }
+
         private TransformMatrix? projectionMatrix;
         private BoundingRect? worldBounds;
         private float viewSize = 1f;
+        private float aspectRatio = 1f;
 
         public Camera()
         {

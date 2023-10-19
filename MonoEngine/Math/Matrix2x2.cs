@@ -9,9 +9,9 @@ namespace MonoEngine.Math
     {
         public float this[int i, int j] => j switch
         {
-            0 => i switch { 0 => m00, 1 => m10, _ => throw new IndexOutOfRangeException() },
-            1 => i switch { 0 => m01, 1 => m11, _ => throw new IndexOutOfRangeException() },
-            _ => throw new IndexOutOfRangeException()
+            0 => i switch { 0 => m00, 1 => m10, _ => throw new IndexOutOfRangeException($"i: {i}") },
+            1 => i switch { 0 => m01, 1 => m11, _ => throw new IndexOutOfRangeException($"i: {i}") },
+            _ => throw new IndexOutOfRangeException($"j: {j}")
         };
 
         public Vector4 Flat => new Vector4(m00, m10, m01, m11);
@@ -86,7 +86,7 @@ namespace MonoEngine.Math
         {
             //      |   x   |
             //      |   y   |
-            // |a b| ax + by 
+            // |a b| ax + by
             // |c d| cx + dy
             vOut.X = mat.m00 * vIn.X + mat.m10 * vIn.Y;
             vOut.Y = mat.m01 * vIn.X + mat.m11 * vIn.Y;

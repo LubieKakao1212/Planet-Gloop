@@ -10,9 +10,9 @@ float3x3 Projection()
 
 float3x3 LocalToView(float4 rotScale, float2 pos)
 {
-	float3x3 camTRS = Projection();
+	float3x3 camWorldToView = Projection();
 
 	float3x3 trs = ComposeTransform(rotScale, pos);
 
-	return mul(camTRS, trs);
+	return mul(camWorldToView, trs);
 }

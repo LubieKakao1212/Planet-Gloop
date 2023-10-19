@@ -36,6 +36,10 @@ namespace EngineTest
         private CompoundAxixBindingInput input_vertical;
         private CompoundAxixBindingInput input_scale;
         private CompoundAxixBindingInput input_rotation;
+        private CompoundAxixBindingInput input_shear;
+        private CompoundAxixBindingInput input_aspect;
+
+        private float cameraShear;
 
         private float CameraSpeed = 1f;
         private float CameraZoomSpeed = 1f;
@@ -90,38 +94,38 @@ namespace EngineTest
             #region Inputs
             inputManager = new InputManager(Window);
 
-            input_horizontal = new CompoundAxixBindingInput("Horizontal");
-            input_vertical = new CompoundAxixBindingInput("Vertical");
-            input_scale = new CompoundAxixBindingInput("Scale");
-            input_rotation = new CompoundAxixBindingInput("Rotation");
+            input_horizontal = inputManager.CreateSimpleAxisBinding("Horizontal", Keys.A, Keys.D);
+            input_vertical = inputManager.CreateSimpleAxisBinding("Vertical", Keys.S, Keys.W);
+            input_scale = inputManager.CreateSimpleAxisBinding("Scale", Keys.Subtract, Keys.Add);
+            //Rotation is counterclockwise
+            input_rotation = inputManager.CreateSimpleAxisBinding("Rotation", Keys.E, Keys.Q);
+            input_shear = inputManager.CreateSimpleAxisBinding("Shear", Keys.Left, Keys.Right);
+            input_aspect = inputManager.CreateSimpleAxisBinding("Aspect", Keys.Down, Keys.Up);
 
             inputManager.RegisterBinding(input_horizontal);
             inputManager.RegisterBinding(input_vertical);
             inputManager.RegisterBinding(input_scale);
             inputManager.RegisterBinding(input_rotation);
-
-            #region Bind
-            input_horizontal.Bind(new AxisBindingInput("").SetValues(0f, 1f).Bind(inputManager.GetKey(Keys.D)));
-            input_horizontal.Bind(new AxisBindingInput("").SetValues(0f, -1f).Bind(inputManager.GetKey(Keys.A)));
-
-            input_vertical.Bind(new AxisBindingInput("").SetValues(0f, 1f).Bind(inputManager.GetKey(Keys.W)));
-            input_vertical.Bind(new AxisBindingInput("").SetValues(0f, -1f).Bind(inputManager.GetKey(Keys.S)));
-
-            input_scale.Bind(new AxisBindingInput("").SetValues(0f, 1f).Bind(inputManager.GetKey(Keys.Add)));
-            input_scale.Bind(new AxisBindingInput("").SetValues(0f, -1f).Bind(inputManager.GetKey(Keys.Subtract)));
-
-            input_rotation.Bind(new AxisBindingInput("").SetValues(0f, 1f).Bind(inputManager.GetKey(Keys.Q)));
-            input_rotation.Bind(new AxisBindingInput("").SetValues(0f, -1f).Bind(inputManager.GetKey(Keys.E)));
-            #endregion
+            inputManager.RegisterBinding(input_shear);
+            inputManager.RegisterBinding(input_aspect);
 
             #region BindCallbacks
-            input_horizontal.Performed += (input) => Camera.Transform.GlobalPosition += Camera.Transform.Right * (CamMoveSpeed(GameTime) * input.GetCurrentValue<float>().LogThis("Horizongtal: "));
+            input_horizontal.Performed += (input) => Camera.Transform.GlobalPosition += Camera.Transform.Right * (CamMoveSpeed(GameTime) * input.GetCurrentValue<float>()/*.LogThis("Horizongtal: ")*/);
 
-            input_vertical.Performed += (input) => Camera.Transform.GlobalPosition += Camera.Transform.Up * (CamMoveSpeed(GameTime) * input.GetCurrentValue<float>().LogThis("Vertical: "));
+            input_vertical.Performed += (input) => Camera.Transform.GlobalPosition += Camera.Transform.Up * (CamMoveSpeed(GameTime) * input.GetCurrentValue<float>()/*.LogThis("Vertical: ")*/);
 
-            input_scale.Performed += (input) => Camera.Transform.LocalScale *= 1f + (CameraZoomSpeed * input.GetCurrentValue<float>().LogThis("Zoom: ") * (float)GameTime.ElapsedGameTime.TotalSeconds);
+            input_scale.Performed += (input) => Camera.ViewSize *= 1f + (CameraZoomSpeed * input.GetCurrentValue<float>()/*.LogThis("Zoom: ")*/ * (float)GameTime.ElapsedGameTime.TotalSeconds);
 
-            input_rotation.Performed += (input) => Camera.Transform.LocalRotation += CameraRotSpeed * input.GetCurrentValue<float>().LogThis("Rotation: ") * (float)GameTime.ElapsedGameTime.TotalSeconds;
+            input_rotation.Performed += (input) => Camera.Transform.LocalRotation += CameraRotSpeed * input.GetCurrentValue<float>()/*.LogThis("Rotation: ")*/ * (float)GameTime.ElapsedGameTime.TotalSeconds;
+
+            input_shear.Performed += (input) => 
+            {
+                cameraShear += input.GetCurrentValue<float>() * (float) GameTime.ElapsedGameTime.TotalSeconds;
+                Camera.Transform.LocalShear = MathF.Atan(cameraShear);
+            };
+
+            input_aspect.Performed += (input) => Camera.AspectRatio *= 1f + (CameraZoomSpeed * input.GetCurrentValue<float>()/*.LogThis("Zoom: ")*/ * (float)GameTime.ElapsedGameTime.TotalSeconds);
+
 
             inputManager.GetMouse(MouseButton.Left).Performed += (input) => CreateBox(MousePosWorld());
             inputManager.GetMouse(MouseButton.Right).Performed += (input) => tilemap.SetTile(grid.WorldToCell(MousePosWorld()), Tiles.bucket[0]);
@@ -211,7 +215,7 @@ namespace EngineTest
                 Vector2.Zero, 0f,
                 new Vector2(MathF.Cos(t) + 1f, MathF.Sin(t) / 2f + 1f));*/
 
-            physicsWorld.Step(gameTime.ElapsedGameTime);
+            //physicsWorld.Step(gameTime.ElapsedGameTime);
 
             foreach (var updatable in scene.OrderedInstancesOf<IUpdatable>())
             {
@@ -347,16 +351,6 @@ namespace EngineTest
         private float CamMoveSpeed(GameTime time)
         {
             return Camera.ViewSize * CameraSpeed * (float)time.ElapsedGameTime.TotalSeconds;
-        }
-    }
-
-    public static class Debug 
-    {
-        public static T LogThis<T>(this T value, string prefix = "") where T : struct 
-        {
-            Console.WriteLine(prefix + value);
-
-            return value;
         }
     }
 }
