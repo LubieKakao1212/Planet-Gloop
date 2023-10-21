@@ -132,7 +132,6 @@ namespace EngineTest
             #endregion
 
             #endregion
-
             Camera = new Camera() { ViewSize = 16 };
             scene = new Hierarchy();
 
@@ -195,7 +194,7 @@ namespace EngineTest
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            this.GameTime = gameTime;
+            GameTime = gameTime;
 
             inputManager.UpdateState();
 
@@ -215,7 +214,7 @@ namespace EngineTest
                 Vector2.Zero, 0f,
                 new Vector2(MathF.Cos(t) + 1f, MathF.Sin(t) / 2f + 1f));*/
 
-            //physicsWorld.Step(gameTime.ElapsedGameTime);
+            physicsWorld.Step(gameTime.ElapsedGameTime);
 
             foreach (var updatable in scene.OrderedInstancesOf<IUpdatable>())
             {
@@ -253,7 +252,7 @@ namespace EngineTest
 
         private void CreateWorld()
         {
-            physicsWorld = new(new Vector2(0, 1f));
+            physicsWorld = new(new Vector2(0, 0f));
 
             debug = new DebugView(physicsWorld);
 
@@ -270,6 +269,7 @@ namespace EngineTest
 
             boxObj.Transform.LocalPosition = pos;
             box.AngularVelocity = 5f;//.ApplyTorque(50f);
+            box.LinearDamping = 0.0f;
 
             scene.AddObject(boxObj);
         }
