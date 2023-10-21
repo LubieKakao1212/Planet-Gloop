@@ -13,17 +13,23 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin ../../MonoEngine/Content/Default.fx
+#begin ../../Shaders/Default.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:../../MonoEngine/Content/Default.fx;Default.fx
+/build:../../Shaders/Default.fx;Default.fx
 
-#begin ../../MonoEngine/Content/Tilemap.fx
+#begin ../../Shaders/DepthMarchedColor.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:../../MonoEngine/Content/Tilemap.fx;Tilemap.fx
+/build:../../Shaders/DepthMarchedColor.fx;DepthMarchedColor.fx
+
+#begin ../../Shaders/Tilemap.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:../../Shaders/Tilemap.fx;Tilemap.fx
 
 #begin Texture.png
 /importer:TextureImporter

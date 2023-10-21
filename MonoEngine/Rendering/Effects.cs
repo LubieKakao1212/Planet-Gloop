@@ -13,6 +13,14 @@ namespace MonoEngine.Rendering
         public static Effect TilemapDefault { get; private set; }
         public static Effect Default { get; private set; }
 
+        //TODO refactor to RSS
+        public const string CameraRS = "CameraRS";
+        public const string CameraT = "CameraT";
+
+        public const string ObjRSS = "ObjRSS";
+        public const string ObjT = "ObjT";
+
+        //TODO refactor to RSS
         public const string GridRS = "GridRS";
         public const string GridT = "GridT";
 

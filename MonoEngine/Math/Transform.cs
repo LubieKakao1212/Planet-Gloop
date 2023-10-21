@@ -1,18 +1,16 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MonoEngine.Math
 {
+    //TODO Add Origin
+    //TODO Add Split ??
     public class Transform
     {
         public event Action Changed;
 
-        public Vector2 Right => localToWorld.TransformDirection(Vector2.UnitX);
-        public Vector2 Up => localToWorld.TransformDirection(Vector2.UnitY);
+        public Vector2 Right => LocalToWorld.TransformDirection(Vector2.UnitX);
+        public Vector2 Up => LocalToWorld.TransformDirection(Vector2.UnitY);
 
         public Vector2 GlobalPosition
         {
@@ -26,8 +24,14 @@ namespace MonoEngine.Math
             set
             {
                 translation = value;
-                OnChanged();
+                OnSelfChanged();
             }
+        }
+
+        public float GlobalRotation
+        {
+            get => LocalToWorldData.Rotation;
+            set => LocalRotation = MathUtil.LoopAngle(value- Parent.LocalToWorldData.Rotation);
         }
 
         public float LocalRotation
@@ -36,9 +40,23 @@ namespace MonoEngine.Math
             set
             {
                 rotation = value;
-                OnChanged();
+                OnSelfChanged();
             }
         }
+
+        public float GlobalShear => LocalToWorldData.Shear;
+
+        public float LocalShear
+        {
+            get => shear;
+            set
+            {
+                shear = value;
+                OnSelfChanged();
+            }
+        }
+
+        public Vector2 GlobalScale => LocalToWorldData.Scale;
 
         public Vector2 LocalScale
         {
@@ -46,7 +64,16 @@ namespace MonoEngine.Math
             set
             {
                 scale = value;
-                OnChanged();
+                OnSelfChanged();
+            }
+        }
+
+        public TransformData LocalToWorldData
+        {
+            get
+            {
+                CalculateLocalToWrorld();
+                return localToWorld.Value;
             }
         }
 
@@ -55,7 +82,7 @@ namespace MonoEngine.Math
             get
             {
                 CalculateLocalToWrorld();
-                return localToWorld;
+                return localToWorld.Value;
             }
         }
 
@@ -64,7 +91,7 @@ namespace MonoEngine.Math
             get
             {
                 CalculateWorldToLocal();
-                return worldToLocal;
+                return worldToLocal.Value;
             }
         }
 
@@ -88,32 +115,58 @@ namespace MonoEngine.Math
 
         private Transform parent = null;
 
-        private TransformMatrix localToWorld;
-        private TransformMatrix worldToLocal;
-
-        private bool isDirtyLtW;
-        private bool isDirtyWtL;
+        private TransformMatrix? localToParent = null;
+        private TransformData? localToWorld = null;
+        private TransformMatrix? worldToLocal = null;
 
         private Vector2 translation = default;
         private float rotation = 0;
+        private float shear = 0;
         private Vector2 scale = new Vector2(1f, 1f);
 
         public Transform()
         {
-            isDirtyLtW = true;
-            isDirtyWtL = true;
+            
+        }
+
+        public void SetRelativePosition(Transform relativeTo, Vector2 position)
+        {
+            var pos = relativeTo.LocalToWorld.TransformPoint(position);
+            GlobalPosition = pos;
+        }
+
+        public TransformMatrix GetRelativeMatrix(Transform relativeTo)
+        {
+            TransformMatrix.FromTo(LocalToWorld, relativeTo.LocalToWorld, out var mOut);
+            return mOut;
         }
 
         private void OnChanged()
         {
-            isDirtyLtW = true;
-            isDirtyWtL = true;
+            localToWorld = null;
+            worldToLocal = null;
             Changed?.Invoke();
+        }
+
+        private void OnSelfChanged()
+        {
+            localToParent = null;
+            OnChanged();
+        }
+
+        private void CalculateLocalToParent()
+        {
+            if (localToParent != null)
+            {
+                return;
+            }
+
+            localToParent = TransformMatrix.TranslationRotationShearScale(translation, rotation, shear, scale);
         }
 
         private void CalculateLocalToWrorld()
         {
-            if (!isDirtyLtW)
+            if (localToWorld != null)
             {
                 return;
             }
@@ -128,21 +181,85 @@ namespace MonoEngine.Math
                 parentLtW.SetIdentity();
             }
 
-            localToWorld = parentLtW * TransformMatrix.TranslationRotationScale(translation, rotation, scale);
+            CalculateLocalToParent();
 
-            isDirtyLtW = false;
+            localToWorld = parentLtW * localToParent;
         }
 
         private void CalculateWorldToLocal()
         {
-            if (!isDirtyWtL)
+            if (worldToLocal != null)
             {
                 return;
             }
-            CalculateLocalToWrorld();
-            worldToLocal = localToWorld.Inverse();
+            worldToLocal = LocalToWorld.Inverse();
+        }
 
-            isDirtyWtL = false;
+        public struct TransformData
+        {
+            public Vector2 Position 
+            { 
+                get
+                {
+                    Decompose();
+                    return position;
+                } 
+            }
+
+            public float Rotation
+            {
+                get
+                {
+                    Decompose();
+                    return rotation;
+                }
+            }
+
+            public float Shear
+            {
+                get
+                {
+                    Decompose();
+                    return shear;
+                }
+            }
+
+            public Vector2 Scale
+            {
+                get
+                {
+                    Decompose();
+                    return scale;
+                }
+            }
+            
+            private Vector2 position;
+            private float rotation;
+            private float shear;
+            private Vector2 scale;
+
+            private bool decomposed;
+            
+            private TransformMatrix matrix;
+
+            public static implicit operator TransformData(TransformMatrix mat)
+            {
+                return new TransformData() { matrix = mat, decomposed = false };
+            }
+
+            public static implicit operator TransformMatrix(TransformData mat)
+            {
+                return mat.matrix;
+            }
+
+            private void Decompose()
+            {
+                if (!decomposed)
+                {
+                    (position, rotation, shear, scale) = matrix;
+                    decomposed = true;
+                }
+            }
         }
     }
 }
