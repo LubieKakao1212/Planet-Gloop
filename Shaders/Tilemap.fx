@@ -9,6 +9,7 @@
 
 #include "Transforms.fxh"
 #include "Camera.fxh"
+#include "Sprites.fxh"
 
 float4 GridRS;
 float2 GridT;
@@ -31,8 +32,9 @@ struct VertexShaderOutput
 {
 	float4 Position : SV_POSITION;
 	float4 Color : COLOR0;
-	float2 WorldPosition : POSITION1;
-	//float4 WPos : TEXCOORD2;
+	//float2 WorldPosition : POSITION1;
+	float2 UV : TEXCOORD0;
+	float3 AtlasPos : TEXCOORD1;
 };
 
 VertexShaderOutput MainVS(
@@ -64,14 +66,17 @@ VertexShaderOutput MainVS(
 
 	output.Color = color;
 
-	//mul(LtV, float3(input.Position.xy, 1.0f)).xy;
+	output.AtlasPos = ProcessSpritePos(atlasPos, input.UV);
+
+	output.UV = input.UV;
+
 
 	return output;
 }
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-	return input.Color;
+	return SpriteAtlas.SampleLevel(AtlasSampler, input.AtlasPos, 0) * input.Color;
 }
 
 technique Unlit

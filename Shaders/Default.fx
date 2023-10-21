@@ -9,15 +9,7 @@
 
 #include "Transforms.fxh"
 #include "Camera.fxh"
-
-Texture2DArray SpriteAtlas;
-
-SamplerState AtlasSampler
-{
-    Filter = POINT;
-    AddressU = Wrap;
-    AddressV = Wrap;
-};
+#include "Sprites.fxh"
 
 struct VertexShaderInput
 {
@@ -29,6 +21,7 @@ struct VertexShaderOutput
 {
 	float4 Position : SV_POSITION;
 	float4 Color : COLOR0;
+	//float2 WorldPosition : POSITION1;
 	float2 UV : TEXCOORD0;
 	float3 AtlasPos : TEXCOORD1;
 };
@@ -43,20 +36,12 @@ VertexShaderOutput MainVS(in VertexShaderInput input,
 
 	float3x3 LtV = LocalToView(rotScale, pos);
 
-	//output.WPos = input.Position.xy;
-
 	output.Position = float4(mul(LtV, float3(input.Position.xy, 1.0f)).xy, 0.0f, 1.0f);
 	output.Color = color;
 
-	float2 spriteSize = atlasPos.zw;
-	float2 spritePos = float2(frac(atlasPos.x), atlasPos.y);
-	float atlasIdx = floor(atlasPos.x);
-
-	output.AtlasPos = float3(spritePos + (input.UV * spriteSize), atlasIdx);
+	output.AtlasPos = ProcessSpritePos(atlasPos, input.UV);
 
 	output.UV = input.UV;
-
-	//mul(LtV, float3(input.Position.xy, 1.0f)).xy;
 
 	return output;
 }

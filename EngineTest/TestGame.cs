@@ -7,6 +7,7 @@ using MonoEngine.Input.Binding;
 using MonoEngine.Math;
 using MonoEngine.Physics;
 using MonoEngine.Rendering;
+using MonoEngine.Rendering.Sprites;
 using MonoEngine.Rendering.Sprites.Atlas;
 using MonoEngine.Scenes;
 using MonoEngine.Scenes.Events;
@@ -51,6 +52,8 @@ namespace EngineTest
         private float bladeLength = 1f;
 
         private const int WindmillCount = 1;
+
+        private List<Sprite> sprites;
 
         private Tilemap tilemap;
         private Grid grid;
@@ -158,9 +161,23 @@ namespace EngineTest
         {
             Effects.Init(Content);
 
+            sprites = new();
+
             atlas = new SpriteAtlas<Color>(GraphicsDevice);
 
-            //atlas.AddTextureRects();
+            var tex = Content.Load<Texture2D>("Texture");
+
+            for (int i=0; i<1024; i++)
+            {
+                var x = Random.Shared.Next(0, tex.Width - 5);
+                var y = Random.Shared.Next(0, tex.Height - 5);
+                var w = Random.Shared.Next(1, tex.Width - x);
+                var h = Random.Shared.Next(1, tex.Height - y);
+            
+                sprites.AddRange(atlas.AddTextureRects(tex, new Rectangle(x, y, w, h)));
+            }
+
+            atlas.Compact();
 
             renderer.SpriteAtlas = atlas.AtlasTextures;
             // TODO: use this.Content to load your game content here
@@ -275,8 +292,9 @@ namespace EngineTest
         {
             var box = physicsWorld.CreateBody(Vector2.Zero, 1f, BodyType.Dynamic);
             var boxObj = new PhysicsBodyObject(box);
-            boxObj.AddDrawableRectFixture(new(1.5f, 1f), Vector2.Zero, 0f, out var fixture, 1f);
+            var drawable = boxObj.AddDrawableRectFixture(new(1.5f, 1f), Vector2.Zero, 0f, out var fixture, 1f);
 
+            drawable.Sprite = sprites[Random.Shared.Next(0, sprites.Count)];
             boxObj.Transform.LocalPosition = pos;
             box.AngularVelocity = 5f;//.ApplyTorque(50f);
             box.LinearDamping = 0.0f;

@@ -13,7 +13,7 @@ namespace MonoEngine.Rendering
 {
     public class RenderPipeline
     {
-        public Texture2D SpriteAtlas
+        public Texture3D SpriteAtlas
         {
             get => CurrentState.SpriteAtlas;
             set => CurrentState.SpriteAtlas = value;
@@ -177,6 +177,7 @@ namespace MonoEngine.Rendering
 
                 //effect.CurrentTechnique = effect.Techniques["Unlit"];
                 effect.Parameters[Effects.SpriteAtlas].SetValue(pipeline.CurrentState.SpriteAtlas);
+                effect.Parameters[Effects.AtlasSize].SetValue(pipeline.CurrentState.SpriteAtlas.Depth);
                 effect.Parameters[Effects.CameraRS].SetValue(cameraMatrixInv.RS.Flat);
                 effect.Parameters[Effects.CameraT].SetValue(cameraMatrixInv.T);
 
@@ -238,7 +239,7 @@ namespace MonoEngine.Rendering
             public TransformMatrix CurrentProjection { get; set; }
             public Effect CurrentEffect { get; set; }
 
-            public Texture2D SpriteAtlas { get; set; }
+            public Texture3D SpriteAtlas { get; set; }
 
             public void SetCamera(Camera cam)
             {

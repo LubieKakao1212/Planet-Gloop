@@ -24,7 +24,9 @@ namespace MonoEngine.Rendering
         public const string GridRS = "GridRS";
         public const string GridT = "GridT";
 
-        public const string SpriteAtlas = "SpriteAtlas";
+        //dafuq???
+        public const string SpriteAtlas = "AtlasSampler+SpriteAtlas";
+        public const string AtlasSize = "AtlasSize";
 
         private const string TilemapDefaultEffectPath = "Tilemap";
         private const string DefaultEffectPath = "Default";

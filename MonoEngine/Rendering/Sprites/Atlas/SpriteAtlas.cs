@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using MonoEngine.Math;
 using MonoEngine.Util;
-using MonoEngine.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,13 +11,13 @@ namespace MonoEngine.Rendering.Sprites.Atlas
 {
     public class SpriteAtlas<T> : ISpriteAtlas where T : struct
     {
-        public Texture2D AtlasTextures => atlasTextures;
+        public Texture3D AtlasTextures => atlasTextures;
 
         private const int maxSizeInternal = 8192;
 
         private List<AtlasRegion> regions = new List<AtlasRegion>();
 
-        private Texture2D atlasTextures;
+        private Texture3D atlasTextures;
 
         private int size;
 
@@ -186,7 +185,7 @@ namespace MonoEngine.Rendering.Sprites.Atlas
 
         private void CreateAtlasTextures()
         {
-            atlasTextures = new Texture2D(graphics, size, size, false, textureFormat, textureCount);
+            atlasTextures = new Texture3D(graphics, size, size, textureCount, false, textureFormat);
 
             var texturePixelCount = size * size;
 
@@ -213,7 +212,7 @@ namespace MonoEngine.Rendering.Sprites.Atlas
                 #region SetSprite Data
                 var pos = region.destinationPosition;
 
-                atlasPixels.SetRectUnchecked(size * textureCount, data, new Rectangle(
+                atlasPixels.SetRectUnchecked(size, data, new Rectangle(
                     pos.X, pos.Y,
                     region.sourceRect.Width, region.sourceRect.Height));
                 var x = pos.X % size;
@@ -232,10 +231,7 @@ namespace MonoEngine.Rendering.Sprites.Atlas
 
             var fullRect = new Rectangle(0, 0, size, size);
 
-            for (int i = 0; i < textureCount; i++) 
-            {
-                atlasTextures.SetData(0, i, fullRect, atlasPixels, texturePixelCount * i, texturePixelCount);
-            }
+            atlasTextures.SetData(atlasPixels);
         }
 
         //Can be done better, I think
