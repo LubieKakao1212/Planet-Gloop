@@ -176,14 +176,18 @@ namespace MonoEngine.Rendering
                 graphics.BlendState = BlendState.AlphaBlend;
 
                 //effect.CurrentTechnique = effect.Techniques["Unlit"];
+                
                 effect.Parameters[Effects.SpriteAtlas].SetValue(pipeline.CurrentState.SpriteAtlas);
                 effect.Parameters[Effects.AtlasSize].SetValue(pipeline.CurrentState.SpriteAtlas.Depth);
                 effect.Parameters[Effects.CameraRS].SetValue(cameraMatrixInv.RS.Flat);
                 effect.Parameters[Effects.CameraT].SetValue(cameraMatrixInv.T);
 
+                effect.CurrentTechnique.Passes[0].Apply();
+
                 graphics.Indices = pipeline.quadInds;
 
-                effect.CurrentTechnique.Passes[0].Apply();
+                pipeline.Graphics.SamplerStates[1] = SamplerState.PointClamp;
+                //pipeline.Graphics.Textures[0] = pipeline.CurrentState.SpriteAtlas;
 
                 graphics.SetVertexBuffers(bindings);
                 graphics.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0, 2, instanceCount);

@@ -167,13 +167,13 @@ namespace EngineTest
 
             var tex = Content.Load<Texture2D>("Texture");
 
-            for (int i=0; i<1024; i++)
+            for (int i=0; i<16; i++)
             {
                 var x = Random.Shared.Next(0, tex.Width - 5);
                 var y = Random.Shared.Next(0, tex.Height - 5);
                 var w = Random.Shared.Next(1, tex.Width - x);
                 var h = Random.Shared.Next(1, tex.Height - y);
-            
+                
                 sprites.AddRange(atlas.AddTextureRects(tex, new Rectangle(x, y, w, h)));
             }
 

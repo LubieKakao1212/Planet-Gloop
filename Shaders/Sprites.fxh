@@ -1,14 +1,15 @@
-Texture3D SpriteAtlas;
 
 int AtlasSize;
 
-SamplerState AtlasSampler : register(s0)
-{
-    //Texture = <SpriteAtlas>;
-    Filter = POINT;
-    AddressU = Wrap;
-    AddressV = Wrap;
-};
+Texture3D SpriteAtlas : register(t0);
+
+SamplerState AtlasSampler : register(s0);
+// {
+//     Texture = (SpriteAtlas);
+//     Filter = POINT;
+//     AddressU = Wrap;
+//     AddressV = Wrap;
+// };
 
 float3 ProcessSpritePos(float4 atlasPos, float2 UV) {
     float2 spriteSize = atlasPos.zw;
