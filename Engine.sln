@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EngineTests", "EngineTests\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarchingSquares", "MarchingSquares\MarchingSquares.csproj", "{F54238DC-735A-4A93-9A39-1DF0B53A209D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Physics", "Physics\Physics.csproj", "{BCC5B9FD-590F-462C-B12D-A3CC50009DDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Physics", "Physics\Physics.csproj", "{BCC5B9FD-590F-462C-B12D-A3CC50009DDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalLoopGame", "GlobalLoopGame\GlobalLoopGame.csproj", "{46B7AE5C-AE43-43B6-9EF3-0A54D0DB677E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{BCC5B9FD-590F-462C-B12D-A3CC50009DDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCC5B9FD-590F-462C-B12D-A3CC50009DDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCC5B9FD-590F-462C-B12D-A3CC50009DDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46B7AE5C-AE43-43B6-9EF3-0A54D0DB677E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46B7AE5C-AE43-43B6-9EF3-0A54D0DB677E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46B7AE5C-AE43-43B6-9EF3-0A54D0DB677E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46B7AE5C-AE43-43B6-9EF3-0A54D0DB677E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
