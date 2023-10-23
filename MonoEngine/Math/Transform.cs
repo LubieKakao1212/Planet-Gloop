@@ -31,7 +31,7 @@ namespace MonoEngine.Math
         public float GlobalRotation
         {
             get => LocalToWorldData.Rotation;
-            set => LocalRotation = MathUtil.LoopAngle(value- Parent.LocalToWorldData.Rotation);
+            set => LocalRotation = MathUtil.LoopAngle(value - (Parent != null ? Parent.LocalToWorldData.Rotation : 0f));
         }
 
         public float LocalRotation

@@ -13,11 +13,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin ../../Shaders/Camera.fxh
-/importer:
-/processor:
-/build:../../Shaders/Camera.fxh;Camera.fxh
-
 #begin ../../Shaders/Default.fx
 /importer:EffectImporter
 /processor:EffectProcessor
@@ -30,19 +25,9 @@
 /processorParam:DebugMode=Auto
 /build:../../Shaders/DepthMarchedColor.fx;DepthMarchedColor.fx
 
-#begin ../../Shaders/Sprites.fxh
-/importer:
-/processor:
-/build:../../Shaders/Sprites.fxh;Sprites.fxh
-
 #begin ../../Shaders/Tilemap.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
 /build:../../Shaders/Tilemap.fx;Tilemap.fx
-
-#begin ../../Shaders/Transforms.fxh
-/importer:
-/processor:
-/build:../../Shaders/Transforms.fxh;Transforms.fxh
 
