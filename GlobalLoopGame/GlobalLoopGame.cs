@@ -175,7 +175,6 @@ namespace GlobalLoopGame
         {
             Components.Add(new BoundryFieldComponent(MapSize, 16f, Spaceship));
             Components.Add(asteroidManager);
-            asteroidManager.components = Components;
         }
 
         private void ThrusterBinding(IInput input, int one, int two)

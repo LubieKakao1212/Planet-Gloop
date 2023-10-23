@@ -26,7 +26,6 @@ namespace GlobalLoopGame.Asteroid
 
         public int difficulty = 1;
         public int waveInterval = 5;
-        public GameComponentCollection components;
 
         public List<AsteroidObject> asteroids { get; private set; } = new List<AsteroidObject>();
 
@@ -84,13 +83,11 @@ namespace GlobalLoopGame.Asteroid
                 
                 foreach (float loc in wave.warningPlacements)
                 {
-                    AsteroidWarning warning = new AsteroidWarning(Color.OrangeRed, 100f);
+                    AsteroidWarning warning = new AsteroidWarning(_world);
 
                     _hierarchy.AddObject(warning);
 
                     warning.InitializeWarning(loc, waveInterval);
-
-                    components.Add(warning);
                 }
 
                 await SpawnAsteroidsInPlacement(wave);

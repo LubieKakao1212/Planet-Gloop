@@ -7,31 +7,35 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using MonoEngine.Scenes.Events;
 using MonoEngine.Util;
+using MonoEngine.Physics;
+using nkast.Aether.Physics2D.Dynamics;
 
 namespace GlobalLoopGame.Asteroid
 {
-    public class AsteroidWarning : DrawableObject, IGameComponent, IUpdateable
+    public class AsteroidWarning : PhysicsBodyObject
     {
-        public bool Enabled => true;
-        public int UpdateOrder { get; }
-
-        public event EventHandler<EventArgs> EnabledChanged;
-
-        public event EventHandler<EventArgs> UpdateOrderChanged;
-
         private AutoTimeMachine despawner;
+        private float scale;
+        private float lifetime;
 
-        public AsteroidWarning(Color color, float drawOrder) : base(color, drawOrder)
+        public AsteroidWarning(World world) : base(null)
         {
-            Transform.LocalScale = new Vector2(2f, 6f);
+            PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
+            PhysicsBody.Tag = this;
+            PhysicsBody.Position = Vector2.One * 1024f;
+
+            var visuals = AddDrawableRectFixture(new(2f, 6f), new(0f, 0f), 0, out var fixture);
+            visuals.Color = Color.OrangeRed;
+            visuals.DrawOrder = 999;
+
+            fixture.CollisionCategories = Category.None;
+            fixture.CollidesWith = Category.None;
+
+            scale = 0.5f;
+            Transform.LocalScale = Vector2.One * scale;
         }
 
-        public void Initialize()
-        {
-
-        }
-
-        public void InitializeWarning(float location, float lifetime)
+        public void InitializeWarning(float location, float deathtime)
         {
             float radians = MathHelper.ToRadians(location);
 
@@ -39,16 +43,26 @@ namespace GlobalLoopGame.Asteroid
 
             Transform.LocalPosition = (thetaVector * 58f);
 
+            lifetime = deathtime - 0.1f;
+
             despawner = new AutoTimeMachine(Despawn, lifetime);
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
+            base.Update(gameTime); 
+
             despawner.Forward(gameTime.ElapsedGameTime.TotalSeconds);
+
+            scale += (1.5f / (lifetime*60));
+
+            Transform.LocalScale = Vector2.One * scale;
         }
 
         private void Despawn()
         {
+            PhysicsBody.World.RemoveAsync(PhysicsBody);
+
             CurrentScene.RemoveObject(this);
         }
     }
