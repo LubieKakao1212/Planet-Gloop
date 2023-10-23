@@ -119,7 +119,7 @@ namespace GlobalLoopGame
 
             //Create initial scene here
             Spaceship = new SpaceshipObject(world, 0f);
-            Spaceship.ThrustMultiplier = 16f;
+            Spaceship.ThrustMultiplier = 32f;
             hierarchy.AddObject(Spaceship);
         }
 
