@@ -22,11 +22,12 @@ namespace GlobalLoopGame.Asteroid
             _hierarchy = hierarchy;
         }
 
-        public void CreateAsteroid(Vector2 pos, Vector2 vel, float spe)
+        // public void CreateAsteroid(Vector2 pos, Vector2 vel, float spe)
+        public void CreateAsteroid(AsteroidPlacement placement)
         {
             AsteroidObject initializedAsteroid = new AsteroidObject(_world, 0f);
 
-            initializedAsteroid.InitializeAsteroid(pos, vel, spe);
+            initializedAsteroid.InitializeAsteroid(this, placement);
 
             _hierarchy.AddObject(initializedAsteroid);
 
@@ -34,15 +35,46 @@ namespace GlobalLoopGame.Asteroid
             {
                 asteroids.Add(initializedAsteroid);
             }
-            
         }
 
         public void RemoveAsteroid(AsteroidObject asteroid)
         {
             if (asteroids.Contains(asteroid))
             {
-                asteroids.Add(asteroid);
+                asteroids.Remove(asteroid);
             }
         }
+
+        public void SpawnWave(int difficulty)
+        {
+            List<AsteroidWave> sortedwaves = waves.Where(wave => wave.difficultyStage == difficulty).ToList();
+
+            int rand = Random.Shared.Next(0, sortedwaves.Count);
+
+            if (rand < sortedwaves.Count)
+            {
+                AsteroidWave wave = sortedwaves[rand];
+
+                foreach (AsteroidPlacement aPlacement in wave.asteroidPlacements)
+                {
+                    CreateAsteroid(aPlacement);
+                }
+            }
+        }
+
+        public List<AsteroidWave> waves = new List<AsteroidWave>()
+        {
+            new AsteroidWave(new List<AsteroidPlacement>()
+            {
+                new AsteroidPlacement(Vector2.One * 2f, 45f, 16f, 100)
+            },
+            0),
+            new AsteroidWave(new List<AsteroidPlacement>()
+            {
+                new AsteroidPlacement(Vector2.One * 3f, MathHelper.ToRadians(235), 16f, 120),
+                new AsteroidPlacement(Vector2.One * 1.5f, MathHelper.ToRadians(240), 20f, 120)
+            },
+            1)
+        };
     }
 }

@@ -133,7 +133,9 @@ namespace GlobalLoopGame
 
             asteroidManager = new AsteroidManager(world, hierarchy);
 
-            asteroidManager.CreateAsteroid(new Vector2(64f, 64f), new Vector2(-8f, -8f), 2f);
+            asteroidManager.SpawnWave(1);
+
+            //asteroidManager.CreateAsteroid(new AsteroidPlacement(new Vector2(2f, 2f), new Vector2(64f, 64f), new Vector2(-8f, -8f), 2f, 100));
         }
 
         private void CreateWorld()

@@ -10,33 +10,60 @@ namespace GlobalLoopGame.Asteroid
 {
     public class AsteroidObject : PhysicsBodyObject
     {
-        public Vector2 velocity;
-        public float speed;
-        public DrawableObject asteroidFixture;
+
+        private AsteroidManager manager;
+        public Vector2 velocity { get; private set; }
+        public float speed { get; private set; }
+        public float health { get; private set; }
+        public DrawableObject asteroidDrawable { get; private set; }
+
+        private float maxHealth = 100f;
 
         public AsteroidObject(World world, float drawOrder) : base(null)
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
             PhysicsBody.Tag = this;
+        }
 
-            asteroidFixture = AddDrawableRectFixture(new(2f, 2f), new(0f, 0f), 0, out var fixture);
+        // public void InitializeAsteroid(AsteroidManager aManager, Vector2 startingPosition, Vector2 startingVelocity, float startingSpeed)
+        public void InitializeAsteroid(AsteroidManager aManager, AsteroidPlacement placement)
+        {
+            manager = aManager;
+            velocity = placement.velocity;
+            speed = placement.speed;
+            Transform.LocalPosition = placement.location;
+            maxHealth = placement.maxHealth;
+
+            health = maxHealth;
+            PhysicsBody.LinearVelocity = velocity * speed;
+
+            asteroidDrawable = AddDrawableRectFixture(placement.size, new(0f, 0f), Random.Shared.NextSingle() * 2 * MathF.PI, out var fixture);
+            asteroidDrawable.Color = Color.Firebrick;
 
             // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3
             fixture.CollisionCategories = Category.Cat1;
             fixture.CollidesWith = Category.None;
             fixture.CollidesWith |= Category.Cat2;
+            fixture.CollidesWith |= Category.Cat3;
+
+            /* var drawable = new DrawableObject(Color.Red, 1f);
+            drawable.Transform.LocalRotation = Random.Shared.NextSingle() * 2 * MathF.PI;
+            drawable.Parent = this;*/
         }
 
-        public void InitializeAsteroid(Vector2 startingPosition, Vector2 startingVelocity, float startingSpeed)
+        public void ModifyHealth(float healthModification)
         {
-            velocity = startingVelocity;
-            speed = startingSpeed;
-            Transform.LocalPosition = startingPosition;
-            PhysicsBody.LinearVelocity = startingVelocity * startingSpeed;
+            health = MathHelper.Clamp(health + healthModification, 0, maxHealth);
 
-            var drawable = new DrawableObject(Color.Red, 1f);
-            drawable.Transform.LocalRotation = Random.Shared.NextSingle() * 2 * MathF.PI;
-            drawable.Parent = this;
+            if (health <= 0)
+            {
+                Die();
+            }
+        }
+
+        void Die()
+        {
+            manager.RemoveAsteroid(this);
         }
     }
 }
