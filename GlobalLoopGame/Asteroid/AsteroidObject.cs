@@ -40,15 +40,11 @@ namespace GlobalLoopGame.Asteroid
             asteroidDrawable = AddDrawableRectFixture(placement.size, new(0f, 0f), Random.Shared.NextSingle() * 2 * MathF.PI, out var fixture);
             asteroidDrawable.Color = Color.Firebrick;
 
-            // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3
+            // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3, bullets - 4
             fixture.CollisionCategories = Category.Cat1;
             fixture.CollidesWith = Category.None;
             fixture.CollidesWith |= Category.Cat2;
-            fixture.CollidesWith |= Category.Cat3;
-
-            /* var drawable = new DrawableObject(Color.Red, 1f);
-            drawable.Transform.LocalRotation = Random.Shared.NextSingle() * 2 * MathF.PI;
-            drawable.Parent = this;*/
+            fixture.CollidesWith |= Category.Cat4;
         }
 
         public void ModifyHealth(float healthModification)

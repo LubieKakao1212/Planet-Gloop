@@ -126,13 +126,14 @@ namespace GlobalLoopGame
             Spaceship = new SpaceshipObject(world, 0f);
             Spaceship.ThrustMultiplier = 64f;
             hierarchy.AddObject(Spaceship);
-
-            var turret = new TurretStation(world);
-            turret.Transform.LocalPosition = new Vector2(10f, 10f);
-            hierarchy.AddObject(turret);
-
+    
             asteroidManager = new AsteroidManager(world, hierarchy);
 
+            asteroidManager.CreateAsteroid(new Vector2(64f, 64f), new Vector2(-8f, -8f), 2f);
+
+            var turret = new TurretStation(world, asteroidManager);
+            turret.Transform.LocalPosition = new Vector2(10f, 10f);
+            hierarchy.AddObject(turret);
             asteroidManager.SpawnWave(1);
 
             //asteroidManager.CreateAsteroid(new AsteroidPlacement(new Vector2(2f, 2f), new Vector2(64f, 64f), new Vector2(-8f, -8f), 2f, 100));

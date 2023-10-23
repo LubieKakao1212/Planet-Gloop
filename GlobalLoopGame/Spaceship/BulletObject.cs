@@ -1,0 +1,49 @@
+﻿using Microsoft.Xna.Framework;
+using MonoEngine.Physics;
+using MonoEngine.Scenes;
+using MonoEngine.Util;
+using nkast.Aether.Physics2D.Dynamics;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace GlobalLoopGame.Spaceship
+{
+    public class BulletObject : PhysicsBodyObject
+    {
+        public DrawableObject asteroidFixture;
+
+        public BulletObject(World world) : base(null)
+        {
+            PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
+            PhysicsBody.Tag = this;
+
+            var visuals = AddDrawableRectFixture(new(0.5f, 2f), new(0f, 0f), 0, out var fixture);
+            visuals.Color = Color.Red;
+
+            // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3, bullets - 4
+            fixture.CollisionCategories = Category.Cat4;
+            fixture.CollidesWith = Category.None;
+            fixture.CollidesWith |= Category.Cat1;
+
+            PhysicsBody.OnCollision += (sender, other, contact) =>
+            {
+                world.RemoveAsync(PhysicsBody);
+                CurrentScene.RemoveObject(this);
+                return false;
+            };
+        }
+
+        public BulletObject InitializeBullet(Vector2 startingPosition, Vector2 startingVelocity, float startingSpeed)
+        {
+            Transform.LocalPosition = startingPosition;
+            PhysicsBody.LinearVelocity = startingVelocity * startingSpeed;
+
+            Transform.LocalRotation = MathF.Atan2(startingVelocity.Y, startingVelocity.X) + MathF.PI / 2f;
+            
+            return this;
+        }
+    }
+}

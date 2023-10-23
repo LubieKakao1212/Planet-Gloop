@@ -35,11 +35,22 @@ namespace MonoEngine.Scenes
                 Console.Out.WriteLine("Assigning object to scene it is alredy assigned, this may be a mistake");
                 return;
             }
-            obj.CurrentScene?.RemoveObject(obj);
+            obj.CurrentScene?.RemoveObjectInternal(obj);
 
             obj.CurrentScene = this;
             rootsSet.Add(obj);
             roots.Insert(order, obj);
+        }
+
+        public void RemoveObject(HierarchyObject obj)
+        {
+            if (!rootsSet.Contains(obj))
+            {
+                throw new InvalidOperationException("Invalid object removal");
+            }
+            RemoveObjectInternal(obj);
+
+            obj.CurrentScene = null;
         }
 
         public IReadOnlyCollection<T> AllInstancesOf<T>()
@@ -117,7 +128,7 @@ namespace MonoEngine.Scenes
             return listOut;
         }
 
-        private void RemoveObject(HierarchyObject obj) 
+        private void RemoveObjectInternal(HierarchyObject obj) 
         {
             if (!rootsSet.Contains(obj))
             {

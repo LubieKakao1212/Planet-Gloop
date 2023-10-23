@@ -11,10 +11,10 @@ namespace GlobalLoopGame.Asteroid
 {
     public class AsteroidManager
     {
-        World _world;
-        Hierarchy _hierarchy;
+        private World _world;
+        private Hierarchy _hierarchy;
 
-        public List<AsteroidObject> asteroids = new List<AsteroidObject>();
+        public List<AsteroidObject> asteroids { get; private set; } = new List<AsteroidObject>();
 
         public AsteroidManager(World world, Hierarchy hierarchy)
         {
