@@ -1,16 +1,22 @@
-﻿using Microsoft.VisualBasic;
+﻿using GlobalLoopGame.Spaceship.Dragging;
+using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using MonoEngine.Physics;
 using MonoEngine.Scenes;
 using nkast.Aether.Physics2D.Dynamics;
+using nkast.Aether.Physics2D.Dynamics.Joints;
 using System;
 using System.Collections.Generic;
 
 namespace GlobalLoopGame.Spaceship
 {
-    public class SpaceshipObject : PhysicsBodyObject
+    public class SpaceshipObject : PhysicsBodyObject, IDragger
     {
         public float ThrustMultiplier { get; set; }
+
+        public Joint CurrentDrag { get; set; }
+
+        public PhysicsBodyObject ThisObject => this;
 
         /// <summary>
         /// BottomLeft, BottomRight, TopLeft, TopRight
@@ -24,8 +30,7 @@ namespace GlobalLoopGame.Spaceship
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
             PhysicsBody.Tag = this;
             PhysicsBody.AngularDamping = 10f;
-            PhysicsBody.LinearDamping = 4f;
-
+            PhysicsBody.LinearDamping = 3.5f;
             var shipBody = AddDrawableRectFixture(new(3f, 1f), new(0f, 0f), 0, out var fixture);
             fixture.CollisionCategories = Category.Cat2;
             fixture.CollidesWith |= Category.Cat1;
