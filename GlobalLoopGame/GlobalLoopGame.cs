@@ -131,9 +131,22 @@ namespace GlobalLoopGame
 
             asteroidManager.CreateAsteroid(new Vector2(64f, 64f), new Vector2(-8f, -8f), 2f);
 
-            var turret = new TurretStation(world, asteroidManager);
-            turret.Transform.LocalPosition = new Vector2(10f, 10f);
-            hierarchy.AddObject(turret);
+
+            var turret00 = new TurretStation(world, asteroidManager);
+            turret00.Transform.LocalPosition = new Vector2(-10f, -10f);
+            
+            var turret10 = new TurretStation(world, asteroidManager);
+            turret10.Transform.LocalPosition = new Vector2(10f, -10f);
+            
+            var turret01 = new TurretStation(world, asteroidManager);
+            turret01.Transform.LocalPosition = new Vector2(-10f, 10f);
+            
+            var turret11 = new TurretStation(world, asteroidManager);
+            turret11.Transform.LocalPosition = new Vector2(10f, 10f);
+            hierarchy.AddObject(turret00);
+            hierarchy.AddObject(turret10);
+            hierarchy.AddObject(turret01);
+            hierarchy.AddObject(turret11);
         }
 
         private void CreateWorld()

@@ -12,7 +12,7 @@ namespace GlobalLoopGame.Spaceship
 {
     public class TurretStation : PhysicsBodyObject, IDraggable
     {
-        public float Range { get; set; } = 32f;
+        public float Range { get; set; } = 64f;
 
         private AutoTimeMachine shootingTimer;
         private AsteroidManager asteroids;
