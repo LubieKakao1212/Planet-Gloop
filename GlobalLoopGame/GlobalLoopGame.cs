@@ -1,10 +1,9 @@
 ﻿using GlobalLoopGame.Spaceship;
+using GlobalLoopGame.Spaceship.Dragging;
 using GlobalLoopGame.Updaters;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using MonoEngine.Input;
 using MonoEngine.Rendering;
 using MonoEngine.Rendering.Sprites;
@@ -12,7 +11,6 @@ using MonoEngine.Rendering.Sprites.Atlas;
 using MonoEngine.Scenes;
 using MonoEngine.Scenes.Events;
 using nkast.Aether.Physics2D.Dynamics;
-using System;
 
 namespace GlobalLoopGame
 {
@@ -125,6 +123,10 @@ namespace GlobalLoopGame
             Spaceship = new SpaceshipObject(world, 0f);
             Spaceship.ThrustMultiplier = 64f;
             hierarchy.AddObject(Spaceship);
+
+            var turret = new TurretStation(world);
+            turret.Transform.LocalPosition = new Vector2(10f, 10f);
+            hierarchy.AddObject(turret);
         }
 
         private void CreateWorld()
@@ -139,10 +141,17 @@ namespace GlobalLoopGame
             var rotLeft = inputManager.GetKey(Keys.A);
             var rotRight = inputManager.GetKey(Keys.D);
 
+            var toggleDrag = inputManager.GetKey(Keys.Space);
+
             ThrusterBinding(acceleraate, 0, 1);
             ThrusterBinding(decelerate, 2, 3);
             ThrusterBinding(rotLeft, 1, 2);
             ThrusterBinding(rotRight, 0, 3);
+
+            toggleDrag.Started += (_) =>
+            {
+                Spaceship.TryInitDragging(5f, 10f);
+            };
         }
 
         private void CreateUpdateables()
