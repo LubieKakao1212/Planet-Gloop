@@ -32,6 +32,8 @@ namespace GlobalLoopGame
 
         private SpaceshipObject Spaceship;
 
+        private float MapSize = 64f;
+
         public GlobalLoopGame()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -114,7 +116,7 @@ namespace GlobalLoopGame
         private void CreateScene()
         {
             hierarchy = new Hierarchy();
-            camera = new Camera() { ViewSize = 16f };
+            camera = new Camera() { ViewSize = MapSize };
             hierarchy.AddObject(camera);
 
             //Create initial scene here
