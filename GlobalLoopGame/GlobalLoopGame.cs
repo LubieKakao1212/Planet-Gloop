@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using GlobalLoopGame.Spaceship;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -26,6 +27,10 @@ namespace GlobalLoopGame
         private Camera camera;
         private SpriteAtlas<Color> spriteAtlas;
         private Sprite NullSprite;
+
+        private GameTime GameTime;
+
+        private SpaceshipObject Spaceship;
 
         public GlobalLoopGame()
         {
@@ -55,12 +60,16 @@ namespace GlobalLoopGame
             CreateWorld();
 
             CreateScene();
+
+            CreateBindings();
         }
 
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            GameTime = gameTime;
 
             inputManager.UpdateState();
 
@@ -82,7 +91,7 @@ namespace GlobalLoopGame
 
             base.Draw(gameTime);
         }
-        
+
         private void LoadSounds()
         {
             //Load sounds and songs here
@@ -109,13 +118,9 @@ namespace GlobalLoopGame
             hierarchy.AddObject(camera);
 
             //Create initial scene here
-
-            //For testing (Remove in the future)
-            var drawable = new DrawableObject(Color.White, 0f);
-            drawable.Transform.LocalPosition = new Vector2(5f, 5f);
-            drawable.Transform.LocalRotation = 1f;
-            drawable.Sprite = NullSprite;
-            hierarchy.AddObject(drawable);
+            Spaceship = new SpaceshipObject(world, 0f);
+            Spaceship.ThrustMultiplier = 16f;
+            hierarchy.AddObject(Spaceship);
         }
 
         private void CreateWorld()
@@ -123,5 +128,32 @@ namespace GlobalLoopGame
             world = new World(new Vector2(0f, 0f));
         }
 
+        private void CreateBindings()
+        {
+            var acceleraate = inputManager.GetKey(Keys.W);
+            var decelerate = inputManager.GetKey(Keys.S);
+            var rotLeft = inputManager.GetKey(Keys.A);
+            var rotRight = inputManager.GetKey(Keys.D);
+
+            ThrusterBinding(acceleraate, 0, 1);
+            ThrusterBinding(decelerate, 2, 3);
+            ThrusterBinding(rotLeft, 1, 2);
+            ThrusterBinding(rotRight, 0, 3);
+        }
+
+        private void ThrusterBinding(IInput input, int one, int two)
+        {
+            input.Started += (input) =>
+            {
+                Spaceship.IncrementThruster(one);
+                Spaceship.IncrementThruster(two);
+            };
+
+            input.Canceled += (input) =>
+            {
+                Spaceship.DecrementThruster(one);
+                Spaceship.DecrementThruster(two);
+            };
+        }
     }
 }

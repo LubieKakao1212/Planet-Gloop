@@ -11,7 +11,7 @@ namespace MonoEngine.Physics
     {
         public float Order { get; set; }
 
-        public Body PhysicsBody { get; private set; }
+        public Body PhysicsBody { get; protected set; }
 
         private bool dirty;
         private bool isUpdating;
