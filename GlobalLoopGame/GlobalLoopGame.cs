@@ -33,10 +33,8 @@ namespace GlobalLoopGame
         private Sprite NullSprite;
 
         private GameTime GameTime;
-        private SpaceshipObject Spaceship;
-        public AsteroidManager asteroidManager;
+        public AsteroidManager asteroidManager { get; private set; }
         public SpaceshipObject Spaceship { get; private set; }
-        private SpaceshipObject Spaceship;
 
         public GlobalLoopGame()
         {

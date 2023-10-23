@@ -12,14 +12,17 @@ namespace GlobalLoopGame.Asteroid
     {
         public Vector2 velocity;
         public float speed;
-        public DrawableObject asteroidBody;
+        public DrawableObject asteroidFixture;
 
         public AsteroidObject(World world, float drawOrder) : base(null)
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
             PhysicsBody.Tag = this;
 
-            asteroidBody = AddDrawableRectFixture(new(2f, 2f), new(0f, 0f), 0, out var fixture);
+            asteroidFixture = AddDrawableRectFixture(new(2f, 2f), new(0f, 0f), 0, out var fixture);
+            fixture.CollisionCategories = Category.Cat1;
+            fixture.CollidesWith |= Category.Cat2;
+            fixture.CollidesWith |= Category.Cat3;
         }
 
         public void InitializeAsteroid(Vector2 startingPosition, Vector2 startingVelocity, float startingSpeed)

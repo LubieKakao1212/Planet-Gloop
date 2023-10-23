@@ -25,14 +25,19 @@ namespace GlobalLoopGame.Spaceship
             PhysicsBody.Tag = this;
             PhysicsBody.AngularDamping = 10f;
             PhysicsBody.LinearDamping = 4f;
+
             var shipBody = AddDrawableRectFixture(new(3f, 1f), new(0f, 0f), 0, out var fixture);
+            fixture.CollisionCategories = Category.Cat2;
+            fixture.CollidesWith |= Category.Cat1;
+            fixture.CollidesWith |= Category.Cat3;
+
             shipBody.DrawOrder = drawOrder + 0.01f;
             AddThruster(new(-1f, -0.5f), 0f);
             AddThruster(new(1f, -0.5f), 0f);
             AddThruster(new(-1f, 0.5f), MathF.PI);
             AddThruster(new(1f, 0.5f), MathF.PI);
         }
-
+        
         public void IncrementThruster(int idx)
         {
             thrust[idx] += 1;
