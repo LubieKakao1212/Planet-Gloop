@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using MonoEngine.Input;
 using MonoEngine.Rendering;
 using MonoEngine.Rendering.Sprites;
@@ -36,7 +38,6 @@ namespace GlobalLoopGame
 
         protected override void Initialize()
         {
-            
             base.Initialize();
         }
 
@@ -46,6 +47,8 @@ namespace GlobalLoopGame
             Effects.Init(Content);
             renderPipeline.Init(GraphicsDevice);
             inputManager = new InputManager(Window);
+
+            LoadSounds();
 
             LoadSprites();
 
@@ -67,7 +70,7 @@ namespace GlobalLoopGame
             {
                 updatable.Update(gameTime);
             }
-
+            
             base.Update(gameTime);
         }
 
@@ -78,6 +81,11 @@ namespace GlobalLoopGame
             renderPipeline.RenderScene(hierarchy, camera);
 
             base.Draw(gameTime);
+        }
+        
+        private void LoadSounds()
+        {
+            //Load sounds and songs here
         }
 
         private void LoadSprites()
