@@ -10,22 +10,28 @@ namespace GlobalLoopGame.Asteroid
 {
     public class AsteroidObject : PhysicsBodyObject
     {
-        Vector2 velocity;
-        float speed;
+        public Vector2 velocity;
+        public float speed;
+        public DrawableObject asteroidBody;
 
         public AsteroidObject(World world, float drawOrder) : base(null)
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
             PhysicsBody.Tag = this;
-            PhysicsBody.AngularDamping = 4f;
-            PhysicsBody.LinearDamping = 4f;
+
+            asteroidBody = AddDrawableRectFixture(new(2f, 2f), new(0f, 0f), 0, out var fixture);
         }
 
-        public override void Update(GameTime time)
+        public void InitializeAsteroid(Vector2 startingPosition, Vector2 startingVelocity, float startingSpeed)
         {
-            PhysicsBody.ApplyForce(velocity * speed, Transform.GlobalPosition);
+            velocity = startingVelocity;
+            speed = startingSpeed;
+            Transform.LocalPosition = startingPosition;
+            PhysicsBody.LinearVelocity = startingVelocity * startingSpeed;
 
-            base.Update(time);
+            var drawable = new DrawableObject(Color.Red, 1f);
+            drawable.Transform.LocalRotation = MathF.PI / 4;
+            drawable.Parent = this;
         }
     }
 }

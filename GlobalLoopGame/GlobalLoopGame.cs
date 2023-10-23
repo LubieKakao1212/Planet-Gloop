@@ -1,4 +1,5 @@
 ﻿using GlobalLoopGame.Spaceship;
+using GlobalLoopGame.Asteroid;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -123,6 +124,10 @@ namespace GlobalLoopGame
             Spaceship = new SpaceshipObject(world, 0f);
             Spaceship.ThrustMultiplier = 32f;
             hierarchy.AddObject(Spaceship);
+
+            AsteroidObject firstAsteroid = new AsteroidObject(world, 0f);
+            firstAsteroid.InitializeAsteroid(new Vector2(64f, 64f), new Vector2(-8f, -8f), 2f);
+            hierarchy.AddObject(firstAsteroid);
         }
 
         private void CreateWorld()
@@ -132,12 +137,12 @@ namespace GlobalLoopGame
 
         private void CreateBindings()
         {
-            var acceleraate = inputManager.GetKey(Keys.W);
+            var accelerate = inputManager.GetKey(Keys.W);
             var decelerate = inputManager.GetKey(Keys.S);
             var rotLeft = inputManager.GetKey(Keys.A);
             var rotRight = inputManager.GetKey(Keys.D);
 
-            ThrusterBinding(acceleraate, 0, 1);
+            ThrusterBinding(accelerate, 0, 1);
             ThrusterBinding(decelerate, 2, 3);
             ThrusterBinding(rotLeft, 1, 2);
             ThrusterBinding(rotRight, 0, 3);
@@ -158,4 +163,5 @@ namespace GlobalLoopGame
             };
         }
     }
+
 }
