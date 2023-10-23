@@ -23,7 +23,7 @@ namespace GlobalLoopGame.Spaceship
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
             PhysicsBody.Tag = this;
-            PhysicsBody.AngularDamping = 4f;
+            PhysicsBody.AngularDamping = 10f;
             PhysicsBody.LinearDamping = 4f;
             var shipBody = AddDrawableRectFixture(new(3f, 1f), new(0f, 0f), 0, out var fixture);
             shipBody.DrawOrder = drawOrder + 0.01f;
