@@ -129,9 +129,6 @@ namespace GlobalLoopGame
     
             asteroidManager = new AsteroidManager(world, hierarchy);
 
-            asteroidManager.CreateAsteroid(new Vector2(64f, 64f), new Vector2(-8f, -8f), 2f);
-
-
             var turret00 = new TurretStation(world, asteroidManager);
             turret00.Transform.LocalPosition = new Vector2(-10f, -10f);
             
@@ -177,6 +174,7 @@ namespace GlobalLoopGame
         private void CreateUpdateables()
         {
             Components.Add(new BoundryFieldComponent(MapSize, 16f, Spaceship));
+            Components.Add(asteroidManager);
         }
 
         private void ThrusterBinding(IInput input, int one, int two)

@@ -22,6 +22,7 @@ namespace GlobalLoopGame.Asteroid
         public AsteroidObject(World world, float drawOrder) : base(null)
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
+            PhysicsBody.Position = new Vector2(9001f, 9001f);
             PhysicsBody.Tag = this;
         }
 
@@ -38,7 +39,7 @@ namespace GlobalLoopGame.Asteroid
             PhysicsBody.LinearVelocity = velocity * speed;
 
             asteroidDrawable = AddDrawableRectFixture(placement.size, new(0f, 0f), Random.Shared.NextSingle() * 2 * MathF.PI, out var fixture);
-            asteroidDrawable.Color = Color.Firebrick;
+            asteroidDrawable.Color = Color.Gray;
 
             // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3, bullets - 4
             fixture.CollisionCategories = Category.Cat1;
