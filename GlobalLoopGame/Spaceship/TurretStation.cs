@@ -1,6 +1,7 @@
 ﻿using GlobalLoopGame.Asteroid;
 using GlobalLoopGame.Spaceship.Dragging;
 using Microsoft.Xna.Framework;
+using MonoEngine.Math;
 using MonoEngine.Physics;
 using MonoEngine.Scenes;
 using MonoEngine.Util;
@@ -18,13 +19,15 @@ namespace GlobalLoopGame.Spaceship
         private AsteroidManager asteroids;
         private HierarchyObject barrel;
 
+        private float spread = 30f * MathF.PI / 180f;
+
         public TurretStation(World world, AsteroidManager asteroids) : base(null)
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
             PhysicsBody.Tag = this;
             PhysicsBody.AngularDamping = 1f;
             PhysicsBody.LinearDamping = 1f;
-            var drawable = AddDrawableRectFixture(new Vector2(3f, 3f), Vector2.Zero, 0f, out var fixture, 1f);
+            var drawable = AddDrawableRectFixture(new Vector2(3f, 3f), Vector2.Zero, 0f, out var fixture, 0.25f);
 
             // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3
             fixture.CollisionCategories = Category.Cat3;
@@ -42,7 +45,7 @@ namespace GlobalLoopGame.Spaceship
             
             this.asteroids = asteroids;
 
-            shootingTimer = new AutoTimeMachine(TargetAndShoot, 0.5f);
+            shootingTimer = new AutoTimeMachine(TargetAndShoot, 0.00125f);
         }
 
         private void TargetAndShoot()
@@ -55,6 +58,7 @@ namespace GlobalLoopGame.Spaceship
                 dir.Normalize();
 
                 barrel.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
+                dir = Matrix2x2.Rotation(Random.Shared.NextSingle() * spread - spread / 2f) * dir;
                 CurrentScene.AddObject(new BulletObject(PhysicsBody.World).InitializeBullet(Transform.GlobalPosition, dir, 128f));
             }
         }

@@ -16,6 +16,7 @@ namespace GlobalLoopGame.Asteroid
         public float speed { get; private set; }
         public float health { get; private set; }
         public DrawableObject asteroidDrawable { get; private set; }
+        private bool isDead = false;
 
         private float maxHealth = 100f;
 
@@ -60,6 +61,17 @@ namespace GlobalLoopGame.Asteroid
 
         void Die()
         {
+            if (isDead)
+                return;
+            isDead = true;
+            var u = Transform.Up;
+            var r = Transform.Right;
+            CurrentScene.AddObject(new AsteroidParticleObject(PhysicsBody.World).InitializeParticle(this, u + r));
+            CurrentScene.AddObject(new AsteroidParticleObject(PhysicsBody.World).InitializeParticle(this, -u + r));
+            CurrentScene.AddObject(new AsteroidParticleObject(PhysicsBody.World).InitializeParticle(this, -u - r));
+            CurrentScene.AddObject(new AsteroidParticleObject(PhysicsBody.World).InitializeParticle(this, u - r));
+
+
             manager.RemoveAsteroid(this);
             PhysicsBody.World.RemoveAsync(PhysicsBody);
             CurrentScene.RemoveObject(this);

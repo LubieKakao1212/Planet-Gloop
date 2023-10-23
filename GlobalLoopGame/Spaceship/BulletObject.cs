@@ -21,6 +21,8 @@ namespace GlobalLoopGame.Spaceship
 
         private AutoTimeMachine despawner;
 
+        private bool destroyted = false;
+
         public BulletObject(World world) : base(null)
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
@@ -37,6 +39,9 @@ namespace GlobalLoopGame.Spaceship
 
             PhysicsBody.OnCollision += (sender, other, contact) =>
             {
+                if (destroyted)
+                    return false;
+                destroyted = true;
                 AsteroidObject otherAsteroid = other.Body.Tag as AsteroidObject;
                 otherAsteroid.ModifyHealth(-damage);
                 Despawn();
