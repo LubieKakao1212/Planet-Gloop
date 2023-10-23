@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using GlobalLoopGame.Asteroid;
+using Microsoft.Xna.Framework;
 using MonoEngine.Physics;
 using MonoEngine.Scenes;
 using MonoEngine.Util;
@@ -15,6 +16,8 @@ namespace GlobalLoopGame.Spaceship
     public class BulletObject : PhysicsBodyObject
     {
         public DrawableObject asteroidFixture;
+
+        public int damage = 10;
 
         private AutoTimeMachine despawner;
 
@@ -34,6 +37,8 @@ namespace GlobalLoopGame.Spaceship
 
             PhysicsBody.OnCollision += (sender, other, contact) =>
             {
+                AsteroidObject otherAsteroid = other.Body.Tag as AsteroidObject;
+                otherAsteroid.ModifyHealth(-damage);
                 Despawn();
                 return false;
             };

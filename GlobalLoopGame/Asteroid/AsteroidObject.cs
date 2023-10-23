@@ -61,6 +61,8 @@ namespace GlobalLoopGame.Asteroid
         void Die()
         {
             manager.RemoveAsteroid(this);
+            PhysicsBody.World.RemoveAsync(PhysicsBody);
+            CurrentScene.RemoveObject(this);
         }
     }
 }
