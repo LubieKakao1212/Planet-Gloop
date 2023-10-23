@@ -25,6 +25,8 @@ namespace GlobalLoopGame.Asteroid
         public event EventHandler<EventArgs> UpdateOrderChanged;
 
         public int difficulty = 1;
+        public int waveInterval = 5;
+        public GameComponentCollection components;
 
         public List<AsteroidObject> asteroids { get; private set; } = new List<AsteroidObject>();
 
@@ -35,13 +37,12 @@ namespace GlobalLoopGame.Asteroid
             _world = world;
             _hierarchy = hierarchy;
 
-            waveMachine = new AutoTimeMachine(() => SpawnWave(this.difficulty), 5f);
-            waveMachine.Forward(4f);
+            waveMachine = new AutoTimeMachine(() => SpawnWave(this.difficulty), this.waveInterval);
         }
 
         public void Initialize()
         {
-
+            waveMachine.Forward(waveInterval);
         }
 
         public void Update(GameTime gameTime)
@@ -71,7 +72,7 @@ namespace GlobalLoopGame.Asteroid
             }
         }
 
-        public void SpawnWave(int difficulty)
+        public async void SpawnWave(int difficulty)
         {
             List<AsteroidWave> sortedwaves = waves.Where(wave => wave.difficultyStage == difficulty).ToList();
 
@@ -80,32 +81,70 @@ namespace GlobalLoopGame.Asteroid
             if (rand < sortedwaves.Count)
             {
                 AsteroidWave wave = sortedwaves[rand];
-
-                foreach (AsteroidPlacement aPlacement in wave.asteroidPlacements)
+                
+                foreach (float loc in wave.warningPlacements)
                 {
-                    CreateAsteroid(aPlacement);
+                    AsteroidWarning warning = new AsteroidWarning(Color.OrangeRed, 100f);
+
+                    _hierarchy.AddObject(warning);
+
+                    warning.InitializeWarning(loc, waveInterval);
+
+                    components.Add(warning);
                 }
+
+                await SpawnAsteroidsInPlacement(wave);
+            }
+        }
+
+        async Task SpawnAsteroidsInPlacement(AsteroidWave wave)
+        {
+            await Task.Delay((1000 * waveInterval));
+
+            foreach (AsteroidPlacement aPlacement in wave.asteroidPlacements)
+            {
+                CreateAsteroid(aPlacement);
             }
         }
 
         public void ModifyDifficulty(int difficultyModification)
         {
             difficulty = MathHelper.Clamp(difficulty + difficultyModification, 0, 10);
+
+            waveInterval = MathHelper.Clamp(20 - difficulty, 6, 999);
         }
 
         public List<AsteroidWave> waves = new List<AsteroidWave>()
         {
             new AsteroidWave(new List<AsteroidPlacement>()
             {
-                new AsteroidPlacement(Vector2.One * 2f, 45, 45, 16f, 100)
+                new AsteroidPlacement(Vector2.One * 2f, 45f, 45f, 8f, 100)
             },
-            0),
+            0,
+            new List<float>()
+            {
+                45f
+            }),
             new AsteroidWave(new List<AsteroidPlacement>()
             {
-                new AsteroidPlacement(Vector2.One * 3f, 235, 237, 16f, 120),
-                new AsteroidPlacement(Vector2.One * 1.5f, 239, 241, 20f, 120)
+                new AsteroidPlacement(Vector2.One * 3f, 235f, 237f, 7f, 120),
+                new AsteroidPlacement(Vector2.One * 1.5f, 239f, 241f, 9f, 120)
             },
-            1)
+            1,
+            new List<float>()
+            {
+                235f
+            }),
+            new AsteroidWave(new List<AsteroidPlacement>()
+            {
+                new AsteroidPlacement(Vector2.One * 3f, 35, 77f, 7f, 120),
+                new AsteroidPlacement(Vector2.One * 1.5f, 39f, 67f, 9f, 120)
+            },
+            1,
+            new List<float>()
+            {
+                50f
+            })
         };
     }
 }

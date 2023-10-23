@@ -27,7 +27,6 @@ namespace GlobalLoopGame.Asteroid
             PhysicsBody.Tag = this;
         }
 
-        // public void InitializeAsteroid(AsteroidManager aManager, Vector2 startingPosition, Vector2 startingVelocity, float startingSpeed)
         public void InitializeAsteroid(AsteroidManager aManager, AsteroidPlacement placement)
         {
             manager = aManager;

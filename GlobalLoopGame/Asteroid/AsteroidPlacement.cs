@@ -17,10 +17,10 @@ namespace GlobalLoopGame.Asteroid
         public int maxHealth;
         public float degrees;
 
-        public AsteroidPlacement(Vector2 startingSize, int startingTheta, int endingTheta, float startingSpeed, int startingHealth)
+        public AsteroidPlacement(Vector2 startingSize, float startingTheta, float endingTheta, float startingSpeed, int startingHealth)
         {
             size = startingSize;
-            float randTheta = MathHelper.ToRadians(Random.Shared.Next(startingTheta, endingTheta));
+            float randTheta = MathHelper.ToRadians(MathHelper.Lerp(startingTheta, endingTheta, Random.Shared.NextSingle()));
             Vector2 thetaVector = new Vector2(MathF.Cos(randTheta), MathF.Sin(randTheta));
             location = (thetaVector * 65f) + size;
             velocity = -thetaVector;
