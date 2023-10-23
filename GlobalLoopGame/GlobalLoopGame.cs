@@ -1,4 +1,5 @@
 ﻿using GlobalLoopGame.Spaceship;
+using GlobalLoopGame.Updaters;
 using GlobalLoopGame.Asteroid;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -12,11 +13,15 @@ using MonoEngine.Rendering.Sprites.Atlas;
 using MonoEngine.Scenes;
 using MonoEngine.Scenes.Events;
 using nkast.Aether.Physics2D.Dynamics;
+using System;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace GlobalLoopGame
 {
     public class GlobalLoopGame : Game
     {
+        const float MapSize = 64f;
+
         private GraphicsDeviceManager _graphics;
 
         private RenderPipeline renderPipeline;
@@ -28,11 +33,10 @@ namespace GlobalLoopGame
         private Sprite NullSprite;
 
         private GameTime GameTime;
-
         private SpaceshipObject Spaceship;
         public AsteroidManager asteroidManager;
-
-        private float MapSize = 64f;
+        public SpaceshipObject Spaceship { get; private set; }
+        private SpaceshipObject Spaceship;
 
         public GlobalLoopGame()
         {
@@ -64,6 +68,8 @@ namespace GlobalLoopGame
             CreateScene();
 
             CreateBindings();
+
+            CreateUpdateables();
         }
 
         protected override void Update(GameTime gameTime)
@@ -116,12 +122,12 @@ namespace GlobalLoopGame
         private void CreateScene()
         {
             hierarchy = new Hierarchy();
-            camera = new Camera() { ViewSize = MapSize };
+            camera = new Camera() { ViewSize = MapSize + 4f };
             hierarchy.AddObject(camera);
 
             //Create initial scene here
             Spaceship = new SpaceshipObject(world, 0f);
-            Spaceship.ThrustMultiplier = 32f;
+            Spaceship.ThrustMultiplier = 64f;
             hierarchy.AddObject(Spaceship);
 
             asteroidManager = new AsteroidManager(world, hierarchy);
@@ -145,6 +151,11 @@ namespace GlobalLoopGame
             ThrusterBinding(decelerate, 2, 3);
             ThrusterBinding(rotLeft, 1, 2);
             ThrusterBinding(rotRight, 0, 3);
+        }
+
+        private void CreateUpdateables()
+        {
+            Components.Add(new BoundryFieldComponent(MapSize, 16f, Spaceship));
         }
 
         private void ThrusterBinding(IInput input, int one, int two)
