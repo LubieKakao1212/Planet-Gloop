@@ -150,7 +150,6 @@ namespace GlobalLoopGame
 
             var toggleDrag = inputManager.GetKey(Keys.Space);
 
-            ThrusterBinding(acceleraate, 0, 1);
             ThrusterBinding(accelerate, 0, 1);
             ThrusterBinding(decelerate, 2, 3);
             ThrusterBinding(rotLeft, 1, 2);
