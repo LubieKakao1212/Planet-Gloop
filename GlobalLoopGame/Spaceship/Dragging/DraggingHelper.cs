@@ -50,6 +50,10 @@ namespace GlobalLoopGame.Spaceship.Dragging
                     {
                         return true;
                     }
+                    if (fixture.Body.Tag is not IDraggable)
+                    {
+
+                    }
                     var dist = (fixture.Body.Position - obj.PhysicsBody.Position).Length();
                     if (dist < d)
                     {
