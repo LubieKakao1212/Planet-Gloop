@@ -12,8 +12,6 @@ using MonoEngine.Rendering.Sprites.Atlas;
 using MonoEngine.Scenes;
 using MonoEngine.Scenes.Events;
 using nkast.Aether.Physics2D.Dynamics;
-using System;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace GlobalLoopGame
 {
@@ -32,6 +30,7 @@ namespace GlobalLoopGame
         private GameTime GameTime;
 
         private SpaceshipObject Spaceship;
+        public AsteroidManager asteroidManager;
 
         private float MapSize = 64f;
 
@@ -125,9 +124,9 @@ namespace GlobalLoopGame
             Spaceship.ThrustMultiplier = 32f;
             hierarchy.AddObject(Spaceship);
 
-            AsteroidObject firstAsteroid = new AsteroidObject(world, 0f);
-            firstAsteroid.InitializeAsteroid(new Vector2(64f, 64f), new Vector2(-8f, -8f), 2f);
-            hierarchy.AddObject(firstAsteroid);
+            asteroidManager = new AsteroidManager(world, hierarchy);
+
+            asteroidManager.CreateAsteroid(new Vector2(64f, 64f), new Vector2(-8f, -8f), 2f);
         }
 
         private void CreateWorld()

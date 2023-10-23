@@ -30,7 +30,7 @@ namespace GlobalLoopGame.Asteroid
             PhysicsBody.LinearVelocity = startingVelocity * startingSpeed;
 
             var drawable = new DrawableObject(Color.Red, 1f);
-            drawable.Transform.LocalRotation = MathF.PI / 4;
+            drawable.Transform.LocalRotation = Random.Shared.NextSingle() * 2 * MathF.PI;
             drawable.Parent = this;
         }
     }
