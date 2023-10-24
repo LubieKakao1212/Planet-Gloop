@@ -29,8 +29,9 @@ namespace GlobalLoopGame.Spaceship
             PhysicsBody.Tag = this;
             PhysicsBody.Position = Vector2.One * 1024f;
 
-            var visuals = AddDrawableRectFixture(new(0.5f, 2f), new(0f, 0f), 0, out var fixture);
-            visuals.Color = Color.Red;
+            var visuals = AddDrawableRectFixture(GameSprites.LaserSize, new(0f, 0f), 0, out var fixture);
+            visuals.Color = Color.White;
+            visuals.Sprite = GameSprites.Laser;
 
             // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3, bullets - 4
             fixture.CollisionCategories = Category.Cat4;
@@ -64,7 +65,7 @@ namespace GlobalLoopGame.Spaceship
             Transform.LocalPosition = startingPosition;
             PhysicsBody.LinearVelocity = startingVelocity * startingSpeed;
 
-            Transform.LocalRotation = MathF.Atan2(startingVelocity.Y, startingVelocity.X) + MathF.PI / 2f;
+            Transform.LocalRotation = MathF.Atan2(startingVelocity.Y, startingVelocity.X) - MathF.PI / 2f;
             
             return this;
         }
