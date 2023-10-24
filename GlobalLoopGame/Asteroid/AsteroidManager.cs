@@ -10,11 +10,12 @@ using MonoEngine.Util;
 
 namespace GlobalLoopGame.Asteroid
 {
-    public class AsteroidManager // : IGameComponent, IUpdateable
+    public class AsteroidManager : IGameComponent, IUpdateable
     {
         private World _world;
 
         private Hierarchy _hierarchy;
+
 
         public int points {  get; private set; }
 
@@ -26,15 +27,18 @@ namespace GlobalLoopGame.Asteroid
         public event EventHandler<EventArgs> EnabledChanged;
 
         public event EventHandler<EventArgs> UpdateOrderChanged;
-        */
-
+        
         public int difficulty { get; private set; } = 0;
-        private int waveInterval = 5;
+        private float waveInterval = 5f;
+        private float waveWarningTime = 5f;
         private int waveNumber = 0;
+        private bool dirty = false;
+
+        private AsteroidWave selectedWave;
 
         public List<AsteroidObject> asteroids { get; private set; } = new List<AsteroidObject>();
 
-        //AutoTimeMachine waveMachine;
+        SequentialAutoTimeMachine waveMachine;
 
         public AsteroidManager(World world, Hierarchy hierarchy)
         {
@@ -42,9 +46,10 @@ namespace GlobalLoopGame.Asteroid
 
             _hierarchy = hierarchy;
 
-            SpawnWave(difficulty);
-
-            //waveMachine = new AutoTimeMachine(() => SpawnWave(this.difficulty), this.waveInterval);
+            waveMachine = new SequentialAutoTimeMachine(
+                (() => SelectWaveAndPlaceWarning(this.difficulty), this.waveInterval), 
+                (() => SpawnAsteroidsInPlacement(this.selectedWave), this.waveWarningTime)
+                );
         }
 
         /*
@@ -81,10 +86,8 @@ namespace GlobalLoopGame.Asteroid
             }
         }
 
-        public async void SpawnWave(int diff)
+        public void SelectWaveAndPlaceWarning(int diff)
         {
-            // await Task.Delay((1000 * waveInterval));
-
             waveNumber++; 
             
             List<AsteroidWave> sortedwaves = waves.Where(wave => wave.difficultyStage == diff).ToList();
@@ -93,9 +96,9 @@ namespace GlobalLoopGame.Asteroid
 
             if (sortedwaves.Count > 0 && rand < sortedwaves.Count)
             {
-                AsteroidWave wave = sortedwaves[rand];
+                selectedWave = sortedwaves[rand];
                 
-                foreach (float loc in wave.warningPlacements)
+                foreach (float loc in selectedWave.warningPlacements)
                 {
                     AsteroidWarning warning = new AsteroidWarning(_world);
 
@@ -103,37 +106,28 @@ namespace GlobalLoopGame.Asteroid
 
                     warning.InitializeWarning(loc, waveInterval);
                 }
-
-                await SpawnAsteroidsInPlacement(wave);
-
-                ModifyDifficulty(1);
-
-                await Task.Delay(2000);
-
-                SpawnWave(difficulty);
-
-                /*
-                if (waveNumber % 4 == 0)
-                {
-                    ModifyDifficulty(1);
-                }
-                */
             }
             // If it can't find a wave of asteroids with the given difficulty, it tries again with a lower difficulty
             else if (diff > 0)
             {
-                SpawnWave(diff - 1);
+                SelectWaveAndPlaceWarning(diff - 1);
             }
         }
 
-        async Task SpawnAsteroidsInPlacement(AsteroidWave wave)
+        private void SpawnAsteroidsInPlacement(AsteroidWave wave)
         {
-            await Task.Delay((1000 * waveInterval));
-
             foreach (AsteroidPlacement aPlacement in wave.asteroidPlacements)
             {
                 CreateAsteroid(aPlacement);
             }
+            
+            /*
+            if (waveNumber % 4 == 0)
+            {
+                ModifyDifficulty(1);
+            }
+            */
+            ModifyDifficulty(1);
         }
 
         public void ModifyDifficulty(int difficultyModification)
@@ -153,11 +147,38 @@ namespace GlobalLoopGame.Asteroid
             }
         }
 
+        public void ModifyInterval(float interval, float warningTime)
+        {
+            waveInterval = interval;
+            waveWarningTime = warningTime;
+        }
+
         public void Reset()
         {
             difficulty = 0;
             waveInterval = 20;
             waveNumber = 0;
+        }
+
+        public void Initialize()
+        {
+
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            if (dirty)
+            {
+                var a = waveMachine.Sequence[0];
+                a.interval = waveInterval;
+                waveMachine.Sequence[0] = a;
+
+                a = waveMachine.Sequence[1];
+                a.interval = waveWarningTime;
+                waveMachine.Sequence[1] = a;
+                dirty = false;
+            }
+            waveMachine.Forward(gameTime.ElapsedGameTime.TotalSeconds);
         }
 
         public List<AsteroidWave> waves = new List<AsteroidWave>()
