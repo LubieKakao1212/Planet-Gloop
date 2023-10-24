@@ -122,6 +122,7 @@ namespace GlobalLoopGame
                 renderPipeline.RenderScene(hierarchy, camera);
             }
             else {
+                GraphicsDevice.Clear(Color.DarkGoldenrod);
                 renderPipeline.RenderScene(menuHierarchy, camera);
             }
             
