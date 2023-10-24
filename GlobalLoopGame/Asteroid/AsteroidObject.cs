@@ -33,8 +33,7 @@ namespace GlobalLoopGame.Asteroid
 
             PhysicsBody.OnCollision += (sender, other, contact) =>
             {
-                if (isDead)
-                    return false;
+                if (isDead) return false;
 
                 PlanetObject planet = other.Body.Tag as PlanetObject;
 
@@ -43,9 +42,11 @@ namespace GlobalLoopGame.Asteroid
                     planet.ModifyHealth(-damage);
 
                     Die();
+
+                    return false;
                 }
 
-                return false;
+                return true;
             };
         }
 

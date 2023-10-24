@@ -204,7 +204,7 @@ namespace GlobalLoopGame
             Resettables.Add(Planet);
 
             Spaceship = new SpaceshipObject(world, 0f);
-            Spaceship.ThrustMultiplier = 96f;
+            Spaceship.ThrustMultiplier = 84f;
             hierarchyGame.AddObject(Spaceship);
             Resettables.Add(Spaceship);
     
@@ -216,13 +216,11 @@ namespace GlobalLoopGame
             turret00.SetStartingPosition(new Vector2(0f, 25f));
             Resettables.Add(turret00);
             hierarchyGame.AddObject(turret00);
-            //turret00.Transform.LocalPosition = new Vector2(0f, 25f);
 
             var turret10 = new TurretStation(world, asteroidManager);
             turret10.SetStartingPosition(new Vector2(22f, -22f));
             Resettables.Add(turret10);
             hierarchyGame.AddObject(turret10);
-            //turret10.Transform.LocalPosition = new Vector2(22f, -22f);
 
             var turret01 = new TurretStation(world, asteroidManager);
             turret01.SetStartingPosition(new Vector2(-23f, -23f));

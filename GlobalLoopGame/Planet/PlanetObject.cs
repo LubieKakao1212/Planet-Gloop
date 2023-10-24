@@ -12,7 +12,7 @@ namespace GlobalLoopGame.Planet
     {
         public GlobalLoopGame game;
         public int health {  get; private set; }
-        private int maxHealth = 5;
+        private int maxHealth = 1;
         public bool isDead { get; private set; }
 
         public PlanetObject(World world) : base(null)
@@ -56,6 +56,8 @@ namespace GlobalLoopGame.Planet
 
         public void Reset()
         {
+            isDead = false;
+
             health = maxHealth;
         }
 

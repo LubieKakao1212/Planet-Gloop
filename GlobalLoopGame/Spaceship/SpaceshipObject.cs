@@ -1,4 +1,6 @@
-﻿using GlobalLoopGame.Spaceship.Dragging;
+﻿using GlobalLoopGame.Asteroid;
+using GlobalLoopGame.Planet;
+using GlobalLoopGame.Spaceship.Dragging;
 using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using MonoEngine.Physics;
@@ -7,6 +9,7 @@ using nkast.Aether.Physics2D.Dynamics;
 using nkast.Aether.Physics2D.Dynamics.Joints;
 using System;
 using System.Collections.Generic;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace GlobalLoopGame.Spaceship
 {
@@ -39,6 +42,7 @@ namespace GlobalLoopGame.Spaceship
             PhysicsBody.Tag = this;
             PhysicsBody.AngularDamping = 2.5f;
             PhysicsBody.LinearDamping = 1.5f;
+
             Transform.GlobalPosition = new Vector2(0f, -48f);
             
             var shipBody = AddDrawableRectFixture(GameSprites.SpaceshipBodySize, new(0f, 0f), 0, out var fixture, 0.25f);
@@ -51,6 +55,18 @@ namespace GlobalLoopGame.Spaceship
             fixture.CollidesWith |= Category.Cat1;
             fixture.CollidesWith |= Category.Cat3;
             fixture.CollidesWith |= Category.Cat5;
+
+            PhysicsBody.OnCollision += (sender, other, contact) =>
+            {
+                AsteroidObject asteroid = other.Body.Tag as AsteroidObject;
+
+                if (asteroid != null)
+                {
+                    GameSounds.playerHurtSound.Play();
+                }
+
+                return true;
+            };
 
             shipBody.DrawOrder = drawOrder + 0.01f;
             var t = GameSprites.SpaceshipBodySize;

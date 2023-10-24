@@ -1,6 +1,7 @@
 ﻿using GlobalLoopGame.Asteroid;
 using GlobalLoopGame.Spaceship.Dragging;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using MonoEngine.Math;
 using MonoEngine.Physics;
 using MonoEngine.Scenes;
@@ -122,7 +123,11 @@ namespace GlobalLoopGame.Spaceship
         {
             canShoot = false;
 
-            GameSounds.pickupTurretSound.Play();
+            SoundEffectInstance pickupInstance = GameSounds.pickupTurretSound.CreateInstance();
+
+            pickupInstance.Volume = 0.5f;
+
+            pickupInstance.Play();
 
             GameSounds.magnetEmitter.Play();
         }
@@ -131,7 +136,11 @@ namespace GlobalLoopGame.Spaceship
         {
             canShoot = true;
 
-            GameSounds.dropTurretSound.Play();
+            SoundEffectInstance dropInstance = GameSounds.dropTurretSound.CreateInstance();
+
+            dropInstance.Volume = 0.5f;
+
+            dropInstance.Play();
 
             GameSounds.magnetEmitter.Pause();
         }

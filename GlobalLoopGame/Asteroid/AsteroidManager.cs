@@ -124,23 +124,19 @@ namespace GlobalLoopGame.Asteroid
                 CreateAsteroid(aPlacement);
             }
             
-            /*
             if (waveNumber % 4 == 0)
             {
                 ModifyDifficulty(1);
             }
-            */
 
-            ModifyDifficulty(1);
+            // ModifyDifficulty(1);
         }
 
         public void ModifyDifficulty(int difficultyModification)
         {
             difficulty = MathHelper.Clamp(difficulty + difficultyModification, 0, 10);
 
-            // waveInterval = MathHelper.Clamp(7 - difficulty, 1, 999);
-
-            SetInterval(MathHelper.Clamp(16 - difficulty, 6, 999), MathHelper.Clamp(11 - difficulty, 1, 999));
+            SetInterval(MathHelper.Clamp(20 - difficulty, 9, 999), MathHelper.Clamp(15 - difficulty, 1, 999));
         }
 
         public void ModifyPoints(int pointModification)
