@@ -80,11 +80,13 @@ namespace GlobalLoopGame
 
             world.Step(gameTime.ElapsedGameTime);
 
+            hierarchy.BeginUpdate();
             foreach (var updatable in hierarchy.OrderedInstancesOf<IUpdatable>())
             {
                 updatable.Update(gameTime);
             }
-            
+            hierarchy.EndUpdate();
+
             base.Update(gameTime);
         }
 

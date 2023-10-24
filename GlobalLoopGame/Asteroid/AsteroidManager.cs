@@ -25,18 +25,24 @@ namespace GlobalLoopGame.Asteroid
         public event EventHandler<EventArgs> UpdateOrderChanged;
 
         public int difficulty = 1;
-        public int waveInterval = 5;
+        public float waveInterval = 5f;
+        public float waveWarningTime = 5f;
+
+        private AsteroidWave selectedWave;
 
         public List<AsteroidObject> asteroids { get; private set; } = new List<AsteroidObject>();
 
-        AutoTimeMachine waveMachine;
+        SequentialAutoTimeMachine waveMachine;
 
         public AsteroidManager(World world, Hierarchy hierarchy)
         {
             _world = world;
             _hierarchy = hierarchy;
 
-            waveMachine = new AutoTimeMachine(() => SpawnWave(this.difficulty), this.waveInterval);
+            waveMachine = new SequentialAutoTimeMachine(
+                (() => SelectWaveAndPlaceWarning(this.difficulty), this.waveInterval), 
+                (() => SpawnAsteroidsInPlacement(this.selectedWave), this.waveWarningTime)
+                );
         }
 
         public void Initialize()
@@ -71,7 +77,7 @@ namespace GlobalLoopGame.Asteroid
             }
         }
 
-        public async void SpawnWave(int difficulty)
+        public void SelectWaveAndPlaceWarning(int difficulty)
         {
             List<AsteroidWave> sortedwaves = waves.Where(wave => wave.difficultyStage == difficulty).ToList();
 
@@ -79,9 +85,9 @@ namespace GlobalLoopGame.Asteroid
 
             if (rand < sortedwaves.Count)
             {
-                AsteroidWave wave = sortedwaves[rand];
+                selectedWave = sortedwaves[rand];
                 
-                foreach (float loc in wave.warningPlacements)
+                foreach (float loc in selectedWave.warningPlacements)
                 {
                     AsteroidWarning warning = new AsteroidWarning(_world);
 
@@ -89,15 +95,11 @@ namespace GlobalLoopGame.Asteroid
 
                     warning.InitializeWarning(loc, waveInterval);
                 }
-
-                await SpawnAsteroidsInPlacement(wave);
             }
         }
 
-        async Task SpawnAsteroidsInPlacement(AsteroidWave wave)
+        private void SpawnAsteroidsInPlacement(AsteroidWave wave)
         {
-            await Task.Delay((1000 * waveInterval));
-
             foreach (AsteroidPlacement aPlacement in wave.asteroidPlacements)
             {
                 CreateAsteroid(aPlacement);
