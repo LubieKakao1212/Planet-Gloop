@@ -38,6 +38,7 @@ namespace GlobalLoopGame.Planet
             fixture.CollidesWith = Category.None;
             fixture.CollidesWith |= Category.Cat1;
             fixture.CollidesWith |= Category.Cat2;
+            fixture.CollidesWith |= Category.Cat3;
         }
 
         public void ModifyHealth(int healthModification)
