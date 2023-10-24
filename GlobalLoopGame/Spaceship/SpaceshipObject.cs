@@ -17,8 +17,13 @@ namespace GlobalLoopGame.Spaceship
         public Joint CurrentDrag { get; set; }
 
         public PhysicsBodyObject ThisObject => this;
+        public float BoostLeft { get; private set; }
 
         private bool movable = false;
+
+        private float maxBoost = 2f;
+        private float boostThrust = 2f;
+        private float boostRegeneration = 1f;
 
         /// <summary>
         /// BottomLeft, BottomRight, TopLeft, TopRight
@@ -26,13 +31,14 @@ namespace GlobalLoopGame.Spaceship
         private List<HierarchyObject> thrusters = new List<HierarchyObject>();
 
         private List<int> thrust = new List<int>();
+        private List<bool> boost = new List<bool>();
 
         public SpaceshipObject(World world, float drawOrder) : base(null)
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
             PhysicsBody.Tag = this;
-            PhysicsBody.AngularDamping = 10f;
-            PhysicsBody.LinearDamping = 3.5f;
+            PhysicsBody.AngularDamping = 2.5f;
+            PhysicsBody.LinearDamping = 1.5f;
             Transform.GlobalPosition = new Vector2(0f, -48f);
             
             var shipBody = AddDrawableRectFixture(GameSprites.SpaceshipBodySize, new(0f, 0f), 0, out var fixture, 0.25f);
@@ -90,28 +96,78 @@ namespace GlobalLoopGame.Spaceship
             root.Parent = this;
             thrusters.Add(root);
             thrust.Add(0);
+            boost.Add(false);
             UpdateThruster(thrusters.Count - 1);
         }
 
         private void UpdateThruster(int idx)
         {
-            var s = thrusters[idx].Transform.LocalScale;
-            s.Y = thrust[idx];
-            thrusters[idx].Transform.LocalScale = s;
+            var scale = new Vector2(1f, thrust[idx]);
+            if (thrust[idx] > 0 && boost[idx] && BoostLeft > 0)
+            {
+                scale.Y += 1;
+                scale.X += 0.5f;
+            }
+            thrusters[idx].Transform.LocalScale = scale;
         }
 
         public override void Update(GameTime time)
         {
             if (movable)
             {
+                var boostAmount = 0;
                 for (int i = 0; i < thrusters.Count; i++)
                 {
-                    PhysicsBody.ApplyForce(thrusters[i].Transform.Up * ThrustMultiplier, thrusters[i].Transform.GlobalPosition);
+                    if (thrust[i] > 0)
+                    {
+                        var thrustMultiplier = ThrustMultiplier;
+                        if (boost[i])
+                        {
+                            boostAmount++;
+                            if (BoostLeft > 0)
+                            {
+                                thrustMultiplier *= boostThrust;
+                            }
+                            else
+                            { 
+                                UpdateThruster(i);
+                            }
+                        }
+
+                        PhysicsBody.ApplyForce(thrusters[i].Transform.Up * thrustMultiplier, thrusters[i].Transform.GlobalPosition);
+                    }
+                }
+                if (boostAmount > 0)
+                {
+                    BoostLeft -= boostAmount * (float)time.ElapsedGameTime.TotalSeconds;
+                    if (BoostLeft < 0f)
+                    {
+                        BoostLeft -= (float)time.ElapsedGameTime.TotalSeconds;
+                    }
+                    BoostLeft = MathF.Max(BoostLeft, -1);
+                }
+                else
+                {
+                    BoostLeft += boostRegeneration * (float)time.ElapsedGameTime.TotalSeconds;
+                    BoostLeft = MathF.Min(BoostLeft, maxBoost);
                 }
             }
 
             base.Update(time);
         }
+
+        public void BoostThruster(int idx)
+        {
+            boost[idx] = true;
+            UpdateThruster(idx);
+        }
+
+        public void DisableBoost(int idx)
+        {
+            boost[idx] = false;
+            UpdateThruster(idx);
+        }
+
         public void OnGameEnd()
         {
             PhysicsBody.LinearVelocity = Vector2.Zero;

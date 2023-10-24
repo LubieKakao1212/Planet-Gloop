@@ -16,6 +16,7 @@ using nkast.Aether.Physics2D.Dynamics;
 using System;
 using static System.Formats.Asn1.AsnWriter;
 using System.Collections.Generic;
+using GlobalLoopGame.UI;
 
 namespace GlobalLoopGame
 {
@@ -28,7 +29,8 @@ namespace GlobalLoopGame
 
         private RenderPipeline renderPipeline;
         private World world;
-        private Hierarchy hierarchy;
+        private Hierarchy hierarchyGame;
+        private Hierarchy hierarchyUI;
         private InputManager inputManager;
         private Camera camera;
         private SpriteAtlas<Color> spriteAtlas;
@@ -76,6 +78,8 @@ namespace GlobalLoopGame
             CreateBindings();
 
             CreateUpdateables();
+
+            CreateUI();
         }
 
         protected override void Update(GameTime gameTime)
@@ -89,12 +93,19 @@ namespace GlobalLoopGame
 
             world.Step(gameTime.ElapsedGameTime);
 
-            hierarchy.BeginUpdate();
-            foreach (var updatable in hierarchy.OrderedInstancesOf<IUpdatable>())
+            hierarchyGame.BeginUpdate();
+            foreach (var updatable in hierarchyGame.OrderedInstancesOf<IUpdatable>())
             {
                 updatable.Update(gameTime);
             }
-            hierarchy.EndUpdate();
+            hierarchyGame.EndUpdate();
+
+            hierarchyUI.BeginUpdate();
+            foreach (var updatable in hierarchyUI.OrderedInstancesOf<IUpdatable>())
+            {
+                updatable.Update(gameTime);
+            }
+            hierarchyUI.EndUpdate();
 
             base.Update(gameTime);
         }
@@ -103,7 +114,8 @@ namespace GlobalLoopGame
         {
             GraphicsDevice.Clear(Color.MidnightBlue);
 
-            renderPipeline.RenderScene(hierarchy, camera);
+            renderPipeline.RenderScene(hierarchyGame, camera);
+            renderPipeline.RenderScene(hierarchyUI, camera);
 
             base.Draw(gameTime);
         }
@@ -154,40 +166,40 @@ namespace GlobalLoopGame
 
         private void CreateScene()
         {
-            hierarchy = new Hierarchy();
+            hierarchyGame = new Hierarchy();
             camera = new Camera() { ViewSize = MapRadius + 4f };
-            hierarchy.AddObject(camera);
+            hierarchyGame.AddObject(camera);
 
             //Create initial scene here
             Planet = new PlanetObject(world);
-            hierarchy.AddObject(Planet);
+            hierarchyGame.AddObject(Planet);
             Planet.game = this;
             Resettables.Add(Planet);
 
             Spaceship = new SpaceshipObject(world, 0f);
             Spaceship.ThrustMultiplier = 64f;
-            hierarchy.AddObject(Spaceship);
+            hierarchyGame.AddObject(Spaceship);
             Resettables.Add(Spaceship);
     
-            asteroidManager = new AsteroidManager(world, hierarchy);
+            asteroidManager = new AsteroidManager(world, hierarchyGame);
             Resettables.Add(asteroidManager);
 
             var turret00 = new TurretStation(world, asteroidManager);
             turret00.SetStartingPosition(new Vector2(0f, 25f));
             Resettables.Add(turret00);
-            hierarchy.AddObject(turret00);
+            hierarchyGame.AddObject(turret00);
             //turret00.Transform.LocalPosition = new Vector2(0f, 25f);
 
             var turret10 = new TurretStation(world, asteroidManager);
             turret10.SetStartingPosition(new Vector2(22f, -22f));
             Resettables.Add(turret10);
-            hierarchy.AddObject(turret10);
+            hierarchyGame.AddObject(turret10);
             //turret10.Transform.LocalPosition = new Vector2(22f, -22f);
 
             var turret01 = new TurretStation(world, asteroidManager);
             turret01.SetStartingPosition(new Vector2(-23f, -23f));
             Resettables.Add(turret01);
-            hierarchy.AddObject(turret01);
+            hierarchyGame.AddObject(turret01);
 
             //turret01.Transform.LocalPosition = new Vector2(-23f, -23f);
 
@@ -197,6 +209,15 @@ namespace GlobalLoopGame
             //hierarchy.AddObject(turret11);
 
             StartGame();
+        }
+
+        private void CreateUI()
+        {
+            hierarchyUI = new Hierarchy();
+            var boost = new BoostBar(Spaceship);
+            boost.Transform.LocalPosition = new Vector2(-64f, 64f);
+
+            hierarchyUI.AddObject(boost);
         }
 
         private void CreateWorld()
@@ -220,6 +241,7 @@ namespace GlobalLoopGame
             ThrusterBinding(decelerate, 2, 3);
             ThrusterBinding(rotLeft, 1, 2);
             ThrusterBinding(rotRight, 0, 3);
+            ThrusterBoostBinding(boost, 0, 1);
 
             toggleDrag.Started += (_) =>
             {
@@ -250,6 +272,21 @@ namespace GlobalLoopGame
             {
                 Spaceship.DecrementThruster(one);
                 Spaceship.DecrementThruster(two);
+            };
+        }
+
+        private void ThrusterBoostBinding(IInput input, int one, int two)
+        {
+            input.Started += (input) =>
+            {
+                Spaceship.BoostThruster(one);
+                Spaceship.BoostThruster(two);
+            };
+
+            input.Canceled += (input) =>
+            {
+                Spaceship.DisableBoost(one);
+                Spaceship.DisableBoost(two);
             };
         }
 
