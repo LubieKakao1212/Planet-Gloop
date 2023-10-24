@@ -132,10 +132,13 @@ namespace GlobalLoopGame
             GameSprites.SpaceshipMagnet = spaceshipTextures[1];
             GameSprites.SpaceshipThrusterFrames = new Sprite[] { spaceshipTextures[2] };
 
+            var 
+
             //Load Sprites Here
 
             spriteAtlas.Compact();
             renderPipeline.SpriteAtlas = spriteAtlas.AtlasTextures;
+            
 
             GameSprites.Init();
         }

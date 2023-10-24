@@ -10,12 +10,18 @@ namespace GlobalLoopGame
         public static Sprite SpaceshipBody;
         public static Sprite[] SpaceshipThrusterFrames;
         public static Sprite SpaceshipMagnet;
+        public static Sprite TurretBase;
+        public static Sprite TurretCannon;
+        public static Sprite TurretCannonCompact;
+        public static Sprite TurretCannonCompact;
 
         public static Vector2 PlanetSize; 
         public static Vector2 SpaceshipBodySize;
         //We assume all frames have the same size
         public static Vector2 SpaceshipThrusterFrameSize; 
         public static Vector2 SpaceshipMagnetSize;
+        public static Vector2 TurretBaseSize;
+        public static Vector2[] TurretCannonSizes;
 
         public static Vector2 GetRelativeSize(Sprite referenceSprite, Vector2 referenceSize, Sprite targetSprite)
         {
@@ -32,6 +38,9 @@ namespace GlobalLoopGame
             //We assume all frames have the same size
             SpaceshipThrusterFrameSize = GetRelativeSize(Planet, PlanetSize, SpaceshipThrusterFrames[0]);
             SpaceshipMagnetSize = GetRelativeSize(Planet, PlanetSize, SpaceshipMagnet);
+
+            TurretBaseSize = GetRelativeSize(Planet, PlanetSize, TurretBase);
+            TurretCannonSize = GetRelativeSize(Planet, PlanetSize, TurretCannon);
         }
     }
 }
