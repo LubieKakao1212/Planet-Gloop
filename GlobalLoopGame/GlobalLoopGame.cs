@@ -231,7 +231,7 @@ namespace GlobalLoopGame
 
             var mBack = new DrawableObject(Color.White, 1f);
             mBack.Sprite = GameSprites.MenuBackground;
-            mBack.Transform.LocalScale = new Vector2(64f, 64f);
+            mBack.Transform.LocalScale = new Vector2(128f, 128f);
             menuHierarchy.AddObject(mBack);
         }
 
@@ -272,6 +272,7 @@ namespace GlobalLoopGame
             playGame.Started += (_) =>
             {
                 menuDisplayed = !menuDisplayed;
+                //asteroidManager.Enabled = !menuDisplayed;
                 Console.WriteLine("menuDisplayed is: " + menuDisplayed);
             };
         }
