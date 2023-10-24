@@ -61,6 +61,7 @@ namespace GlobalLoopGame.Asteroid
 
             asteroidDrawable = AddDrawableRectFixture(placement.size, new(0f, 0f), Random.Shared.NextSingle() * 2 * MathF.PI, out var fixture);
             asteroidDrawable.Color = Color.Gray;
+            asteroidDrawable.Sprite = GameSprites.NullSprite;
 
             // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3, bullets - 4
             fixture.CollisionCategories = Category.Cat1;
