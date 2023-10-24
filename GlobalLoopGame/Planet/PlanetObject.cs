@@ -13,8 +13,9 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace GlobalLoopGame.Planet
 {
-    public class PlanetObject : PhysicsBodyObject
+    public class PlanetObject : PhysicsBodyObject, IResettable
     {
+        public GlobalLoopGame game;
         public int health {  get; private set; }
         private int maxHealth = 5;
         public bool isDead { get; private set; }
@@ -43,10 +44,21 @@ namespace GlobalLoopGame.Planet
         {
             health = MathHelper.Clamp(health + healthModification, 0, maxHealth);
 
+            Console.WriteLine("health " + health.ToString());
+
             if (!isDead && health <= 0)
             {
                 Die();
             }
+        }
+        public void OnGameEnd()
+        {
+
+        }
+
+        public void Reset()
+        {
+            health = maxHealth;
         }
 
         public override void Update(GameTime time)
@@ -57,6 +69,11 @@ namespace GlobalLoopGame.Planet
         void Die()
         {
             isDead = true;
+
+            if (game != null)
+            {
+                game.EndGame();
+            }
         }
     }
 }
