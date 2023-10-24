@@ -37,6 +37,7 @@ namespace GlobalLoopGame
         private GameTime GameTime;
 
         private bool gameEnded = true;
+        private bool menuDisplayed = true;
 
         public AsteroidManager asteroidManager { get; private set; }
 
@@ -90,15 +91,25 @@ namespace GlobalLoopGame
 
             inputManager.UpdateState();
 
-            world.Step(gameTime.ElapsedGameTime);
-
-            hierarchy.BeginUpdate();
-            foreach (var updatable in hierarchy.OrderedInstancesOf<IUpdatable>())
+            if (!menuDisplayed)
             {
-                updatable.Update(gameTime);
+                world.Step(gameTime.ElapsedGameTime);
+                hierarchy.BeginUpdate();
+                foreach (var updatable in hierarchy.OrderedInstancesOf<IUpdatable>())
+                {
+                    updatable.Update(gameTime);
+                }
+                hierarchy.EndUpdate();
             }
-            hierarchy.EndUpdate();
-
+            else
+            {
+                menuHierarchy.BeginUpdate();
+                foreach (var updatable in menuHierarchy.OrderedInstancesOf<IUpdatable>())
+                {
+                    updatable.Update(gameTime);
+                }
+                menuHierarchy.EndUpdate();
+            }
             base.Update(gameTime);
         }
 
@@ -106,7 +117,14 @@ namespace GlobalLoopGame
         {
             GraphicsDevice.Clear(Color.MidnightBlue);
 
-            renderPipeline.RenderScene(hierarchy, camera);
+            if (!menuDisplayed)
+            {
+                renderPipeline.RenderScene(hierarchy, camera);
+            }
+            else {
+                renderPipeline.RenderScene(menuHierarchy, camera);
+            }
+            
 
             base.Draw(gameTime);
         }
@@ -212,6 +230,7 @@ namespace GlobalLoopGame
 
             var mBack = new DrawableObject(Color.White, 1f);
             menuHierarchy.AddObject(mBack);
+            hierarchy = menuHierarchy;
         }
 
         private void CreateWorld()
@@ -246,6 +265,12 @@ namespace GlobalLoopGame
             restart.Started += (_) =>
             {
                 Restart();
+            };
+
+            playGame.Started += (_) =>
+            {
+                menuDisplayed = !menuDisplayed;
+                Console.WriteLine("menuDisplayed is: " + menuDisplayed);
             };
         }
 
