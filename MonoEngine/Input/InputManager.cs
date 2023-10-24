@@ -131,6 +131,17 @@ namespace MonoEngine.Input
             return binding;
         }
 
+        public CompoundAxixBindingInput CreateSimpleKeysBinding(string name, params Keys[] bindings)
+        {
+            var binding = new CompoundAxixBindingInput(name);
+            foreach (var key in bindings)
+            { 
+                binding.Bind(new AxisBindingInput("").SetValues(0f, 1f).Bind(GetKey(key)));
+            }
+            
+            return binding;
+        }
+
         private void SetInput(BoolInput input, bool state)
         {
             var changed = input.UpdateState(state);
