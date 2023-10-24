@@ -41,10 +41,18 @@ namespace GlobalLoopGame.Spaceship
             {
                 if (destroyted)
                     return false;
+
                 destroyted = true;
+
                 AsteroidObject otherAsteroid = other.Body.Tag as AsteroidObject;
-                otherAsteroid.ModifyHealth(-damage);
+
+                if (otherAsteroid != null)
+                {
+                    otherAsteroid.ModifyHealth(-damage);
+                }
+
                 Despawn();
+
                 return false;
             };
 

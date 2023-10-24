@@ -2,6 +2,7 @@
 using GlobalLoopGame.Spaceship.Dragging;
 using GlobalLoopGame.Updaters;
 using GlobalLoopGame.Asteroid;
+using GlobalLoopGame.Planet;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -34,6 +35,7 @@ namespace GlobalLoopGame
         private GameTime GameTime;
         public AsteroidManager asteroidManager { get; private set; }
         public SpaceshipObject Spaceship { get; private set; }
+        public PlanetObject Player { get; private set; }
 
         public GlobalLoopGame()
         {
@@ -123,6 +125,9 @@ namespace GlobalLoopGame
             hierarchy.AddObject(camera);
 
             //Create initial scene here
+            Player = new PlanetObject(world);
+            hierarchy.AddObject(Player);
+
             Spaceship = new SpaceshipObject(world, 0f);
             Spaceship.ThrustMultiplier = 64f;
             hierarchy.AddObject(Spaceship);
@@ -130,16 +135,17 @@ namespace GlobalLoopGame
             asteroidManager = new AsteroidManager(world, hierarchy);
 
             var turret00 = new TurretStation(world, asteroidManager);
-            turret00.Transform.LocalPosition = new Vector2(-10f, -10f);
+            turret00.Transform.LocalPosition = new Vector2(-20f, -20f);
             
             var turret10 = new TurretStation(world, asteroidManager);
-            turret10.Transform.LocalPosition = new Vector2(10f, -10f);
+            turret10.Transform.LocalPosition = new Vector2(20f, -20f);
             
             var turret01 = new TurretStation(world, asteroidManager);
-            turret01.Transform.LocalPosition = new Vector2(-10f, 10f);
+            turret01.Transform.LocalPosition = new Vector2(-20f, 20f);
             
             var turret11 = new TurretStation(world, asteroidManager);
-            turret11.Transform.LocalPosition = new Vector2(10f, 10f);
+            turret11.Transform.LocalPosition = new Vector2(20f, 20f);
+
             hierarchy.AddObject(turret00);
             hierarchy.AddObject(turret10);
             hierarchy.AddObject(turret01);

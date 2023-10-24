@@ -31,6 +31,7 @@ namespace GlobalLoopGame.Spaceship
             PhysicsBody.Tag = this;
             PhysicsBody.AngularDamping = 10f;
             PhysicsBody.LinearDamping = 3.5f;
+            Transform.GlobalPosition = new Vector2(0f, -48f);
             
             var shipBody = AddDrawableRectFixture(new(3f, 1f), new(0f, 0f), 0, out var fixture);
 
@@ -39,6 +40,7 @@ namespace GlobalLoopGame.Spaceship
             fixture.CollidesWith = Category.None;
             fixture.CollidesWith |= Category.Cat1;
             fixture.CollidesWith |= Category.Cat3;
+            fixture.CollidesWith |= Category.Cat5;
 
             shipBody.DrawOrder = drawOrder + 0.01f;
             AddThruster(new(-1f, -0.5f), 0f);

@@ -1,3 +1,4 @@
+using GlobalLoopGame.Planet;
 using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using MonoEngine.Physics;
@@ -5,6 +6,7 @@ using MonoEngine.Scenes;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
 using System.Collections.Generic;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace GlobalLoopGame.Asteroid
 {
@@ -19,12 +21,30 @@ namespace GlobalLoopGame.Asteroid
         private bool isDead = false;
 
         private float maxHealth = 100f;
+        private int damage = 1;
 
         public AsteroidObject(World world, float drawOrder) : base(null)
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
             PhysicsBody.Position = new Vector2(9001f, 9001f);
             PhysicsBody.Tag = this;
+
+            PhysicsBody.OnCollision += (sender, other, contact) =>
+            {
+                if (isDead)
+                    return false;
+
+                PlanetObject player = other.Body.Tag as PlanetObject;
+
+                if (player != null)
+                {
+                    player.ModifyHealth(-damage);
+                }
+
+                Die();
+
+                return false;
+            };
         }
 
         public void InitializeAsteroid(AsteroidManager aManager, AsteroidPlacement placement)
@@ -46,6 +66,7 @@ namespace GlobalLoopGame.Asteroid
             fixture.CollidesWith = Category.None;
             fixture.CollidesWith |= Category.Cat2;
             fixture.CollidesWith |= Category.Cat4;
+            fixture.CollidesWith |= Category.Cat5;
         }
 
         public void ModifyHealth(float healthModification)
