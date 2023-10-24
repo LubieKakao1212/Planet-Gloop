@@ -177,6 +177,7 @@ namespace GlobalLoopGame.Spaceship
 
         public void Reset()
         {
+            BoostLeft = maxBoost;
             Transform.GlobalPosition = new Vector2(0f, -48f);
             movable = true;
         }
