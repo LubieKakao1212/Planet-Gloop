@@ -73,7 +73,7 @@ namespace GlobalLoopGame.Spaceship
 
                 barrel.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
                 dir = Matrix2x2.Rotation(Random.Shared.NextSingle() * spread - spread / 2f) * dir;
-                CurrentScene.AddObject(new BulletObject(PhysicsBody.World).InitializeBullet(Transform.GlobalPosition, dir, 128f));
+                CurrentScene.AddObject(new BulletObject(PhysicsBody.World).InitializeBullet(Transform.GlobalPosition + barrel.Transform.Up * 37f / GameSprites.pixelsPerUnit, dir, 128f));
             }
         }
 

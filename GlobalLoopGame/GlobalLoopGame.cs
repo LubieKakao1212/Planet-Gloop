@@ -143,6 +143,9 @@ namespace GlobalLoopGame
                 new Rectangle(32, 20, 26, 38)
                 );
 
+            GameSprites.Laser = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("LaserTex"),
+                new Rectangle(1, 0, 4, 27))[0];
+
             //Load Sprites Here
 
             spriteAtlas.Compact();
