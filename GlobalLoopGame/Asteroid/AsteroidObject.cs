@@ -16,6 +16,7 @@ namespace GlobalLoopGame.Asteroid
         public Vector2 velocity { get; private set; }
         public float speed { get; private set; }
         public float health { get; private set; }
+        public Vector2 size { get; private set; }
         public DrawableObject asteroidDrawable { get; private set; }
         private bool isDead = false;
 
@@ -53,6 +54,7 @@ namespace GlobalLoopGame.Asteroid
             speed = placement.speed;
             Transform.LocalPosition = placement.location;
             maxHealth = placement.maxHealth;
+            size = placement.size;
 
             health = maxHealth;
             PhysicsBody.LinearVelocity = velocity * speed;
@@ -74,7 +76,10 @@ namespace GlobalLoopGame.Asteroid
 
             if (health <= 0)
             {
-                manager.ModifyPoints(100);
+                // score modification is based on maxHealth and speed
+                int pointModification = (int)MathF.Round(maxHealth * (20f - speed)/2);
+
+                manager.ModifyPoints(pointModification);
 
                 Die();
             }
