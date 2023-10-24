@@ -151,12 +151,19 @@ namespace GlobalLoopGame.Spaceship
         {
             PhysicsBody.LinearVelocity = Vector2.Zero;
             PhysicsBody.AngularVelocity = 0f;
+
+            for (int i = 0; i < thrust.Count; i++)
+            {
+                thrust[i] = 0;
+            }
+
             movable = false;
         }
 
         public void Reset()
         {
             Transform.GlobalPosition = new Vector2(0f, -48f);
+            Transform.GlobalRotation = 0f;
             movable = true;
         }
     }

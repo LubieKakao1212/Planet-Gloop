@@ -129,10 +129,12 @@ namespace GlobalLoopGame
 
             GameSounds.thrusterEmitter = GameSounds.thrusterSound.CreateInstance();
             GameSounds.thrusterEmitter.IsLooped = true;
+            GameSounds.thrusterEmitter.Volume = 0.1f;
             GameSounds.thrusterEmitter.Pause();
 
             GameSounds.sideThrusterEmitter = GameSounds.sideThrustSound.CreateInstance();
             GameSounds.sideThrusterEmitter.IsLooped = true;
+            GameSounds.sideThrusterEmitter.Volume = 0.1f;
             GameSounds.sideThrusterEmitter.Pause();
         }
 
@@ -187,7 +189,7 @@ namespace GlobalLoopGame
             Resettables.Add(Planet);
 
             Spaceship = new SpaceshipObject(world, 0f);
-            Spaceship.ThrustMultiplier = 84f;
+            Spaceship.ThrustMultiplier = 96f;
             hierarchy.AddObject(Spaceship);
             Resettables.Add(Spaceship);
     
@@ -199,25 +201,16 @@ namespace GlobalLoopGame
             turret00.SetStartingPosition(new Vector2(0f, 25f));
             Resettables.Add(turret00);
             hierarchy.AddObject(turret00);
-            //turret00.Transform.LocalPosition = new Vector2(0f, 25f);
 
             var turret10 = new TurretStation(world, asteroidManager);
             turret10.SetStartingPosition(new Vector2(22f, -22f));
             Resettables.Add(turret10);
             hierarchy.AddObject(turret10);
-            //turret10.Transform.LocalPosition = new Vector2(22f, -22f);
 
             var turret01 = new TurretStation(world, asteroidManager);
             turret01.SetStartingPosition(new Vector2(-23f, -23f));
             Resettables.Add(turret01);
             hierarchy.AddObject(turret01);
-
-            //turret01.Transform.LocalPosition = new Vector2(-23f, -23f);
-
-            //var turret11 = new TurretStation(world, asteroidManager);
-            //turret11.Transform.LocalPosition = new Vector2(20f, 20f);
-
-            //hierarchy.AddObject(turret11);
 
             StartGame();
         }
@@ -233,6 +226,7 @@ namespace GlobalLoopGame
             var decelerate = inputManager.CreateSimpleKeysBinding("decelerate", new Keys[2] { Keys.S, Keys.Down });
             var rotLeft = inputManager.CreateSimpleKeysBinding("rotLeft", new Keys[2] { Keys.A, Keys.Left });
             var rotRight = inputManager.CreateSimpleKeysBinding("rotRight", new Keys[2] { Keys.D, Keys.Right });
+            
             var toggleDrag = inputManager.CreateSimpleKeysBinding("toggleDrag", new Keys[1] { Keys.Space });
             var restart = inputManager.CreateSimpleKeysBinding("restart", new Keys[1] { Keys.R });
             var boost = inputManager.CreateSimpleKeysBinding("boost", new Keys[2] { Keys.LeftShift, Keys.RightShift });
