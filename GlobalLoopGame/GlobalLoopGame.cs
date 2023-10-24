@@ -176,10 +176,10 @@ namespace GlobalLoopGame
             turret00.Transform.LocalPosition = new Vector2(0f, 25f);
             
             var turret10 = new TurretStation(world, asteroidManager);
-            turret10.Transform.LocalPosition = new Vector2(18f, -25f);
+            turret10.Transform.LocalPosition = new Vector2(22f, -22f);
             
             var turret01 = new TurretStation(world, asteroidManager);
-            turret01.Transform.LocalPosition = new Vector2(-18f, -25f);
+            turret01.Transform.LocalPosition = new Vector2(-23f, -23f);
             
             //var turret11 = new TurretStation(world, asteroidManager);
             //turret11.Transform.LocalPosition = new Vector2(20f, 20f);

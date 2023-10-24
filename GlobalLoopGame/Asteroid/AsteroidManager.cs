@@ -88,6 +88,8 @@ namespace GlobalLoopGame.Asteroid
         {
             if (!active) return;
 
+            Console.WriteLine("selecting wave and placing warning");
+
             waveNumber++; 
             
             List<AsteroidWave> sortedwaves = waves.Where(wave => wave.difficultyStage == diff).ToList();
@@ -104,7 +106,7 @@ namespace GlobalLoopGame.Asteroid
 
                     _hierarchy.AddObject(warning);
 
-                    warning.InitializeWarning(loc, waveInterval);
+                    warning.InitializeWarning(loc, waveWarningTime);
                 }
             }
             // If it can't find a wave of asteroids with the given difficulty, it tries again with a lower difficulty
@@ -118,6 +120,8 @@ namespace GlobalLoopGame.Asteroid
         {
             if (wave is null || !active)
                 return;
+
+            Console.WriteLine("spawning asteroids in placement");
 
             foreach (AsteroidPlacement aPlacement in wave.asteroidPlacements)
             {
@@ -138,7 +142,9 @@ namespace GlobalLoopGame.Asteroid
         {
             difficulty = MathHelper.Clamp(difficulty + difficultyModification, 0, 10);
 
-            waveInterval = MathHelper.Clamp(7 - difficulty, 1, 999);
+            // waveInterval = MathHelper.Clamp(7 - difficulty, 1, 999);
+
+            SetInterval(MathHelper.Clamp(20 - difficulty, 6, 999), MathHelper.Clamp(15 - difficulty, 1, 999));
         }
 
         public void ModifyPoints(int pointModification)
@@ -153,10 +159,13 @@ namespace GlobalLoopGame.Asteroid
             Console.WriteLine("points " + points.ToString());
         }
 
-        public void ModifyInterval(float interval, float warningTime)
+        public void SetInterval(float interval, float warningTime)
         {
             waveInterval = interval;
+
             waveWarningTime = warningTime;
+
+            dirty = true;
         }
 
         public void Initialize()
@@ -201,13 +210,13 @@ namespace GlobalLoopGame.Asteroid
             active = true; 
             
             difficulty = 0;
-            waveInterval = 20;
+            waveInterval = 7;
             waveNumber = 0;
             points = 0;
 
             waveMachine = new SequentialAutoTimeMachine(
-                (() => SelectWaveAndPlaceWarning(this.difficulty), this.waveInterval),
-                (() => SpawnAsteroidsInPlacement(this.selectedWave), this.waveWarningTime)
+                (() => SelectWaveAndPlaceWarning(this.difficulty), this.waveWarningTime),
+                (() => SpawnAsteroidsInPlacement(this.selectedWave), this.waveInterval)
                 );
         }
 
@@ -215,7 +224,7 @@ namespace GlobalLoopGame.Asteroid
         {
             new AsteroidWave(new List<AsteroidPlacement>()
             {
-                new AsteroidPlacement(Vector2.One * 2f, 45f, 45f, 8f, 100)
+                new AsteroidPlacement(Vector2.One * 2f, 45f, 45f, 8f, 75)
             },
             0,
             new List<float>()
@@ -224,7 +233,7 @@ namespace GlobalLoopGame.Asteroid
             }),
             new AsteroidWave(new List<AsteroidPlacement>()
             {
-                new AsteroidPlacement(Vector2.One * 2f, 0f, 0f, 8f, 100)
+                new AsteroidPlacement(Vector2.One * 2f, 0f, 0f, 8f, 75)
             },
             0,
             new List<float>()
@@ -233,7 +242,7 @@ namespace GlobalLoopGame.Asteroid
             }),
             new AsteroidWave(new List<AsteroidPlacement>()
             {
-                new AsteroidPlacement(Vector2.One * 2f, 180f, 180f, 8f, 100)
+                new AsteroidPlacement(Vector2.One * 2f, 180f, 180f, 8f, 75)
             },
             0,
             new List<float>()
@@ -242,7 +251,7 @@ namespace GlobalLoopGame.Asteroid
             }),
             new AsteroidWave(new List<AsteroidPlacement>()
             {
-                new AsteroidPlacement(Vector2.One * 2f, 270, 270f, 8f, 100)
+                new AsteroidPlacement(Vector2.One * 2f, 270, 270f, 8f, 75)
             },
             0,
             new List<float>()
@@ -251,8 +260,8 @@ namespace GlobalLoopGame.Asteroid
             }),
             new AsteroidWave(new List<AsteroidPlacement>()
             {
-                new AsteroidPlacement(Vector2.One * 3f, 235f, 237f, 7f, 100),
-                new AsteroidPlacement(Vector2.One * 2f, 239f, 241f, 9f, 100)
+                new AsteroidPlacement(Vector2.One * 3f, 235f, 237f, 7f, 85),
+                new AsteroidPlacement(Vector2.One * 2f, 239f, 241f, 9f, 85)
             },
             1,
             new List<float>()
@@ -261,8 +270,8 @@ namespace GlobalLoopGame.Asteroid
             }),
             new AsteroidWave(new List<AsteroidPlacement>()
             {
-                new AsteroidPlacement(Vector2.One * 4f, 35, 77f, 7f, 100),
-                new AsteroidPlacement(Vector2.One * 2f, 39f, 67f, 9f, 100)
+                new AsteroidPlacement(Vector2.One * 4f, 35, 77f, 7f, 85),
+                new AsteroidPlacement(Vector2.One * 2f, 39f, 67f, 9f, 85)
             },
             1,
             new List<float>()
@@ -271,8 +280,8 @@ namespace GlobalLoopGame.Asteroid
             }),
             new AsteroidWave(new List<AsteroidPlacement>()
             {
-                new AsteroidPlacement(Vector2.One * 2f, 10f, 30f, 8f, 100),
-                new AsteroidPlacement(Vector2.One * 2f, 0f, 20f, 8f, 100)
+                new AsteroidPlacement(Vector2.One * 2f, 10f, 30f, 8f, 85),
+                new AsteroidPlacement(Vector2.One * 2f, 0f, 20f, 8f, 85)
             },
             1,
             new List<float>()
