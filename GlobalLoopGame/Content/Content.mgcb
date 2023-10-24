@@ -65,7 +65,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:TurretMount1Cannonstyle.png;Cannon.png
+/build:TurretMount1Cannonstyle.png;CannonTex.png
 
 #begin TurretPlatform1.png
 /importer:TextureImporter
@@ -77,5 +77,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:TurretPlatform1.png;TurretPlatform.png
+/build:TurretPlatform1.png;TurretPlatformTex.png
 

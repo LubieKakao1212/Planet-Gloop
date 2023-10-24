@@ -27,7 +27,8 @@ namespace GlobalLoopGame.Spaceship
             PhysicsBody.Tag = this;
             PhysicsBody.AngularDamping = 1f;
             PhysicsBody.LinearDamping = 1f;
-            var drawable = AddDrawableRectFixture(new Vector2(3f, 3f), Vector2.Zero, 0f, out var fixture, 0.25f);
+            var drawable = AddDrawableRectFixture(GameSprites.TurretBaseSize, Vector2.Zero, 0f, out var fixture, 0.125f);
+            drawable.Sprite = GameSprites.TurretBase;
 
             // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3
             fixture.CollisionCategories = Category.Cat3;
@@ -35,9 +36,13 @@ namespace GlobalLoopGame.Spaceship
             fixture.CollidesWith |= Category.Cat2;
             fixture.CollidesWith |= Category.Cat3;
 
-            var barrel = new DrawableObject(Color.Gray, 0.1f);
-            barrel.Transform.LocalPosition = new Vector2(0f, 1f);
-            barrel.Transform.LocalScale = new Vector2(1f, 4f);
+            var barrel = new DrawableObject(Color.White, 0.1f);
+            barrel.Sprite = GameSprites.TurretCannon[0];
+
+            var ratio = 17f / GameSprites.pixelsPerUnit; 
+            barrel.Transform.LocalPosition = new Vector2(0f, ratio);
+            barrel.Transform.LocalScale = GameSprites.TurretCannonSizes[0];
+
             var barrelRoot = new HierarchyObject();
             barrel.Parent = barrelRoot;
             barrelRoot.Parent = this;
