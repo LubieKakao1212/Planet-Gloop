@@ -245,7 +245,7 @@ namespace GlobalLoopGame
 
             toggleDrag.Started += (_) =>
             {
-                Spaceship.TryInitDragging(5f, 10f);
+                Spaceship.TryInitDragging(10f, 15f);
             };
 
             restart.Started += (_) =>
