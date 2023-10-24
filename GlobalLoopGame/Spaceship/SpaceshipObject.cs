@@ -33,7 +33,9 @@ namespace GlobalLoopGame.Spaceship
             PhysicsBody.LinearDamping = 3.5f;
             Transform.GlobalPosition = new Vector2(0f, -48f);
             
-            var shipBody = AddDrawableRectFixture(new(3f, 1f), new(0f, 0f), 0, out var fixture);
+            var shipBody = AddDrawableRectFixture(GameSprites.SpaceshipBodySize, new(0f, 0f), 0, out var fixture, 0.25f);
+            shipBody.Sprite = GameSprites.SpaceshipBody;
+            shipBody.Color = Color.White;
 
             // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3
             fixture.CollisionCategories = Category.Cat2;
@@ -43,10 +45,12 @@ namespace GlobalLoopGame.Spaceship
             fixture.CollidesWith |= Category.Cat5;
 
             shipBody.DrawOrder = drawOrder + 0.01f;
-            AddThruster(new(-1f, -0.5f), 0f);
-            AddThruster(new(1f, -0.5f), 0f);
-            AddThruster(new(-1f, 0.5f), MathF.PI);
-            AddThruster(new(1f, 0.5f), MathF.PI);
+            var t = GameSprites.SpaceshipBodySize;
+            t.X *= 12f / 32f;
+            AddThruster(new(-t.X, -t.Y / 2f), 0f);
+            AddThruster(new(t.X, -t.Y / 2f), 0f);
+            AddThruster(new(-t.X, t.Y / 2f), MathF.PI);
+            AddThruster(new(t.X, t.Y / 2f), MathF.PI);
         }
         
         public void IncrementThruster(int idx)
@@ -64,7 +68,11 @@ namespace GlobalLoopGame.Spaceship
         public void AddThruster(Vector2 pos, float rotation)
         {
             var drawable = new DrawableObject(Color.Cyan, 0f);
-            drawable.Transform.LocalPosition = -Vector2.UnitY / 2f;
+            //No animation for now
+            drawable.Sprite = GameSprites.SpaceshipThrusterFrames[0];
+            var size = GameSprites.SpaceshipThrusterFrameSize;
+            drawable.Transform.LocalScale = size;
+            drawable.Transform.LocalPosition = -Vector2.UnitY * size.Y / 2f;
             var root = new HierarchyObject();
             drawable.Parent = root;
             root.Transform.LocalPosition = pos;

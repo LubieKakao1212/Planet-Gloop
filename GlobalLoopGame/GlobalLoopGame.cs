@@ -31,7 +31,6 @@ namespace GlobalLoopGame
         private InputManager inputManager;
         private Camera camera;
         private SpriteAtlas<Color> spriteAtlas;
-        private Sprite NullSprite;
 
         private GameTime GameTime;
 
@@ -43,8 +42,8 @@ namespace GlobalLoopGame
         public GlobalLoopGame()
         {
             _graphics = new GraphicsDeviceManager(this);
-            _graphics.PreferredBackBufferWidth = 800;
-            _graphics.PreferredBackBufferHeight = 800;
+            _graphics.PreferredBackBufferWidth = 1000;
+            _graphics.PreferredBackBufferHeight = 1000;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -115,12 +114,25 @@ namespace GlobalLoopGame
 
             var white = new Texture2D(GraphicsDevice, 1, 1);
             white.SetData(new Color[] { Color.White });
-            NullSprite = spriteAtlas.AddTextureRects(white, new Rectangle(0, 0, 1, 1))[0];
+            GameSprites.NullSprite = spriteAtlas.AddTextureRects(white, new Rectangle(0, 0, 1, 1))[0];
+            GameSprites.Planet = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PlanetTex"), new Rectangle(0, 0, 128, 128))[0];
+
+            var spaceshipTextures = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SpaceshipTex"),
+                new Rectangle(0, 6, 32, 20),
+                new Rectangle(36, 17, 12, 18),
+                new Rectangle(35, 0, 6, 6)
+                );
+
+            GameSprites.SpaceshipBody = spaceshipTextures[0];
+            GameSprites.SpaceshipMagnet = spaceshipTextures[1];
+            GameSprites.SpaceshipThrusterFrames = new Sprite[] { spaceshipTextures[2] };
 
             //Load Sprites Here
 
             spriteAtlas.Compact();
             renderPipeline.SpriteAtlas = spriteAtlas.AtlasTextures;
+
+            GameSprites.Init();
         }
 
         private void CreateScene()
