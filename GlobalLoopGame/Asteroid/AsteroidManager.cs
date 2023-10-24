@@ -16,10 +16,7 @@ namespace GlobalLoopGame.Asteroid
 
         private Hierarchy _hierarchy;
 
-
         public int points {  get; private set; }
-
-        /*
         public bool Enabled => true;
 
         public int UpdateOrder { get; }
@@ -127,6 +124,7 @@ namespace GlobalLoopGame.Asteroid
                 ModifyDifficulty(1);
             }
             */
+
             ModifyDifficulty(1);
         }
 
@@ -145,6 +143,8 @@ namespace GlobalLoopGame.Asteroid
             {
                 points = 0;
             }
+
+            Console.WriteLine(points.ToString());
         }
 
         public void ModifyInterval(float interval, float warningTime)
