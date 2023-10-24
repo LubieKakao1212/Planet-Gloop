@@ -30,6 +30,7 @@ namespace GlobalLoopGame.Asteroid
             var visuals = AddDrawableRectFixture(new(2f, 6f), new(0f, 0f), 0, out var fixture);
             visuals.Color = Color.OrangeRed;
             visuals.DrawOrder = 999;
+            visuals.Sprite = GameSprites.NullSprite;
 
             fixture.CollisionCategories = Category.None;
             fixture.CollidesWith = Category.None;
