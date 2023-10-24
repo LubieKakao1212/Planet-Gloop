@@ -29,6 +29,7 @@ namespace GlobalLoopGame
         private RenderPipeline renderPipeline;
         private World world;
         private Hierarchy hierarchy;
+        private Hierarchy menuHierarchy;
         private InputManager inputManager;
         private Camera camera;
         private SpriteAtlas<Color> spriteAtlas;
@@ -72,6 +73,8 @@ namespace GlobalLoopGame
             CreateWorld();
 
             CreateScene();
+
+            CreateMenuScene();
 
             CreateBindings();
 
@@ -144,6 +147,9 @@ namespace GlobalLoopGame
             GameSprites.Laser = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("LaserTex"),
                 new Rectangle(1, 0, 4, 27))[0];
 
+            var menuBackground = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("MainMenu512x512"), new Rectangle(0, 0, 512, 512))[0];
+
+
             //Load Sprites Here
             spriteAtlas.Compact();
             renderPipeline.SpriteAtlas = spriteAtlas.AtlasTextures;
@@ -155,6 +161,7 @@ namespace GlobalLoopGame
         private void CreateScene()
         {
             hierarchy = new Hierarchy();
+            
             camera = new Camera() { ViewSize = MapRadius + 4f };
             hierarchy.AddObject(camera);
 
@@ -199,6 +206,14 @@ namespace GlobalLoopGame
             StartGame();
         }
 
+        private void CreateMenuScene()
+        {
+            menuHierarchy = new Hierarchy();
+
+            var mBack = new DrawableObject(Color.White, 1f);
+            menuHierarchy.AddObject(mBack);
+        }
+
         private void CreateWorld()
         {
             world = new World(new Vector2(0f, 0f));
@@ -215,6 +230,8 @@ namespace GlobalLoopGame
             var boost = inputManager.CreateSimpleKeysBinding("boost", new Keys[2] { Keys.LeftShift, Keys.RightShift });
             var confirm = inputManager.CreateSimpleKeysBinding("confirm", new Keys[1] { Keys.Enter });
             var cancel = inputManager.CreateSimpleKeysBinding("cancel", new Keys[1] { Keys.Escape });
+
+            var playGame = inputManager.CreateSimpleKeysBinding("playGame", new Keys[1] { Keys.P });
 
             ThrusterBinding(accelerate, 0, 1);
             ThrusterBinding(decelerate, 2, 3);
