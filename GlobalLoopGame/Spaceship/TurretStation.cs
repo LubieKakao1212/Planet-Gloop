@@ -39,6 +39,7 @@ namespace GlobalLoopGame.Spaceship
             fixture.CollidesWith = Category.None;
             fixture.CollidesWith |= Category.Cat2;
             fixture.CollidesWith |= Category.Cat3;
+            fixture.CollidesWith |= Category.Cat5;
 
             var barrel = new DrawableObject(Color.White, 0.1f);
             barrel.Sprite = GameSprites.TurretCannon[0];
