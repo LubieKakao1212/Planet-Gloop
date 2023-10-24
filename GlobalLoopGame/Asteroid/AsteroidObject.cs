@@ -61,6 +61,7 @@ namespace GlobalLoopGame.Asteroid
 
             health = maxHealth;
             PhysicsBody.LinearVelocity = velocity * speed;
+            PhysicsBody.AngularVelocity = Random.Shared.NextSingle();
 
             asteroidDrawable = AddDrawableRectFixture(placement.size, new(0f, 0f), Random.Shared.NextSingle() * 2 * MathF.PI, out var fixture);
             asteroidDrawable.Color = Color.Gray;

@@ -74,7 +74,7 @@ namespace GlobalLoopGame.Asteroid
         {
             if (!active) return;
 
-            Console.WriteLine("selecting wave and placing warning");
+            // Console.WriteLine("selecting wave and placing warning");
 
             waveNumber++; 
             
@@ -117,7 +117,7 @@ namespace GlobalLoopGame.Asteroid
             if (wave is null || !active)
                 return;
 
-            Console.WriteLine("spawning asteroids in placement");
+            // Console.WriteLine("spawning asteroids in placement");
 
             foreach (AsteroidPlacement aPlacement in wave.asteroidPlacements)
             {
