@@ -20,7 +20,8 @@ namespace GlobalLoopGame
 {
     public class GlobalLoopGame : Game
     {
-        const float MapSize = 64f;
+        const float MapRadius = 64f;
+        const float PlanetRadius = 12f;
 
         private GraphicsDeviceManager _graphics;
 
@@ -125,7 +126,7 @@ namespace GlobalLoopGame
         private void CreateScene()
         {
             hierarchy = new Hierarchy();
-            camera = new Camera() { ViewSize = MapSize + 4f };
+            camera = new Camera() { ViewSize = MapRadius + 4f };
             hierarchy.AddObject(camera);
 
             //Create initial scene here
@@ -183,7 +184,7 @@ namespace GlobalLoopGame
 
         private void CreateUpdateables()
         {
-            Components.Add(new BoundryFieldComponent(MapSize, 16f, Spaceship));
+            Components.Add(new BoundryFieldComponent(MapRadius, 16f, PlanetRadius + 6f, 32f, Spaceship));
             Components.Add(asteroidManager);
         }
 

@@ -19,14 +19,18 @@ namespace GlobalLoopGame.Updaters
         public event EventHandler<EventArgs> UpdateOrderChanged;
 
         private PhysicsBodyObject[] affectedObjects;
-        private float force;
-        private float radius;
+        private float outerForce;
+        private float innerForce;
+        private float outerRadius;
+        private float innerRadius;
 
-        public BoundryFieldComponent(float radius, float force, params PhysicsBodyObject[] affectedObjects)
+        public BoundryFieldComponent(float outerRadius, float outerForce, float innerRadius, float innerForce, params PhysicsBodyObject[] affectedObjects)
         {
-            this.force = force;
+            this.outerForce = outerForce;
+            this.innerForce = innerForce;
             this.affectedObjects = affectedObjects;
-            this.radius = radius;
+            this.outerRadius = outerRadius;
+            this.innerRadius = innerRadius;
         }
 
         public void Update(GameTime gameTime)
@@ -34,13 +38,15 @@ namespace GlobalLoopGame.Updaters
             foreach (var obj in affectedObjects)
             {
                 var pos = obj.Transform.GlobalPosition;
-                var force = pos.Length() - radius;
-                force = MathF.Max(force, 0) * this.force;
-                if (force > 0)
+                var distance = pos.Length();
+                var forceO = (distance - outerRadius) * outerForce;
+                var forceI = (distance - innerRadius) * innerForce;
+                var force = MathF.Min(MathF.Max(-forceI, 0), -forceO);
+                if (distance > 0.001f && force != 0)
                 {
                     pos.Normalize();
 
-                    obj.PhysicsBody.ApplyForce(-pos * force);
+                    obj.PhysicsBody.ApplyForce(pos * force);
                 }
             }
         }
