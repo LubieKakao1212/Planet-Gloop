@@ -165,7 +165,7 @@ namespace GlobalLoopGame
             GameSprites.Laser = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("LaserTex"),
                 new Rectangle(1, 0, 4, 27))[0];
 
-            var menuBackground = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("MainMenu512x512"), new Rectangle(0, 0, 512, 512))[0];
+            GameSprites.MenuBackground = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("MainMenu512x512"), new Rectangle(0, 0, 512, 512))[0];
 
 
             //Load Sprites Here
@@ -229,8 +229,9 @@ namespace GlobalLoopGame
             menuHierarchy = new Hierarchy();
 
             var mBack = new DrawableObject(Color.White, 1f);
+            mBack.Sprite = GameSprites.MenuBackground;
+            mBack.Transform.LocalScale = new Vector2(64f, 64f);
             menuHierarchy.AddObject(mBack);
-            hierarchy = menuHierarchy;
         }
 
         private void CreateWorld()
