@@ -133,11 +133,9 @@ namespace GlobalLoopGame
             GameSprites.SpaceshipThrusterFrames = new Sprite[] { spaceshipTextures[2] };
 
             GameSprites.TurretBase = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("TurretPlatformTex"),
-                new Rectangle(0, 0, 64, 64)
+                new Rectangle(0, 0, 48, 48)
                 )[0];
 
-            GameSprites.TurretBase = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("TurretPlatformTex"),
-               new Rectangle(0, 0, 64, 64))[0];
             GameSprites.TurretCannon = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("CannonTex"),
                 new Rectangle(3, 4, 26, 54),
                 new Rectangle(32, 20, 26, 38)
@@ -147,7 +145,6 @@ namespace GlobalLoopGame
                 new Rectangle(1, 0, 4, 27))[0];
 
             //Load Sprites Here
-
             spriteAtlas.Compact();
             renderPipeline.SpriteAtlas = spriteAtlas.AtlasTextures;
             

@@ -65,7 +65,7 @@ namespace GlobalLoopGame.Spaceship
             Transform.LocalPosition = startingPosition;
             PhysicsBody.LinearVelocity = startingVelocity * startingSpeed;
 
-            Transform.LocalRotation = MathF.Atan2(startingVelocity.Y, startingVelocity.X) + MathF.PI / 2f;
+            Transform.LocalRotation = MathF.Atan2(startingVelocity.Y, startingVelocity.X) - MathF.PI / 2f;
             
             return this;
         }
