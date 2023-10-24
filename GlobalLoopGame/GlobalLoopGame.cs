@@ -17,6 +17,8 @@ using System;
 using static System.Formats.Asn1.AsnWriter;
 using System.Collections.Generic;
 using GlobalLoopGame.UI;
+using Microsoft.Xna.Framework.Audio;
+using MonoEngine.Input.Binding;
 
 namespace GlobalLoopGame
 {
@@ -45,6 +47,8 @@ namespace GlobalLoopGame
         public PlanetObject Planet { get; private set; }
 
         public List<IResettable> Resettables { get; private set; } = new List<IResettable>();
+
+        CompoundAxixBindingInput accelerate, decelerate, rotLeft, rotRight;
 
         public GlobalLoopGame()
         {
@@ -123,6 +127,30 @@ namespace GlobalLoopGame
         private void LoadSounds()
         {
             //Load sounds and songs here
+
+            GameSounds.asteroidDeathSound = Content.Load<SoundEffect>("Sounds/AsteroidHurt");
+            GameSounds.dropTurretSound = Content.Load<SoundEffect>("Sounds/DropTurret");
+            GameSounds.magnetSound = Content.Load<SoundEffect>("Sounds/Magnet");
+            GameSounds.pickupTurretSound = Content.Load<SoundEffect>("Sounds/PickupTurret");
+            GameSounds.planetHurtSound = Content.Load<SoundEffect>("Sounds/PlanetHurt");
+            GameSounds.playerHurtSound = Content.Load<SoundEffect>("Sounds/PlayerHurt");
+            GameSounds.sideThrustSound = Content.Load<SoundEffect>("Sounds/SideThrust");
+            GameSounds.thrusterSound = Content.Load<SoundEffect>("Sounds/Thruster");
+            GameSounds.warningSound = Content.Load<SoundEffect>("Sounds/Warning");
+
+            GameSounds.magnetEmitter = GameSounds.magnetSound.CreateInstance();
+            GameSounds.magnetEmitter.IsLooped = true;
+            GameSounds.magnetEmitter.Pause();
+
+            GameSounds.thrusterEmitter = GameSounds.thrusterSound.CreateInstance();
+            GameSounds.thrusterEmitter.IsLooped = true;
+            GameSounds.thrusterEmitter.Volume = 0.1f;
+            GameSounds.thrusterEmitter.Pause();
+
+            GameSounds.sideThrusterEmitter = GameSounds.sideThrustSound.CreateInstance();
+            GameSounds.sideThrusterEmitter.IsLooped = true;
+            GameSounds.sideThrusterEmitter.Volume = 0.1f;
+            GameSounds.sideThrusterEmitter.Pause();
         }
 
         private void LoadSprites()
@@ -159,7 +187,6 @@ namespace GlobalLoopGame
             //Load Sprites Here
             spriteAtlas.Compact();
             renderPipeline.SpriteAtlas = spriteAtlas.AtlasTextures;
-            
 
             GameSprites.Init();
         }
@@ -177,11 +204,12 @@ namespace GlobalLoopGame
             Resettables.Add(Planet);
 
             Spaceship = new SpaceshipObject(world, 0f);
-            Spaceship.ThrustMultiplier = 64f;
+            Spaceship.ThrustMultiplier = 96f;
             hierarchyGame.AddObject(Spaceship);
             Resettables.Add(Spaceship);
     
             asteroidManager = new AsteroidManager(world, hierarchyGame);
+            asteroidManager.game = this;
             Resettables.Add(asteroidManager);
 
             var turret00 = new TurretStation(world, asteroidManager);
@@ -200,13 +228,6 @@ namespace GlobalLoopGame
             turret01.SetStartingPosition(new Vector2(-23f, -23f));
             Resettables.Add(turret01);
             hierarchyGame.AddObject(turret01);
-
-            //turret01.Transform.LocalPosition = new Vector2(-23f, -23f);
-
-            //var turret11 = new TurretStation(world, asteroidManager);
-            //turret11.Transform.LocalPosition = new Vector2(20f, 20f);
-
-            //hierarchy.AddObject(turret11);
 
             StartGame();
         }
@@ -227,10 +248,11 @@ namespace GlobalLoopGame
 
         private void CreateBindings()
         {
-            var accelerate = inputManager.CreateSimpleKeysBinding("accelerate", new Keys[2] { Keys.W, Keys.Up });
-            var decelerate = inputManager.CreateSimpleKeysBinding("decelerate", new Keys[2] { Keys.S, Keys.Down });
-            var rotLeft = inputManager.CreateSimpleKeysBinding("rotLeft", new Keys[2] { Keys.A, Keys.Left });
-            var rotRight = inputManager.CreateSimpleKeysBinding("rotRight", new Keys[2] { Keys.D, Keys.Right });
+            accelerate = inputManager.CreateSimpleKeysBinding("accelerate", new Keys[2] { Keys.W, Keys.Up });
+            decelerate = inputManager.CreateSimpleKeysBinding("decelerate", new Keys[2] { Keys.S, Keys.Down });
+            rotLeft = inputManager.CreateSimpleKeysBinding("rotLeft", new Keys[2] { Keys.A, Keys.Left });
+            rotRight = inputManager.CreateSimpleKeysBinding("rotRight", new Keys[2] { Keys.D, Keys.Right });
+            
             var toggleDrag = inputManager.CreateSimpleKeysBinding("toggleDrag", new Keys[1] { Keys.Space });
             var restart = inputManager.CreateSimpleKeysBinding("restart", new Keys[1] { Keys.R });
             var boost = inputManager.CreateSimpleKeysBinding("boost", new Keys[2] { Keys.LeftShift, Keys.RightShift });
@@ -309,6 +331,14 @@ namespace GlobalLoopGame
         
         public void EndGame()
         {
+            if (accelerate.GetCurrentValue<float>() != 0f ||
+                decelerate.GetCurrentValue<float>() != 0f ||
+                rotLeft.GetCurrentValue<float>() != 0f ||
+                rotRight.GetCurrentValue<float>() != 0f)
+            {
+                return;
+            }
+
             if (gameEnded)
             {
                 return;

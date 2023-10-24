@@ -5,11 +5,6 @@ using MonoEngine.Scenes;
 using MonoEngine.Util;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace GlobalLoopGame.Planet
 {
@@ -45,6 +40,8 @@ namespace GlobalLoopGame.Planet
             health = MathHelper.Clamp(health + healthModification, 0, maxHealth);
 
             Console.WriteLine("health " + health.ToString());
+
+            GameSounds.planetHurtSound.Play();
 
             if (!isDead && health <= 0)
             {

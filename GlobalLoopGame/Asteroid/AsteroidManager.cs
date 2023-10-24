@@ -32,6 +32,8 @@ namespace GlobalLoopGame.Asteroid
         private bool dirty = false;
         private bool active = false;
 
+        public GlobalLoopGame game;
+
         private AsteroidWave selectedWave;
 
         public List<AsteroidObject> asteroids { get; private set; } = new List<AsteroidObject>();
@@ -78,24 +80,29 @@ namespace GlobalLoopGame.Asteroid
             
             List<AsteroidWave> sortedwaves = waves.Where(wave => wave.difficultyStage == diff).ToList();
 
-            int rand = Random.Shared.Next(0, sortedwaves.Count);
-
-            if (sortedwaves.Count > 0 && rand < sortedwaves.Count)
+            if (sortedwaves.Count > 0)
             {
-                selectedWave = sortedwaves[rand];
-                
-                foreach (float loc in selectedWave.warningPlacements)
+                int rand = Random.Shared.Next(0, sortedwaves.Count);
+
+                if (rand < sortedwaves.Count)
                 {
-                    AsteroidWarning warning = new AsteroidWarning(_world, this);
+                    selectedWave = sortedwaves[rand];
 
-                    _hierarchy.AddObject(warning);
-                    
-                    if (!asteroidWarnings.Contains(warning))
+                    GameSounds.warningSound.Play();
+
+                    foreach (float loc in selectedWave.warningPlacements)
                     {
-                        asteroidWarnings.Add(warning);
-                    }
+                        AsteroidWarning warning = new AsteroidWarning(_world, this);
 
-                    warning.InitializeWarning(loc, waveWarningTime);
+                        _hierarchy.AddObject(warning);
+
+                        if (!asteroidWarnings.Contains(warning))
+                        {
+                            asteroidWarnings.Add(warning);
+                        }
+
+                        warning.InitializeWarning(loc, waveWarningTime);
+                    }
                 }
             }
             // If it can't find a wave of asteroids with the given difficulty, it tries again with a lower difficulty
@@ -133,7 +140,7 @@ namespace GlobalLoopGame.Asteroid
 
             // waveInterval = MathHelper.Clamp(7 - difficulty, 1, 999);
 
-            SetInterval(MathHelper.Clamp(20 - difficulty, 6, 999), MathHelper.Clamp(15 - difficulty, 1, 999));
+            SetInterval(MathHelper.Clamp(16 - difficulty, 6, 999), MathHelper.Clamp(11 - difficulty, 1, 999));
         }
 
         public void ModifyPoints(int pointModification)
@@ -206,7 +213,7 @@ namespace GlobalLoopGame.Asteroid
             active = true; 
             
             difficulty = 0;
-            waveInterval = 7;
+            waveInterval = 5;
             waveNumber = 0;
             points = 0;
 
