@@ -15,6 +15,7 @@ using MonoEngine.Scenes.Events;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
 using static System.Formats.Asn1.AsnWriter;
+using System.Collections.Generic;
 
 namespace GlobalLoopGame
 {
@@ -34,10 +35,14 @@ namespace GlobalLoopGame
 
         private GameTime GameTime;
 
+        private bool gameEnded = true;
+
         public AsteroidManager asteroidManager { get; private set; }
 
         public SpaceshipObject Spaceship { get; private set; }
         public PlanetObject Planet { get; private set; }
+
+        public List<IResettable> Resettables { get; private set; } = new List<IResettable>();
 
         public GlobalLoopGame()
         {
@@ -131,29 +136,35 @@ namespace GlobalLoopGame
             //Create initial scene here
             Planet = new PlanetObject(world);
             hierarchy.AddObject(Planet);
+            Planet.game = this;
+            Resettables.Add(Planet);
 
             Spaceship = new SpaceshipObject(world, 0f);
             Spaceship.ThrustMultiplier = 64f;
             hierarchy.AddObject(Spaceship);
+            Resettables.Add(Spaceship);
     
             asteroidManager = new AsteroidManager(world, hierarchy);
+            Resettables.Add(asteroidManager);
 
             var turret00 = new TurretStation(world, asteroidManager);
-            turret00.Transform.LocalPosition = new Vector2(-20f, -20f);
+            turret00.Transform.LocalPosition = new Vector2(0f, 25f);
             
             var turret10 = new TurretStation(world, asteroidManager);
-            turret10.Transform.LocalPosition = new Vector2(20f, -20f);
+            turret10.Transform.LocalPosition = new Vector2(18f, -25f);
             
             var turret01 = new TurretStation(world, asteroidManager);
-            turret01.Transform.LocalPosition = new Vector2(-20f, 20f);
+            turret01.Transform.LocalPosition = new Vector2(-18f, -25f);
             
-            var turret11 = new TurretStation(world, asteroidManager);
-            turret11.Transform.LocalPosition = new Vector2(20f, 20f);
+            //var turret11 = new TurretStation(world, asteroidManager);
+            //turret11.Transform.LocalPosition = new Vector2(20f, 20f);
 
             hierarchy.AddObject(turret00);
             hierarchy.AddObject(turret10);
             hierarchy.AddObject(turret01);
-            hierarchy.AddObject(turret11);
+            //hierarchy.AddObject(turret11);
+
+            StartGame();
         }
 
         private void CreateWorld()
@@ -201,6 +212,39 @@ namespace GlobalLoopGame
                 Spaceship.DecrementThruster(two);
             };
         }
-    }
 
+        public void StartGame()
+        {
+            if (!gameEnded)
+            {
+                return;
+            }
+
+            gameEnded = false;
+
+            Console.WriteLine("Game started!");
+
+            foreach (IResettable resettable in Resettables)
+            {
+                resettable.Reset();
+            }
+        }
+        
+        public void EndGame()
+        {
+            if (gameEnded)
+            {
+                return;
+            }
+
+            Console.WriteLine("Game ended!");
+
+            foreach (IResettable resettable in Resettables)
+            {
+                resettable.OnGameEnd();
+            }
+
+            gameEnded = true;
+        }
+    }
 }

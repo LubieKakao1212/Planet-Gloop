@@ -10,13 +10,15 @@ using System.Collections.Generic;
 
 namespace GlobalLoopGame.Spaceship
 {
-    public class SpaceshipObject : PhysicsBodyObject, IDragger
+    public class SpaceshipObject : PhysicsBodyObject, IDragger, IResettable
     {
         public float ThrustMultiplier { get; set; }
 
         public Joint CurrentDrag { get; set; }
 
         public PhysicsBodyObject ThisObject => this;
+
+        private bool movable = false;
 
         /// <summary>
         /// BottomLeft, BottomRight, TopLeft, TopRight
@@ -77,6 +79,9 @@ namespace GlobalLoopGame.Spaceship
 
         private void UpdateThruster(int idx)
         { 
+            if (!movable)
+                return;
+
             var s = thrusters[idx].Transform.LocalScale;
             s.Y = thrust[idx];
             thrusters[idx].Transform.LocalScale = s;
@@ -84,12 +89,27 @@ namespace GlobalLoopGame.Spaceship
 
         public override void Update(GameTime time)
         {
-            for (int i = 0; i < thrusters.Count; i++)
+            if (movable)
             {
-                PhysicsBody.ApplyForce(thrusters[i].Transform.Up * ThrustMultiplier, thrusters[i].Transform.GlobalPosition);
+                for (int i = 0; i < thrusters.Count; i++)
+                {
+                    PhysicsBody.ApplyForce(thrusters[i].Transform.Up * ThrustMultiplier, thrusters[i].Transform.GlobalPosition);
+                }
             }
 
             base.Update(time);
+        }
+        public void OnGameEnd()
+        {
+            PhysicsBody.LinearVelocity = Vector2.Zero;
+            PhysicsBody.AngularVelocity = 0f;
+            movable = false;
+        }
+
+        public void Reset()
+        {
+            Transform.GlobalPosition = new Vector2(0f, -48f);
+            movable = true;
         }
     }
 }

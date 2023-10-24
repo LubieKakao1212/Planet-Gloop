@@ -80,7 +80,7 @@ namespace GlobalLoopGame.Asteroid
             }
         }
 
-        void Die()
+        public void Die()
         {
             if (isDead)
                 return;
