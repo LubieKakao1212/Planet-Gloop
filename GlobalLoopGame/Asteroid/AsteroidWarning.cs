@@ -17,12 +17,15 @@ namespace GlobalLoopGame.Asteroid
         private AutoTimeMachine despawner;
         private float scale;
         private float lifetime;
+        private AsteroidManager asteroidManager;
 
-        public AsteroidWarning(World world) : base(null)
+        public AsteroidWarning(World world, AsteroidManager manager) : base(null)
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
             PhysicsBody.Tag = this;
             PhysicsBody.Position = Vector2.One * 1024f;
+
+            asteroidManager = manager;
 
             var visuals = AddDrawableRectFixture(new(2f, 6f), new(0f, 0f), 0, out var fixture);
             visuals.Color = Color.OrangeRed;
@@ -59,8 +62,13 @@ namespace GlobalLoopGame.Asteroid
             Transform.LocalScale = Vector2.One * scale;
         }
 
-        private void Despawn()
+        public void Despawn()
         {
+            if (asteroidManager.asteroidWarnings.Contains(this))
+            {
+                asteroidManager.asteroidWarnings.Remove(this);
+            }
+
             PhysicsBody.World.RemoveAsync(PhysicsBody);
 
             CurrentScene.RemoveObject(this);

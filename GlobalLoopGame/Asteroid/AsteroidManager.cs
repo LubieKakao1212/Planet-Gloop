@@ -35,6 +35,7 @@ namespace GlobalLoopGame.Asteroid
         private AsteroidWave selectedWave;
 
         public List<AsteroidObject> asteroids { get; private set; } = new List<AsteroidObject>();
+        public List<AsteroidWarning> asteroidWarnings { get; private set; } = new List<AsteroidWarning>();
 
         SequentialAutoTimeMachine waveMachine;
 
@@ -43,24 +44,7 @@ namespace GlobalLoopGame.Asteroid
             _world = world;
 
             _hierarchy = hierarchy;
-
-            //waveMachine = new SequentialAutoTimeMachine(
-            //    (() => SelectWaveAndPlaceWarning(this.difficulty), this.waveInterval), 
-            //    (() => SpawnAsteroidsInPlacement(this.selectedWave), this.waveWarningTime)
-            //    );
         }
-
-        /*
-        public void Initialize()
-        {
-            waveMachine.Forward(waveInterval);
-        }
-
-        public void Update(GameTime gameTime)
-        {
-            waveMachine.Forward(gameTime.ElapsedGameTime.TotalSeconds);
-        }
-        */
 
         public void CreateAsteroid(AsteroidPlacement placement)
         {
@@ -102,9 +86,14 @@ namespace GlobalLoopGame.Asteroid
                 
                 foreach (float loc in selectedWave.warningPlacements)
                 {
-                    AsteroidWarning warning = new AsteroidWarning(_world);
+                    AsteroidWarning warning = new AsteroidWarning(_world, this);
 
                     _hierarchy.AddObject(warning);
+                    
+                    if (!asteroidWarnings.Contains(warning))
+                    {
+                        asteroidWarnings.Add(warning);
+                    }
 
                     warning.InitializeWarning(loc, waveWarningTime);
                 }
@@ -202,6 +191,13 @@ namespace GlobalLoopGame.Asteroid
             foreach (AsteroidObject asteroid in asteroidsCopy)
             {
                 asteroid.Die();
+            }
+
+            List<AsteroidWarning> asteroidWarningsCopy = new List<AsteroidWarning>(asteroidWarnings);
+
+            foreach (AsteroidWarning asteroidWarning in asteroidWarningsCopy)
+            {
+                asteroidWarning.Despawn();
             }
         }
 

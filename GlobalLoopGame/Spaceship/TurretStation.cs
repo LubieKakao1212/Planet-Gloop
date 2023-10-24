@@ -11,7 +11,7 @@ using System;
 
 namespace GlobalLoopGame.Spaceship
 {
-    public class TurretStation : PhysicsBodyObject, IDraggable
+    public class TurretStation : PhysicsBodyObject, IDraggable, IResettable
     {
         public float Range { get; set; } = 32f;
 
@@ -22,6 +22,8 @@ namespace GlobalLoopGame.Spaceship
         private float spread = 27f * MathF.PI / 180f;
 
         private bool canShoot = false;
+
+        private Vector2 startingPosition = Vector2.Zero;
 
         public TurretStation(World world, AsteroidManager asteroids) : base(null)
         {
@@ -47,8 +49,6 @@ namespace GlobalLoopGame.Spaceship
             
             this.asteroids = asteroids;
 
-            canShoot = true;
-
             shootingTimer = new AutoTimeMachine(TargetAndShoot, 0.125f);
         }
 
@@ -65,6 +65,9 @@ namespace GlobalLoopGame.Spaceship
             {
                 var dir = target.Transform.GlobalPosition - Transform.GlobalPosition;
                 dir.Normalize();
+
+                // spread gets narrower the smaller the target is
+                spread = (30f - target.size.X) * MathF.PI / 180f;
 
                 barrel.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
                 dir = Matrix2x2.Rotation(Random.Shared.NextSingle() * spread - spread / 2f) * dir;
@@ -102,6 +105,13 @@ namespace GlobalLoopGame.Spaceship
             base.Update(time);
         }
 
+        public void SetStartingPosition(Vector2 pos)
+        {
+            startingPosition = pos;
+
+            Transform.LocalPosition = startingPosition;
+        }
+
         public void OnBecomeDragged()
         {
             canShoot = false;
@@ -109,6 +119,18 @@ namespace GlobalLoopGame.Spaceship
 
         public void OnBecomeDropped()
         {
+            canShoot = true;
+        }
+
+        public void OnGameEnd()
+        {
+            canShoot = false;
+        }
+
+        public void Reset()
+        {
+            Transform.LocalPosition = startingPosition;
+
             canShoot = true;
         }
     }

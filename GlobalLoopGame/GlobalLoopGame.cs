@@ -148,20 +148,27 @@ namespace GlobalLoopGame
             Resettables.Add(asteroidManager);
 
             var turret00 = new TurretStation(world, asteroidManager);
-            turret00.Transform.LocalPosition = new Vector2(0f, 25f);
-            
+            turret00.SetStartingPosition(new Vector2(0f, 25f));
+            Resettables.Add(turret00);
+            hierarchy.AddObject(turret00);
+            //turret00.Transform.LocalPosition = new Vector2(0f, 25f);
+
             var turret10 = new TurretStation(world, asteroidManager);
-            turret10.Transform.LocalPosition = new Vector2(22f, -22f);
-            
+            turret10.SetStartingPosition(new Vector2(22f, -22f));
+            Resettables.Add(turret10);
+            hierarchy.AddObject(turret10);
+            //turret10.Transform.LocalPosition = new Vector2(22f, -22f);
+
             var turret01 = new TurretStation(world, asteroidManager);
-            turret01.Transform.LocalPosition = new Vector2(-23f, -23f);
-            
+            turret01.SetStartingPosition(new Vector2(-23f, -23f));
+            Resettables.Add(turret01);
+            hierarchy.AddObject(turret01);
+
+            //turret01.Transform.LocalPosition = new Vector2(-23f, -23f);
+
             //var turret11 = new TurretStation(world, asteroidManager);
             //turret11.Transform.LocalPosition = new Vector2(20f, 20f);
 
-            hierarchy.AddObject(turret00);
-            hierarchy.AddObject(turret10);
-            hierarchy.AddObject(turret01);
             //hierarchy.AddObject(turret11);
 
             StartGame();
@@ -174,12 +181,15 @@ namespace GlobalLoopGame
 
         private void CreateBindings()
         {
-            var accelerate = inputManager.GetKey(Keys.W);
-            var decelerate = inputManager.GetKey(Keys.S);
-            var rotLeft = inputManager.GetKey(Keys.A);
-            var rotRight = inputManager.GetKey(Keys.D);
-
-            var toggleDrag = inputManager.GetKey(Keys.Space);
+            var accelerate = inputManager.CreateSimpleKeysBinding("accelerate", new Keys[2] { Keys.W, Keys.Up });
+            var decelerate = inputManager.CreateSimpleKeysBinding("decelerate", new Keys[2] { Keys.S, Keys.Down });
+            var rotLeft = inputManager.CreateSimpleKeysBinding("rotLeft", new Keys[2] { Keys.A, Keys.Left });
+            var rotRight = inputManager.CreateSimpleKeysBinding("rotRight", new Keys[2] { Keys.D, Keys.Right });
+            var toggleDrag = inputManager.CreateSimpleKeysBinding("toggleDrag", new Keys[1] { Keys.Space });
+            var restart = inputManager.CreateSimpleKeysBinding("restart", new Keys[1] { Keys.R });
+            var boost = inputManager.CreateSimpleKeysBinding("boost", new Keys[2] { Keys.LeftShift, Keys.RightShift });
+            var confirm = inputManager.CreateSimpleKeysBinding("confirm", new Keys[1] { Keys.Enter });
+            var cancel = inputManager.CreateSimpleKeysBinding("cancel", new Keys[1] { Keys.Escape });
 
             ThrusterBinding(accelerate, 0, 1);
             ThrusterBinding(decelerate, 2, 3);
@@ -189,6 +199,11 @@ namespace GlobalLoopGame
             toggleDrag.Started += (_) =>
             {
                 Spaceship.TryInitDragging(5f, 10f);
+            };
+
+            restart.Started += (_) =>
+            {
+                Restart();
             };
         }
 
@@ -245,6 +260,16 @@ namespace GlobalLoopGame
             }
 
             gameEnded = true;
+        }
+
+        public void Restart()
+        {
+            if (!gameEnded)
+            {
+                EndGame();
+            }
+
+            StartGame();
         }
     }
 }
