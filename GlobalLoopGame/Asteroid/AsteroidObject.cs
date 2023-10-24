@@ -1,11 +1,13 @@
 using GlobalLoopGame.Planet;
 using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using MonoEngine.Physics;
 using MonoEngine.Scenes;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
 using System.Collections.Generic;
+using System.Net.Mime;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace GlobalLoopGame.Asteroid
@@ -81,6 +83,8 @@ namespace GlobalLoopGame.Asteroid
                 int pointModification = (int)MathF.Round(maxHealth * (20f - speed)/2);
 
                 manager.ModifyPoints(pointModification);
+
+                GameSounds.asteroidDeathSound.Play();
 
                 Die();
             }

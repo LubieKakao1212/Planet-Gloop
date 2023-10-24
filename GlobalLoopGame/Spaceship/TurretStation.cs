@@ -120,11 +120,19 @@ namespace GlobalLoopGame.Spaceship
         public void OnBecomeDragged()
         {
             canShoot = false;
+
+            GameSounds.pickupTurretSound.Play();
+
+            GameSounds.magnetEmitter.Play();
         }
 
         public void OnBecomeDropped()
         {
             canShoot = true;
+
+            GameSounds.dropTurretSound.Play();
+
+            GameSounds.magnetEmitter.Pause();
         }
 
         public void OnGameEnd()

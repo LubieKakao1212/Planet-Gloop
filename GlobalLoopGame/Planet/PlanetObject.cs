@@ -46,6 +46,8 @@ namespace GlobalLoopGame.Planet
 
             Console.WriteLine("health " + health.ToString());
 
+            GameSounds.planetHurtSound.Play();
+
             if (!isDead && health <= 0)
             {
                 Die();

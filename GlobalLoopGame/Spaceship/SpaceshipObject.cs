@@ -60,10 +60,9 @@ namespace GlobalLoopGame.Spaceship
             if (movable)
             {
                 thrust[idx] += 1;
+
                 UpdateThruster(idx);
             }
-
-            // CurrentDrag.BodyB.Tag as IDraggable
         }
 
         public void DecrementThruster(int idx)
@@ -71,6 +70,7 @@ namespace GlobalLoopGame.Spaceship
             if (movable)
             {
                 thrust[idx] -= 1;
+
                 UpdateThruster(idx);
             }
         }
@@ -98,6 +98,41 @@ namespace GlobalLoopGame.Spaceship
             var s = thrusters[idx].Transform.LocalScale;
             s.Y = thrust[idx];
             thrusters[idx].Transform.LocalScale = s;
+
+            if (thrusters.Count < 4)
+            {
+                return;
+            }
+
+            if (GameSounds.thrusterEmitter.State == Microsoft.Xna.Framework.Audio.SoundState.Playing)
+            {
+                if (thrusters[0].Transform.LocalScale.Y < 1f && thrusters[1].Transform.LocalScale.Y < 1f)
+                {
+                    GameSounds.thrusterEmitter.Pause();
+                }
+            }
+            else
+            {
+                if (thrusters[0].Transform.LocalScale.Y >= 1f || thrusters[1].Transform.LocalScale.Y >= 1f)
+                {
+                    GameSounds.thrusterEmitter.Play();
+                }
+            }
+
+            if (GameSounds.sideThrusterEmitter.State == Microsoft.Xna.Framework.Audio.SoundState.Playing)
+            {
+                if (thrusters[2].Transform.LocalScale.Y < 1f && thrusters[3].Transform.LocalScale.Y < 1f)
+                {
+                    GameSounds.sideThrusterEmitter.Pause();
+                }
+            }
+            else
+            {
+                if (thrusters[2].Transform.LocalScale.Y >= 1f || thrusters[3].Transform.LocalScale.Y >= 1f)
+                {
+                    GameSounds.sideThrusterEmitter.Play();
+                }
+            }
         }
 
         public override void Update(GameTime time)

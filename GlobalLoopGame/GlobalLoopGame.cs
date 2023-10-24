@@ -16,6 +16,7 @@ using nkast.Aether.Physics2D.Dynamics;
 using System;
 using static System.Formats.Asn1.AsnWriter;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Audio;
 
 namespace GlobalLoopGame
 {
@@ -111,6 +112,28 @@ namespace GlobalLoopGame
         private void LoadSounds()
         {
             //Load sounds and songs here
+
+            GameSounds.asteroidDeathSound = Content.Load<SoundEffect>("Sounds/AsteroidHurt");
+            GameSounds.dropTurretSound = Content.Load<SoundEffect>("Sounds/DropTurret");
+            GameSounds.magnetSound = Content.Load<SoundEffect>("Sounds/Magnet");
+            GameSounds.pickupTurretSound = Content.Load<SoundEffect>("Sounds/PickupTurret");
+            GameSounds.planetHurtSound = Content.Load<SoundEffect>("Sounds/PlanetHurt");
+            GameSounds.playerHurtSound = Content.Load<SoundEffect>("Sounds/PlayerHurt");
+            GameSounds.sideThrustSound = Content.Load<SoundEffect>("Sounds/SideThrust");
+            GameSounds.thrusterSound = Content.Load<SoundEffect>("Sounds/Thruster");
+            GameSounds.warningSound = Content.Load<SoundEffect>("Sounds/Warning");
+
+            GameSounds.magnetEmitter = GameSounds.magnetSound.CreateInstance();
+            GameSounds.magnetEmitter.IsLooped = true;
+            GameSounds.magnetEmitter.Pause();
+
+            GameSounds.thrusterEmitter = GameSounds.thrusterSound.CreateInstance();
+            GameSounds.thrusterEmitter.IsLooped = true;
+            GameSounds.thrusterEmitter.Pause();
+
+            GameSounds.sideThrusterEmitter = GameSounds.sideThrustSound.CreateInstance();
+            GameSounds.sideThrusterEmitter.IsLooped = true;
+            GameSounds.sideThrusterEmitter.Pause();
         }
 
         private void LoadSprites()
@@ -147,7 +170,6 @@ namespace GlobalLoopGame
             //Load Sprites Here
             spriteAtlas.Compact();
             renderPipeline.SpriteAtlas = spriteAtlas.AtlasTextures;
-            
 
             GameSprites.Init();
         }
@@ -165,11 +187,12 @@ namespace GlobalLoopGame
             Resettables.Add(Planet);
 
             Spaceship = new SpaceshipObject(world, 0f);
-            Spaceship.ThrustMultiplier = 64f;
+            Spaceship.ThrustMultiplier = 84f;
             hierarchy.AddObject(Spaceship);
             Resettables.Add(Spaceship);
     
             asteroidManager = new AsteroidManager(world, hierarchy);
+            asteroidManager.game = this;
             Resettables.Add(asteroidManager);
 
             var turret00 = new TurretStation(world, asteroidManager);
