@@ -38,9 +38,9 @@ namespace GlobalLoopGame.Asteroid
                 if (planet != null)
                 {
                     planet.ModifyHealth(-damage);
-                }
 
-                Die();
+                    Die();
+                }
 
                 return false;
             };
@@ -72,10 +72,10 @@ namespace GlobalLoopGame.Asteroid
         {
             health = MathHelper.Clamp(health + healthModification, 0, maxHealth);
 
-            manager.ModifyPoints(100);
-
             if (health <= 0)
             {
+                manager.ModifyPoints(100);
+
                 Die();
             }
         }
