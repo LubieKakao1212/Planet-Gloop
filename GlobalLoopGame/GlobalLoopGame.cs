@@ -17,6 +17,7 @@ using System;
 using static System.Formats.Asn1.AsnWriter;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Audio;
+using MonoEngine.Input.Binding;
 
 namespace GlobalLoopGame
 {
@@ -44,6 +45,8 @@ namespace GlobalLoopGame
         public PlanetObject Planet { get; private set; }
 
         public List<IResettable> Resettables { get; private set; } = new List<IResettable>();
+
+        CompoundAxixBindingInput accelerate, decelerate, rotLeft, rotRight;
 
         public GlobalLoopGame()
         {
@@ -222,10 +225,10 @@ namespace GlobalLoopGame
 
         private void CreateBindings()
         {
-            var accelerate = inputManager.CreateSimpleKeysBinding("accelerate", new Keys[2] { Keys.W, Keys.Up });
-            var decelerate = inputManager.CreateSimpleKeysBinding("decelerate", new Keys[2] { Keys.S, Keys.Down });
-            var rotLeft = inputManager.CreateSimpleKeysBinding("rotLeft", new Keys[2] { Keys.A, Keys.Left });
-            var rotRight = inputManager.CreateSimpleKeysBinding("rotRight", new Keys[2] { Keys.D, Keys.Right });
+            accelerate = inputManager.CreateSimpleKeysBinding("accelerate", new Keys[2] { Keys.W, Keys.Up });
+            decelerate = inputManager.CreateSimpleKeysBinding("decelerate", new Keys[2] { Keys.S, Keys.Down });
+            rotLeft = inputManager.CreateSimpleKeysBinding("rotLeft", new Keys[2] { Keys.A, Keys.Left });
+            rotRight = inputManager.CreateSimpleKeysBinding("rotRight", new Keys[2] { Keys.D, Keys.Right });
             
             var toggleDrag = inputManager.CreateSimpleKeysBinding("toggleDrag", new Keys[1] { Keys.Space });
             var restart = inputManager.CreateSimpleKeysBinding("restart", new Keys[1] { Keys.R });
@@ -289,6 +292,14 @@ namespace GlobalLoopGame
         
         public void EndGame()
         {
+            if (accelerate.GetCurrentValue<float>() != 0f ||
+                decelerate.GetCurrentValue<float>() != 0f ||
+                rotLeft.GetCurrentValue<float>() != 0f ||
+                rotRight.GetCurrentValue<float>() != 0f)
+            {
+                return;
+            }
+
             if (gameEnded)
             {
                 return;
