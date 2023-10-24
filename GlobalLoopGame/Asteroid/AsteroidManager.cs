@@ -88,7 +88,7 @@ namespace GlobalLoopGame.Asteroid
                 {
                     selectedWave = sortedwaves[rand];
 
-                    // game.warningSound.Play();
+                    GameSounds.warningSound.Play();
 
                     foreach (float loc in selectedWave.warningPlacements)
                     {
