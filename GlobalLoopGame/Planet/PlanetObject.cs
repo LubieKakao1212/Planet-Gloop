@@ -44,6 +44,8 @@ namespace GlobalLoopGame.Planet
 
             GameSounds.planetHurtSound.Play();
 
+            game.asteroidManager.ModifyDifficulty(-1);
+
             if (!isDead && health <= 0)
             {
                 Die();

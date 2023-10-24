@@ -129,14 +129,12 @@ namespace GlobalLoopGame.Asteroid
                 ModifyDifficulty(1);
             }
 
-            // ModifyDifficulty(1);
+            SetInterval(7, 7);
         }
 
         public void ModifyDifficulty(int difficultyModification)
         {
             difficulty = MathHelper.Clamp(difficulty + difficultyModification, 0, 10);
-
-            SetInterval(MathHelper.Clamp(20 - difficulty, 9, 999), MathHelper.Clamp(15 - difficulty, 1, 999));
         }
 
         public void ModifyPoints(int pointModification)
@@ -156,6 +154,8 @@ namespace GlobalLoopGame.Asteroid
             waveInterval = interval;
 
             waveWarningTime = warningTime;
+
+            // Console.WriteLine(waveInterval.ToString());
 
             dirty = true;
         }
@@ -209,7 +209,7 @@ namespace GlobalLoopGame.Asteroid
             active = true; 
             
             difficulty = 0;
-            waveInterval = 5;
+            SetInterval(3, 3);
             waveNumber = 0;
             points = 0;
 
