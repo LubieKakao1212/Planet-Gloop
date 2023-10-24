@@ -19,6 +19,12 @@ namespace GlobalLoopGame.Spaceship.Dragging
 
             obj.PhysicsBody.World.Add(joint);
             dragger.CurrentDrag = joint;
+
+            IDraggable iDraggable = dragged.PhysicsBody.Tag as IDraggable;
+            if (iDraggable != null)
+            {
+                iDraggable.OnBecomeDragged();
+            }
         }
 
         public static void TryInitDragging(this IDragger dragger, float distance, float interactionDistance)
@@ -26,6 +32,12 @@ namespace GlobalLoopGame.Spaceship.Dragging
             var obj = dragger.ThisObject;
             if (dragger.CurrentDrag != null)
             {
+                IDraggable iDraggable = dragger.CurrentDrag.BodyB.Tag as IDraggable;
+                if (iDraggable != null)
+                {
+                    iDraggable.OnBecomeDropped();
+                }
+
                 obj.PhysicsBody.World.Remove(dragger.CurrentDrag);
                 dragger.CurrentDrag = null;
                 return;

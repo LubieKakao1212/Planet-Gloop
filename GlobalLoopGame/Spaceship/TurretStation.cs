@@ -13,13 +13,15 @@ namespace GlobalLoopGame.Spaceship
 {
     public class TurretStation : PhysicsBodyObject, IDraggable
     {
-        public float Range { get; set; } = 64f;
+        public float Range { get; set; } = 32f;
 
         private AutoTimeMachine shootingTimer;
         private AsteroidManager asteroids;
         private HierarchyObject barrel;
 
-        private float spread = 30f * MathF.PI / 180f;
+        private float spread = 27f * MathF.PI / 180f;
+
+        private bool canShoot = false;
 
         public TurretStation(World world, AsteroidManager asteroids) : base(null)
         {
@@ -45,11 +47,18 @@ namespace GlobalLoopGame.Spaceship
             
             this.asteroids = asteroids;
 
+            canShoot = true;
+
             shootingTimer = new AutoTimeMachine(TargetAndShoot, 0.125f);
         }
 
         private void TargetAndShoot()
         {
+            if (!canShoot)
+            {
+                return;
+            }
+
             var target = FindTarget();
 
             if (target != null)
@@ -66,7 +75,9 @@ namespace GlobalLoopGame.Spaceship
         private AsteroidObject FindTarget()
         {
             AsteroidObject closest = null;
+
             var closestDist = Range;
+
             foreach (var asteroid in asteroids.asteroids)
             {
                 var delta = asteroid.Transform.GlobalPosition - Transform.GlobalPosition;
@@ -83,8 +94,22 @@ namespace GlobalLoopGame.Spaceship
 
         public override void Update(GameTime time)
         {
-            shootingTimer.Forward(time.ElapsedGameTime.TotalSeconds);
+            if (canShoot)
+            {
+                shootingTimer.Forward(time.ElapsedGameTime.TotalSeconds);
+            }
+
             base.Update(time);
+        }
+
+        public void OnBecomeDragged()
+        {
+            canShoot = false;
+        }
+
+        public void OnBecomeDropped()
+        {
+            canShoot = true;
         }
     }
 }

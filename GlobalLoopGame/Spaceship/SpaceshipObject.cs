@@ -53,14 +53,22 @@ namespace GlobalLoopGame.Spaceship
         
         public void IncrementThruster(int idx)
         {
-            thrust[idx] += 1;
-            UpdateThruster(idx);
+            if (movable)
+            {
+                thrust[idx] += 1;
+                UpdateThruster(idx);
+            }
+
+            // CurrentDrag.BodyB.Tag as IDraggable
         }
 
         public void DecrementThruster(int idx)
         {
-            thrust[idx] -= 1;
-            UpdateThruster(idx);
+            if (movable)
+            {
+                thrust[idx] -= 1;
+                UpdateThruster(idx);
+            }
         }
 
         public void AddThruster(Vector2 pos, float rotation)
@@ -78,10 +86,7 @@ namespace GlobalLoopGame.Spaceship
         }
 
         private void UpdateThruster(int idx)
-        { 
-            if (!movable)
-                return;
-
+        {
             var s = thrusters[idx].Transform.LocalScale;
             s.Y = thrust[idx];
             thrusters[idx].Transform.LocalScale = s;
