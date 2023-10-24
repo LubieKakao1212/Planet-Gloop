@@ -48,7 +48,7 @@ namespace GlobalLoopGame.Spaceship
                 return false;
             };
 
-            despawner = new AutoTimeMachine(Despawn, 0.1f);
+            despawner = new AutoTimeMachine(Despawn, 1f);
         }
 
         public BulletObject InitializeBullet(Vector2 startingPosition, Vector2 startingVelocity, float startingSpeed)

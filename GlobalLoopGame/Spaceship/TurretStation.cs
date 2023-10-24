@@ -45,7 +45,7 @@ namespace GlobalLoopGame.Spaceship
             
             this.asteroids = asteroids;
 
-            shootingTimer = new AutoTimeMachine(TargetAndShoot, 0.00125f);
+            shootingTimer = new AutoTimeMachine(TargetAndShoot, 0.125f);
         }
 
         private void TargetAndShoot()
