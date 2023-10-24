@@ -218,13 +218,14 @@ namespace GlobalLoopGame
             hierarchyGame.AddObject(turret00);
             //turret00.Transform.LocalPosition = new Vector2(0f, 25f);
 
-            var turret10 = new TurretStation(world, asteroidManager);
+            var turret10 = new SniperTurret(world, asteroidManager);
             turret10.SetStartingPosition(new Vector2(22f, -22f));
             Resettables.Add(turret10);
             hierarchyGame.AddObject(turret10);
             //turret10.Transform.LocalPosition = new Vector2(22f, -22f);
 
-            var turret01 = new TurretStation(world, asteroidManager);
+            var turret01 = new ShotgunTurret(world, asteroidManager, 1f);
+            turret01.Range = 24f;
             turret01.SetStartingPosition(new Vector2(-23f, -23f));
             Resettables.Add(turret01);
             hierarchyGame.AddObject(turret01);

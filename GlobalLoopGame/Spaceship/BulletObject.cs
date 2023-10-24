@@ -18,6 +18,7 @@ namespace GlobalLoopGame.Spaceship
         public DrawableObject asteroidFixture;
 
         public int damage = 10;
+        public int pierce = 0;
 
         private AutoTimeMachine despawner;
 
@@ -49,10 +50,12 @@ namespace GlobalLoopGame.Spaceship
 
                 if (otherAsteroid != null)
                 {
-                    otherAsteroid.ModifyHealth(-damage);
+                    OnAsteroidHit(otherAsteroid);
                 }
-
-                Despawn();
+                else
+                {
+                    Despawn();
+                }
 
                 return false;
             };
@@ -70,6 +73,12 @@ namespace GlobalLoopGame.Spaceship
             return this;
         }
 
+        public BulletObject SetLifetime(float lifetime)
+        {
+            despawner.Interval = lifetime;
+            return this;
+        }
+
         public override void Update(GameTime time)
         {
             base.Update(time);
@@ -80,6 +89,15 @@ namespace GlobalLoopGame.Spaceship
         {
             PhysicsBody.World.RemoveAsync(PhysicsBody);
             CurrentScene.RemoveObject(this);
+        }
+
+        protected virtual void OnAsteroidHit(AsteroidObject asteroid)
+        {
+            asteroid.ModifyHealth(-damage);
+            if (pierce-- <= 0)
+            {
+                Despawn();
+            }
         }
     }
 }
