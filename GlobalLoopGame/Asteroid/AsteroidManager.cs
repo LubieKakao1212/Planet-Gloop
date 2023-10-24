@@ -16,6 +16,8 @@ namespace GlobalLoopGame.Asteroid
 
         private Hierarchy _hierarchy;
 
+        public int points {  get; private set; }
+
         /*
         public bool Enabled => true;
 
@@ -139,6 +141,16 @@ namespace GlobalLoopGame.Asteroid
             difficulty = MathHelper.Clamp(difficulty + difficultyModification, 0, 10);
 
             waveInterval = MathHelper.Clamp(7 - difficulty, 1, 999);
+        }
+
+        public void ModifyPoints(int pointModification)
+        {
+            points += pointModification;
+
+            if (points < 0)
+            {
+                points = 0;
+            }
         }
 
         public void Reset()

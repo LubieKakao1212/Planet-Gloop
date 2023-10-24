@@ -33,9 +33,11 @@ namespace GlobalLoopGame
         private Sprite NullSprite;
 
         private GameTime GameTime;
+
         public AsteroidManager asteroidManager { get; private set; }
+
         public SpaceshipObject Spaceship { get; private set; }
-        public PlanetObject Player { get; private set; }
+        public PlanetObject Planet { get; private set; }
 
         public GlobalLoopGame()
         {
@@ -125,8 +127,8 @@ namespace GlobalLoopGame
             hierarchy.AddObject(camera);
 
             //Create initial scene here
-            Player = new PlanetObject(world);
-            hierarchy.AddObject(Player);
+            Planet = new PlanetObject(world);
+            hierarchy.AddObject(Planet);
 
             Spaceship = new SpaceshipObject(world, 0f);
             Spaceship.ThrustMultiplier = 64f;

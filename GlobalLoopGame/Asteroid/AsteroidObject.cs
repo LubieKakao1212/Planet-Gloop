@@ -12,7 +12,6 @@ namespace GlobalLoopGame.Asteroid
 {
     public class AsteroidObject : PhysicsBodyObject
     {
-
         private AsteroidManager manager;
         public Vector2 velocity { get; private set; }
         public float speed { get; private set; }
@@ -34,11 +33,11 @@ namespace GlobalLoopGame.Asteroid
                 if (isDead)
                     return false;
 
-                PlanetObject player = other.Body.Tag as PlanetObject;
+                PlanetObject planet = other.Body.Tag as PlanetObject;
 
-                if (player != null)
+                if (planet != null)
                 {
-                    player.ModifyHealth(-damage);
+                    planet.ModifyHealth(-damage);
                 }
 
                 Die();
@@ -73,6 +72,8 @@ namespace GlobalLoopGame.Asteroid
         {
             health = MathHelper.Clamp(health + healthModification, 0, maxHealth);
 
+            manager.ModifyPoints(100);
+
             if (health <= 0)
             {
                 Die();
@@ -83,14 +84,16 @@ namespace GlobalLoopGame.Asteroid
         {
             if (isDead)
                 return;
+
             isDead = true;
+
             var u = Transform.Up;
             var r = Transform.Right;
+
             CurrentScene.AddObject(new AsteroidParticleObject(PhysicsBody.World).InitializeParticle(this, u + r));
             CurrentScene.AddObject(new AsteroidParticleObject(PhysicsBody.World).InitializeParticle(this, -u + r));
             CurrentScene.AddObject(new AsteroidParticleObject(PhysicsBody.World).InitializeParticle(this, -u - r));
             CurrentScene.AddObject(new AsteroidParticleObject(PhysicsBody.World).InitializeParticle(this, u - r));
-
 
             manager.RemoveAsteroid(this);
             PhysicsBody.World.RemoveAsync(PhysicsBody);

@@ -24,9 +24,6 @@ namespace GlobalLoopGame.Planet
             PhysicsBody = world.CreateBody(bodyType: BodyType.Static);
             PhysicsBody.Tag = this;
 
-            // var visuals = AddDrawableRectFixture(Vector2.One * 64f, Vector2.Zero, 0, out var fixture);
-            // visuals.Color = Color.Red;
-
             var fixture = PhysicsBody.CreateCircle(12f, 0f);
             var drawable = new DrawableObject(Color.Purple, -1f);
             drawable.Parent = this;
