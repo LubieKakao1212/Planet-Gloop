@@ -451,6 +451,21 @@ namespace GlobalLoopGame.Asteroid
             }),
             new AsteroidWave(new List<AsteroidPlacement>()
             {
+                new AsteroidPlacement(Vector2.One * 6f, 235f, 300f, 7f, 110),
+                new AsteroidPlacement(Vector2.One * 5f, 190f, 350f, 8f, 130),
+                new AsteroidPlacement(Vector2.One * 7f, 235f, 300f, 8f, 130),
+                new AsteroidPlacement(Vector2.One * 3f, 190f, 350f, 8f, 120),
+                new AsteroidPlacement(Vector2.One * 4f, 235f, 300f, 8f, 110),
+                new AsteroidPlacement(Vector2.One * 5f, 190f, 350f, 9f, 110),
+                new AsteroidPlacement(Vector2.One * 2f, 235f, 300f, 9f, 110)
+            },
+            8,
+            new List<float>()
+            {
+                270f
+            }),
+            new AsteroidWave(new List<AsteroidPlacement>()
+            {
                 new AsteroidPlacement(Vector2.One * 6f, 0f, 90f, 7f, 110),
                 new AsteroidPlacement(Vector2.One * 5f, 0f, 90f, 8f, 130),
                 new AsteroidPlacement(Vector2.One * 7f, 90f, 180f, 8f, 130),
@@ -509,6 +524,38 @@ namespace GlobalLoopGame.Asteroid
             }),
             new AsteroidWave(new List<AsteroidPlacement>()
             {
+                new AsteroidPlacement(Vector2.One * 6f, 200f, 230f, 7f, 110),
+                new AsteroidPlacement(Vector2.One * 5f, 180f, 270f, 8f, 130),
+                new AsteroidPlacement(Vector2.One * 6f, 200f, 230f, 9f, 130),
+                new AsteroidPlacement(Vector2.One * 3f, 200f, 230f, 8f, 120),
+                new AsteroidPlacement(Vector2.One * 4f, 180f, 270f, 7f, 110),
+                new AsteroidPlacement(Vector2.One * 5f, 180f, 270f, 9f, 110),
+                new AsteroidPlacement(Vector2.One * 4f, 180f, 270f, 10f, 110),
+                new AsteroidPlacement(Vector2.One * 3f, 180f, 270f, 9f, 110)
+            },
+            9,
+            new List<float>()
+            {
+                215f
+            }),
+            new AsteroidWave(new List<AsteroidPlacement>()
+            {
+                new AsteroidPlacement(Vector2.One * 6f, 55f, 125f, 7f, 110),
+                new AsteroidPlacement(Vector2.One * 5f, 45f, 135f, 8f, 130),
+                new AsteroidPlacement(Vector2.One * 6f, 55f, 125f, 9f, 130),
+                new AsteroidPlacement(Vector2.One * 3f, 45f, 135f, 8f, 120),
+                new AsteroidPlacement(Vector2.One * 4f, 55f, 125f, 7f, 110),
+                new AsteroidPlacement(Vector2.One * 5f, 45f, 135f, 9f, 110),
+                new AsteroidPlacement(Vector2.One * 4f, 55f, 125f, 10f, 110),
+                new AsteroidPlacement(Vector2.One * 3f, 45f, 135f, 9f, 110)
+            },
+            9,
+            new List<float>()
+            {
+                90f
+            }),
+            new AsteroidWave(new List<AsteroidPlacement>()
+            {
                 new AsteroidPlacement(Vector2.One * 11f, 0f, 90f, 6f, 180),
                 new AsteroidPlacement(Vector2.One * 5f, 50f, 135f, 8f, 130),
                 new AsteroidPlacement(Vector2.One * 6f, 50f, 135f, 9f, 130),
@@ -526,6 +573,54 @@ namespace GlobalLoopGame.Asteroid
                 95f,
                 185f,
                 300f
+            }),
+            new AsteroidWave(new List<AsteroidPlacement>()
+            {
+                new AsteroidPlacement(Vector2.One * 5f, 0f, 90f, 8f, 130),
+                new AsteroidPlacement(Vector2.One * 6f, 0f, 90f, 9f, 130),
+                new AsteroidPlacement(Vector2.One * 4f, 0f, 90f, 7f, 120),
+                new AsteroidPlacement(Vector2.One * 6f, 0f, 90f, 7f, 110),
+                new AsteroidPlacement(Vector2.One * 5f, 0f, 90f, 9f, 110),
+                new AsteroidPlacement(Vector2.One * 4f, 0f, 90f, 10f, 110),
+                new AsteroidPlacement(Vector2.One * 3f, 0f, 90f, 9f, 110),
+                new AsteroidPlacement(Vector2.One * 6f, 0f, 90f, 6f, 110)
+            },
+            10,
+            new List<float>()
+            {
+                40f
+            }),
+            new AsteroidWave(new List<AsteroidPlacement>()
+            {
+                new AsteroidPlacement(Vector2.One * 5f, 135f, 205f, 8f, 130),
+                new AsteroidPlacement(Vector2.One * 6f, 135f, 205f, 9f, 130),
+                new AsteroidPlacement(Vector2.One * 4f, 135f, 205f, 7f, 120),
+                new AsteroidPlacement(Vector2.One * 6f, 135f, 205f, 7f, 110),
+                new AsteroidPlacement(Vector2.One * 5f, 135f, 205f, 9f, 110),
+                new AsteroidPlacement(Vector2.One * 4f, 135f, 205f, 10f, 110),
+                new AsteroidPlacement(Vector2.One * 3f, 135f, 205f, 9f, 110),
+                new AsteroidPlacement(Vector2.One * 6f, 135f, 205f, 6f, 110)
+            },
+            10,
+            new List<float>()
+            {
+                180f
+            }),
+            new AsteroidWave(new List<AsteroidPlacement>()
+            {
+                new AsteroidPlacement(Vector2.One * 5f, 245f, 335f, 8f, 130),
+                new AsteroidPlacement(Vector2.One * 6f, 245f, 335f, 9f, 130),
+                new AsteroidPlacement(Vector2.One * 4f, 245f, 335f, 7f, 120),
+                new AsteroidPlacement(Vector2.One * 6f, 245f, 335f, 7f, 110),
+                new AsteroidPlacement(Vector2.One * 5f, 245f, 335f, 9f, 110),
+                new AsteroidPlacement(Vector2.One * 4f, 245f, 335f, 10f, 110),
+                new AsteroidPlacement(Vector2.One * 3f, 245f, 335f, 9f, 110),
+                new AsteroidPlacement(Vector2.One * 6f, 245f, 335f, 6f, 110)
+            },
+            10,
+            new List<float>()
+            {
+                290f
             })
         };
     }
