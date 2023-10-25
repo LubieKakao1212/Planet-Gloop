@@ -46,6 +46,7 @@ namespace GlobalLoopGame
 
         public SpaceshipObject Spaceship { get; private set; }
         public PlanetObject Planet { get; private set; }
+        public List<TurretStation> Turrets { get; private set; } = new List<TurretStation>();
 
         public List<IResettable> Resettables { get; private set; } = new List<IResettable>();
 
@@ -218,8 +219,12 @@ namespace GlobalLoopGame
             GameSprites.Laser = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("LaserTex"),
                 new Rectangle(11, 1, 10, 30))[0];
 
-            GameSprites.MenuBackground = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("MainMenu512x512"), new Rectangle(0, 0, 512, 512))[0];
+            GameSprites.MenuBackground = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("MainMenu512x512"), 
+                new Rectangle(0, 0, 512, 512))[0];
 
+            GameSprites.Warning = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("IncomingWarning"),
+                new Rectangle(65, 8, 32, 32))[0];
+            
             //Load Sprites Here
             spriteAtlas.Compact();
             renderPipeline.SpriteAtlas = spriteAtlas.AtlasTextures;
@@ -253,6 +258,7 @@ namespace GlobalLoopGame
             turret00.SetStartingPosition(new Vector2(0f, 27f));
             Resettables.Add(turret00);
             hierarchyGame.AddObject(turret00);
+            Turrets.Add(turret00);
 
             var turret10 = new SniperTurret(world, asteroidManager);
             turret10.SetSprites(GameSprites.TurretSniper, GameSprites.TurretSniperSizes, new Vector2(-6f, 12f) / GameSprites.pixelsPerUnit);
@@ -260,6 +266,7 @@ namespace GlobalLoopGame
             turret10.Transform.GlobalRotation = 4 * MathF.PI / 3;
             Resettables.Add(turret10);
             hierarchyGame.AddObject(turret10);
+            Turrets.Add(turret10);
 
             var turret01 = new ShotgunTurret(world, asteroidManager, 1f);
             turret01.SetSprites(GameSprites.TurretShotgun, GameSprites.TurretShotgunSizes, new Vector2(0f, 12f) / GameSprites.pixelsPerUnit);
@@ -268,6 +275,7 @@ namespace GlobalLoopGame
             turret01.Transform.LocalRotation = 2 * MathF.PI / 3;
             Resettables.Add(turret01);
             hierarchyGame.AddObject(turret01);
+            Turrets.Add(turret01);
 
             StartGame();
         }
@@ -337,7 +345,8 @@ namespace GlobalLoopGame
 
         private void CreateUpdateables()
         {
-            Components.Add(new BoundryFieldComponent(MapRadius, 16f, PlanetRadius + 6f, 32f, Spaceship));
+            Components.Add(new BoundryFieldComponent(MapRadius - 2f, 32f, PlanetRadius + 6f, 64f, Spaceship, Turrets[0], Turrets[1], Turrets[2]));
+            
             Components.Add(asteroidManager);
         }
 
@@ -390,14 +399,6 @@ namespace GlobalLoopGame
         
         public void EndGame()
         {
-            if (accelerate.GetCurrentValue<float>() != 0f ||
-                decelerate.GetCurrentValue<float>() != 0f ||
-                rotLeft.GetCurrentValue<float>() != 0f ||
-                rotRight.GetCurrentValue<float>() != 0f)
-            {
-                return;
-            }
-
             if (gameEnded)
             {
                 return;
@@ -415,10 +416,27 @@ namespace GlobalLoopGame
 
         public void Restart()
         {
+            /*
+            if (accelerate.GetCurrentValue<float>() != 0f ||
+                decelerate.GetCurrentValue<float>() != 0f ||
+                rotLeft.GetCurrentValue<float>() != 0f ||
+                rotRight.GetCurrentValue<float>() != 0f)
+            {
+                return;
+            }
+            */
+
+            /*
             if (!gameEnded)
             {
                 EndGame();
             }
+            */
+
+            // Don't restart unless the game has ended or is paused
+
+            if (gameEnded)
+                return;
 
             StartGame();
         }

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using MonoEngine.Physics;
 using MonoEngine.Scenes;
+using MonoEngine.Util;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,8 @@ namespace GlobalLoopGame.Asteroid
 
         private float maxHealth = 100f;
         private int damage = 1;
+
+        private AutoTimeMachine despawner;
 
         public AsteroidObject(World world, float drawOrder) : base(null)
         {
@@ -48,6 +51,8 @@ namespace GlobalLoopGame.Asteroid
 
                 return true;
             };
+
+            despawner = new AutoTimeMachine(Die, 60f);
         }
 
         public void InitializeAsteroid(AsteroidManager aManager, AsteroidPlacement placement)
@@ -61,7 +66,7 @@ namespace GlobalLoopGame.Asteroid
 
             health = maxHealth;
             PhysicsBody.LinearVelocity = velocity * speed;
-            PhysicsBody.AngularVelocity = Random.Shared.NextSingle();
+            PhysicsBody.AngularVelocity = Random.Shared.NextSingle() * 0.5f;
 
             asteroidDrawable = AddDrawableRectFixture(placement.size, new(0f, 0f), Random.Shared.NextSingle() * 2 * MathF.PI, out var fixture);
             asteroidDrawable.Color = Color.Gray;
@@ -73,6 +78,12 @@ namespace GlobalLoopGame.Asteroid
             fixture.CollidesWith |= Category.Cat2;
             fixture.CollidesWith |= Category.Cat4;
             fixture.CollidesWith |= Category.Cat5;
+        }
+
+        public override void Update(GameTime time)
+        {
+            base.Update(time);
+            despawner.Forward(time.ElapsedGameTime.TotalSeconds);
         }
 
         public void ModifyHealth(float healthModification)
