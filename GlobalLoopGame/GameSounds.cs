@@ -31,11 +31,8 @@ namespace GlobalLoopGame
         public static SoundEffect boostOverloadSound;
         public static SoundEffect boostUnableSound;
 
-        public static SoundEffect regularShotSound;
-        public static SoundEffect shotgunShotSound;
-        public static SoundEffect shotgunReloadSound;
-        public static SoundEffect sniperShotSound;
         public static SoundEffect[] shotSounds = new SoundEffect[3];
+        public static SoundEffect shotgunReloadSound;
 
         public static SoundEffect musicIntensityOne;
         public static SoundEffect musicIntensityTwo;

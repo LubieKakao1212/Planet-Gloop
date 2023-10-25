@@ -178,13 +178,10 @@ namespace GlobalLoopGame
             GameSounds.boostOverloadSound = Content.Load<SoundEffect>("Sounds/BoostOverload");
             GameSounds.boostUnableSound = Content.Load<SoundEffect>("Sounds/BoostUnable");
 
-            GameSounds.regularShotSound = Content.Load<SoundEffect>("Sounds/RegularShot");
-            GameSounds.shotgunShotSound = Content.Load<SoundEffect>("Sounds/ShotgunShot");
-            GameSounds.sniperShotSound = Content.Load<SoundEffect>("Sounds/SniperShot");
-            GameSounds.shotgunReloadSound = Content.Load<SoundEffect>("Sounds/ShotgunReload");
             GameSounds.shotSounds[0] = Content.Load<SoundEffect>("Sounds/RegularShot");
             GameSounds.shotSounds[1] = Content.Load<SoundEffect>("Sounds/ShotgunShot");
             GameSounds.shotSounds[2] = Content.Load<SoundEffect>("Sounds/SniperShot");
+            GameSounds.shotgunReloadSound = Content.Load<SoundEffect>("Sounds/ShotgunReload");
 
             GameSounds.musicIntensityOne = Content.Load<SoundEffect>("Sounds/Music/Song0");
             GameSounds.musicIntensityTwo = Content.Load<SoundEffect>("Sounds/Music/Song1");
