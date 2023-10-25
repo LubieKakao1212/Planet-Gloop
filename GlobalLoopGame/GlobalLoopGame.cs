@@ -80,6 +80,8 @@ namespace GlobalLoopGame
             LoadSounds();
 
             LoadSprites();
+            
+            LoadEffects();
 
             CreateWorld();
 
@@ -264,6 +266,18 @@ namespace GlobalLoopGame
             GameSprites.Init();
         }
 
+        private void LoadEffects()
+        {
+            var custom = Content.Load<Effect>("Custom");
+            custom.Parameters["Color"].SetValue(Color.White.ToVector4() * 0.25f);
+            GameEffects.Custom = custom;
+
+
+            var dss = new DepthStencilState();
+            GameEffects.DSS = dss;
+
+        } 
+
         private void CreateScene()
         {
             hierarchyGame = new Hierarchy();
@@ -299,14 +313,14 @@ namespace GlobalLoopGame
             hierarchyGame.AddObject(turret00);
             Turrets.Add(turret00);
 
-            var turret10 = new SniperTurret(world, asteroidManager);
+            var turret10 = new SniperTurret(world, asteroidManager, renderPipeline);
             turret10.SetSprites(GameSprites.TurretSniper, GameSprites.TurretSniperSizes, new Vector2(-6f, 12f) / GameSprites.pixelsPerUnit);
             turret10.SetStartingPosition(new Vector2(0f, 32f));
             Resettables.Add(turret10);
             hierarchyGame.AddObject(turret10);
             Turrets.Add(turret10);
 
-            var turret01 = new ShotgunTurret(world, asteroidManager, 1f);
+            var turret01 = new ShotgunTurret(world, asteroidManager, renderPipeline, 1f);
             turret01.SetSprites(GameSprites.TurretShotgun, GameSprites.TurretShotgunSizes, new Vector2(0f, 12f) / GameSprites.pixelsPerUnit);
             turret01.RangeRadius = 24f;
             turret01.SetStartingPosition(new Vector2(-32f, 0f));

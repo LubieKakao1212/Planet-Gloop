@@ -1,5 +1,6 @@
 ﻿using GlobalLoopGame.Asteroid;
 using Microsoft.Xna.Framework;
+using MonoEngine.Rendering;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace GlobalLoopGame.Spaceship
 {
     public class ShotgunTurret : TurretStation
     {
-        public ShotgunTurret(World world, AsteroidManager asteroids, float cooldown) : base(world, asteroids, cooldown)
+        public ShotgunTurret(World world, AsteroidManager asteroids, RenderPipeline renderer, float cooldown) : base(world, asteroids, renderer, cooldown)
         {
             bulletCount = 16;
             spread = 30f * MathF.PI / 180f;

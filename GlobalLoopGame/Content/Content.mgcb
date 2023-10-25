@@ -25,6 +25,12 @@
 /processorParam:TextureFormat=Color
 /build:../../Art/IncomingWarning.png;IncomingWarning.png
 
+#begin ../../Shaders/Custom.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:../../Shaders/Custom.fx;Custom.fx
+
 #begin ../../Shaders/Default.fx
 /importer:EffectImporter
 /processor:EffectProcessor

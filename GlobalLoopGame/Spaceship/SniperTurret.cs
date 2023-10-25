@@ -1,5 +1,6 @@
 ﻿using GlobalLoopGame.Asteroid;
 using Microsoft.Xna.Framework;
+using MonoEngine.Rendering;
 using nkast.Aether.Physics2D.Collision;
 using nkast.Aether.Physics2D.Dynamics;
 
@@ -7,7 +8,7 @@ namespace GlobalLoopGame.Spaceship
 {
     public class SniperTurret : TurretStation
     {
-        public SniperTurret(World world, AsteroidManager asteroids) : base(world, asteroids, 2.5f)
+        public SniperTurret(World world, AsteroidManager asteroids, RenderPipeline renderer) : base(world, asteroids, renderer, 2.5f)
         {
             spread = 0;
             RangeRadius = 72f;

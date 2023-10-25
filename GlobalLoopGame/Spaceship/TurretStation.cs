@@ -1,9 +1,13 @@
 ﻿using GlobalLoopGame.Asteroid;
+using GlobalLoopGame.Mesh;
 using GlobalLoopGame.Spaceship.Dragging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
 using MonoEngine.Math;
 using MonoEngine.Physics;
+using MonoEngine.Rendering;
+using MonoEngine.Rendering.Data;
 using MonoEngine.Rendering.Sprites;
 using MonoEngine.Scenes;
 using MonoEngine.Util;
@@ -17,11 +21,13 @@ namespace GlobalLoopGame.Spaceship
     {
         public float RangeRadius { get; set; } = 32f;
 
+        private const int meshResolution = 4095;
+
         protected AutoTimeMachine shootingTimer;
         protected AsteroidManager asteroids;
         protected HierarchyObject barrel;
         protected DrawableObject barrelDrawable;
-        protected DrawableObject rangeDisplay;
+        protected MeshObject rangeDisplay;
 
         protected float spread = 5f * MathF.PI / 180f;
 
@@ -42,7 +48,7 @@ namespace GlobalLoopGame.Spaceship
 
         protected int damage = 10;
 
-        public TurretStation(World world, AsteroidManager asteroids, float cooldown = 0.125f) : base(null)
+        public TurretStation(World world, AsteroidManager asteroids, RenderPipeline renderer, float cooldown = 0.125f) : base(null)
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
             PhysicsBody.Tag = this;
@@ -69,9 +75,12 @@ namespace GlobalLoopGame.Spaceship
             popupDescription.FontSize = 12;
             UpdateText();
 
-            rangeDisplay = new DrawableObject(Color.White * 0.125f, -10f);
+            /*rangeDisplay = new DrawableObject(Color.White * 0.125f, -10f);
             rangeDisplay.Sprite = GameSprites.Circle;
             rangeDisplay.Transform.LocalScale = Vector2.Zero;
+            rangeDisplay.Parent = this;*/
+
+            rangeDisplay = MeshObject.CreateNew(renderer, Vertex2DPosition.VertexDeclaration, new Vertex2DPosition[meshResolution + 1], new int[meshResolution * 3], Color.White, -10f, GameEffects.Custom, GameEffects.DSS);
             rangeDisplay.Parent = this;
 
             var barrelRoot = new HierarchyObject();
@@ -126,6 +135,20 @@ namespace GlobalLoopGame.Spaceship
                 var distance = delta.Length();
                 if (distance < closestDist)
                 {
+                    bool lineOfSight = true;
+                    PhysicsBody.World.RayCast((fixture, point, normal, fraction) =>
+                    {
+                        //the planet
+                        if (fixture.CollisionCategories.HasFlag(Category.Cat5))
+                        {
+                            lineOfSight = false;
+                            return 0f;
+                        }
+                        return 1f;
+                    }, Transform.GlobalPosition, asteroid.Transform.GlobalPosition);
+                    if (!lineOfSight)
+                        continue;
+
                     closestDist = distance;
                     closest = asteroid;
                 }
@@ -156,12 +179,22 @@ namespace GlobalLoopGame.Spaceship
                 grabTimer -= (float)time.ElapsedGameTime.TotalSeconds;
             }
             grabTimer = MathHelper.Clamp(grabTimer, 0f, 1f);
-            rangeDisplay.Transform.LocalScale = Vector2.Lerp(Vector2.Zero, Vector2.One * RangeRadius * 2f, grabTimer);
+            //rangeDisplay.Transform.LocalScale = Vector2.Lerp(Vector2.Zero, Vector2.One * RangeRadius * 2f, grabTimer);
+
+            UpdateRangeMesh(RangeRadius * 2f * grabTimer);
+
             popupDescription.Transform.GlobalPosition = Transform.GlobalPosition + Vector2.UnitY * 10f;
             popupDescription.Transform.GlobalRotation = 0;
             popupDescription.Color = Color.Lerp(Color.White, Color.Transparent, 1f - Math.Min(grabTimer * 3f, 1f));
 
             base.Update(time);
+        }
+
+        private void UpdateRangeMesh(float radius)
+        {
+            ViewMesh.CalculateMesh(PhysicsBody.World, Transform.GlobalPosition, radius, meshResolution, out var verts, out var inds, Category.Cat5);
+            rangeDisplay.UpdateMesh(verts, inds);
+            rangeDisplay.Transform.GlobalRotation = 0f;
         }
 
         public void SetStartingPosition(Vector2 pos)
