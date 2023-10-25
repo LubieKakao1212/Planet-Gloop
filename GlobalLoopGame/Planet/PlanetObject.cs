@@ -16,9 +16,12 @@ namespace GlobalLoopGame.Planet
         public int health {  get; private set; }
         private int maxHealth = 5;
         public bool isDead { get; private set; }
+        public bool shouldDie { get; private set; }
 
         public PlanetObject(World world) : base(null)
         {
+            Order = 10f;
+
             PhysicsBody = world.CreateBody(bodyType: BodyType.Kinematic);
             PhysicsBody.Tag = this;
             PhysicsBody.AngularVelocity = 0.25f;
@@ -61,7 +64,7 @@ namespace GlobalLoopGame.Planet
 
             if (!isDead && health <= 0)
             {
-                Die();
+                shouldDie = true;
             }
         }
 
@@ -73,6 +76,7 @@ namespace GlobalLoopGame.Planet
         public void Reset()
         {
             isDead = false;
+            shouldDie = false;
 
             health = maxHealth;
         }
@@ -80,6 +84,10 @@ namespace GlobalLoopGame.Planet
         public override void Update(GameTime time)
         {
             base.Update(time);
+            if(shouldDie && !isDead)
+            {
+                Die();
+            }
             //Transform.LocalRotation += (float)time.ElapsedGameTime.TotalSeconds / 3f;
         }
 
