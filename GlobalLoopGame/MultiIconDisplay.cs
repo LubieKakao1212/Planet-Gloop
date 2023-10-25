@@ -51,7 +51,10 @@ namespace GlobalLoopGame
 
         public void UpdateCount(int newCount)
         {
-            if (newCount == iconCount)
+            var oldCount = iconCount;
+            iconCount = newCount;
+
+            if (newCount == oldCount)
             {
                 return;
             }
@@ -63,19 +66,19 @@ namespace GlobalLoopGame
             {
                 overflowMessage.Text = "";
             }
-            if (iconCount > maxIcons && newCount > maxIcons) 
+            if (oldCount > maxIcons && newCount > maxIcons) 
             {
                 return;
             }
-            var delta = newCount - iconCount;
+            var delta = newCount - oldCount;
 
             if (delta < 0)
             {
-                SetIconsColor(Color.Transparent, newCount, MathHelper.Min(iconCount, maxIcons));
+                SetIconsColor(Color.Transparent, newCount, MathHelper.Min(oldCount, maxIcons));
             }
             else
             {
-                SetIconsColor(Color.White, iconCount, MathHelper.Min(newCount, maxIcons));
+                SetIconsColor(Color.White, oldCount, MathHelper.Min(newCount, maxIcons));
             }
 
         }

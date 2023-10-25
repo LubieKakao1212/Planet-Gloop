@@ -8,8 +8,8 @@ namespace GlobalLoopGame.Spaceship.Dragging
 {
     public interface IDraggable
     {
-        void OnBecomeDragged();
+        void OnBecomeDragged(IDragger dragger);
 
-        void OnBecomeDropped();
+        void OnBecomeDropped(IDragger dragger);
     }
 }

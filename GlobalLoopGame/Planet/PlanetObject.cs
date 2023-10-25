@@ -51,7 +51,10 @@ namespace GlobalLoopGame.Planet
             if (healthModification < 0)
             {
                 GameSounds.planetHurtSound.Play();
-                game.asteroidManager.ModifyDifficulty(-1);
+                if (game.asteroidManager.difficulty > 3)
+                {
+                    game.asteroidManager.ModifyDifficulty(-1);
+                }
             }
 
             HealthChange?.Invoke(health);
