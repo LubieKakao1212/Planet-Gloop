@@ -222,7 +222,13 @@ namespace GlobalLoopGame
 
             GameSprites.Warning = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("IncomingWarning"),
                 new Rectangle(65, 8, 32, 32))[0];
-            
+
+            GameSprites.SmallAsteroid = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("Asteroid16x16"),
+                new Rectangle(0, 0, 16, 16))[0];
+
+            GameSprites.LargeAsteroid = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("Asteroid32x32"),
+                new Rectangle(0, 0, 32, 32))[0];
+
             //Load Sprites Here
             spriteAtlas.Compact();
             renderPipeline.SpriteAtlas = spriteAtlas.AtlasTextures;

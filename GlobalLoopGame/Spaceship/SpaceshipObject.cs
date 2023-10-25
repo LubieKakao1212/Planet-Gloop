@@ -20,6 +20,8 @@ namespace GlobalLoopGame.Spaceship
 
         public Joint CurrentDrag { get; set; }
 
+        DrawableObject magnetObject;
+
         public PhysicsBodyObject ThisObject => this;
         public float BoostLeft { get; private set; }
 
@@ -76,6 +78,8 @@ namespace GlobalLoopGame.Spaceship
             AddThruster(new(t.X, -t.Y / 2f), 0f);
             AddThruster(new(-t.X, t.Y / 2f), MathF.PI);
             AddThruster(new(t.X, t.Y / 2f), MathF.PI);
+
+            // add magnet
         }
         
         public void IncrementThruster(int idx)

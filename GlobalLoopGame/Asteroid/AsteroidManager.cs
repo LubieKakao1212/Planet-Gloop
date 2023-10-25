@@ -133,10 +133,10 @@ namespace GlobalLoopGame.Asteroid
                 CreateAsteroid(aPlacement);
             }
             
-            /*if (waveNumber % (difficulty+1) == 0)
+            if (waveNumber % (difficulty+1) == 0)
             {
                 ModifyDifficulty(1);
-            }*/
+            }
 
             SetInterval(10, 7);
         }
@@ -324,7 +324,7 @@ namespace GlobalLoopGame.Asteroid
             {
                 new AsteroidPlacement(Vector2.One * 5f, 140f, 150f, 5.5f, 90),
                 new AsteroidPlacement(Vector2.One * 3.3f, 130f, 140f, 6f, 115),
-                new AsteroidPlacement(Vector2.One * 2.5f, 150f, 160f, 7.5f, 105)
+                new AsteroidPlacement(Vector2.One * 3.5f, 150f, 160f, 7.5f, 105)
             },
             3,
             new List<float>()
