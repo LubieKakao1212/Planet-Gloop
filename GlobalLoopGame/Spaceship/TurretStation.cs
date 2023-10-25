@@ -66,6 +66,7 @@ namespace GlobalLoopGame.Spaceship
             popupDescription = new TextObject();
             popupDescription.Color = Color.White;
             popupDescription.Parent = this;
+            popupDescription.FontSize = 12;
             UpdateText();
 
             rangeDisplay = new DrawableObject(Color.White * 0.125f, -10f);

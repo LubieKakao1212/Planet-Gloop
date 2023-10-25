@@ -143,6 +143,7 @@ namespace GlobalLoopGame
                 renderPipeline.RenderScene(hierarchyUI, camera);
 
                 textRenderer.DrawAllText(hierarchyGame, GameSprites.Font, camera);
+                textRenderer.DrawAllText(hierarchyUI, GameSprites.Font, camera);
             }
             else
             {
@@ -231,8 +232,15 @@ namespace GlobalLoopGame
             GameSprites.Warning = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("IncomingWarning"),
                 new Rectangle(65, 8, 32, 32))[0];
 
-            GameSprites.Font = Content.Load<SpriteFont>("Fonts/Font");
+            GameSprites.Health = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("HealthTex"),
+                new Rectangle(0, 0, 32, 32))[0];
 
+            var font = new Font();
+            font.AddSize(12, Content.Load<SpriteFont>("Fonts/Font12"));
+            font.AddSize(36, Content.Load<SpriteFont>("Fonts/Font36"));
+            font.AddSize(72, Content.Load<SpriteFont>("Fonts/Font72"));
+            GameSprites.Font = font;
+            
             //Load Sprites Here
             spriteAtlas.Compact();
             renderPipeline.SpriteAtlas = spriteAtlas.AtlasTextures;
@@ -292,9 +300,14 @@ namespace GlobalLoopGame
         {
             hierarchyUI = new Hierarchy();
             var boost = new Bar(() => Spaceship.BoostLeft, Color.Green, Color.Red);
-            boost.Transform.LocalPosition = new Vector2(-64f, 64f);
-
+            boost.Transform.LocalPosition = new Vector2(-64f, 60f);
             hierarchyUI.AddObject(boost);
+
+            var health = new MultiIconDisplay(GameSprites.Health, 4, 0.5f, 4f, 1f);
+            health.Transform.LocalPosition = new Vector2(-64f, 64f);
+            Planet.HealthChange += health.UpdateCount;
+            Planet.ModifyHealth(0);
+            hierarchyUI.AddObject(health);
         }
 
         private void CreateMenuScene()

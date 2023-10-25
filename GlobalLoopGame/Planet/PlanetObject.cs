@@ -10,6 +10,8 @@ namespace GlobalLoopGame.Planet
 {
     public class PlanetObject : PhysicsBodyObject, IResettable
     {
+        public event Action<int> HealthChange;
+
         public GlobalLoopGame game;
         public int health {  get; private set; }
         private int maxHealth = 5;
@@ -46,9 +48,13 @@ namespace GlobalLoopGame.Planet
 
             Console.WriteLine("health " + health.ToString());
 
-            GameSounds.planetHurtSound.Play();
+            if (healthModification < 0)
+            {
+                GameSounds.planetHurtSound.Play();
+                game.asteroidManager.ModifyDifficulty(-1);
+            }
 
-            game.asteroidManager.ModifyDifficulty(-1);
+            HealthChange?.Invoke(health);
 
             if (!isDead && health <= 0)
             {

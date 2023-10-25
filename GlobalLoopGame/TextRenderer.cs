@@ -24,12 +24,12 @@ namespace GlobalLoopGame
             sb.DrawString(font, text, pos - textSize / 2f, color);
         }
 
-        public static void DrawAllText(this SpriteBatch sb, Hierarchy hierarchy, SpriteFont font, Camera cam)
+        public static void DrawAllText(this SpriteBatch sb, Hierarchy hierarchy, Font font, Camera cam)
         {
-            sb.Begin();
+            sb.Begin(samplerState: SamplerState.PointWrap);
             foreach (var text in hierarchy.AllInstancesOf<TextObject>())
             {
-                sb.DrawTextAt(font, text.Text, cam, text.Transform.GlobalPosition, text.Color);
+                sb.DrawTextAt(font.GetSize(text.FontSize), text.Text, cam, text.Transform.GlobalPosition, text.Color);
             }
             sb.End();
         }

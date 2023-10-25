@@ -14,5 +14,7 @@ namespace GlobalLoopGame
 
         public Color Color { get; set; }
 
+        public int FontSize { get; set; }
+
     }
 }
