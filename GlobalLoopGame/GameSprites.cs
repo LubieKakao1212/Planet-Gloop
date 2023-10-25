@@ -19,6 +19,8 @@ namespace GlobalLoopGame
         public static Sprite[] TurretSniper;
         public static Sprite Laser;
         public static Sprite Warning;
+        public static Sprite SmallExplosion;
+        public static Sprite LargeExplosion;
         public static Sprite SmallAsteroid;
         public static Sprite LargeAsteroid;
 
@@ -36,6 +38,7 @@ namespace GlobalLoopGame
         public static Vector2[] TurretShotgunSizes;
         public static Vector2[] TurretSniperSizes;
         public static Vector2 LaserSize;
+        public static Vector2 SmallExplosionSize;
 
         public static float pixelsPerUnit;
 
@@ -73,6 +76,8 @@ namespace GlobalLoopGame
             TurretShotgunSizes = GetRelativeSizeArr(Planet, PlanetSize, TurretShotgun);
             TurretSniperSizes = GetRelativeSizeArr(Planet, PlanetSize, TurretSniper);
             LaserSize = GetRelativeSize(Planet, PlanetSize, Laser);
+
+            SmallExplosionSize = GetRelativeSize(Planet, PlanetSize, SmallExplosion);
         }
     }
 }

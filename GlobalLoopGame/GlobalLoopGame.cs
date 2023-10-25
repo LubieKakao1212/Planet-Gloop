@@ -237,6 +237,9 @@ namespace GlobalLoopGame
             GameSprites.LargeAsteroid = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("Asteroid32x32"),
                 new Rectangle(0, 0, 32, 32))[0];
 
+            GameSprites.SmallExplosion = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("explosion2"),
+                new Rectangle(0, 0, 16, 16))[0];
+
             //Load Sprites Here
             spriteAtlas.Compact();
             renderPipeline.SpriteAtlas = spriteAtlas.AtlasTextures;
@@ -251,7 +254,7 @@ namespace GlobalLoopGame
             hierarchyGame.AddObject(camera);
 
             //Create initial scene here
-            DrawableObject backgroundObject = new DrawableObject(new Color(0.1f, 0.1f, 0.1f, 0.2f), -2f);
+            DrawableObject backgroundObject = new DrawableObject(new Color(0.1f, 0.1f, 0.3f, 0.25f), -2f);
             hierarchyGame.AddObject(backgroundObject);
             backgroundObject.Sprite = GameSprites.SpaceBackground;
             backgroundObject.Transform.GlobalPosition = new Vector2(0, 0);

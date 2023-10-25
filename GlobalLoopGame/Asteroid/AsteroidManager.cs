@@ -144,6 +144,8 @@ namespace GlobalLoopGame.Asteroid
         public void ModifyDifficulty(int difficultyModification)
         {
             difficulty = MathHelper.Clamp(difficulty + difficultyModification, 0, 10);
+
+            // Console.WriteLine("setting difficulty to " + difficulty.ToString());
         }
 
         public void ModifyPoints(int pointModification)

@@ -105,8 +105,11 @@ namespace GlobalLoopGame.Spaceship
         protected virtual void OnAsteroidHit(AsteroidObject asteroid)
         {
             asteroid.ModifyHealth(-damage);
+
             if (pierce-- <= 0)
             {
+                CurrentScene.AddObject(new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(this));
+
                 Despawn();
             }
         }

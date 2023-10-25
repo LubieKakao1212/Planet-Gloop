@@ -44,6 +44,8 @@ namespace GlobalLoopGame.Asteroid
                 {
                     planet.ModifyHealth(-damage);
 
+                    CurrentScene.AddObject(new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(this));
+
                     Die();
 
                     return false;
