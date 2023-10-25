@@ -15,11 +15,13 @@ namespace GlobalLoopGame.Spaceship
         {
             bulletCount = 16;
             spread = 30f * MathF.PI / 180f;
+            damage = 15;
+            UpdateText();
         }
 
         protected override BulletObject CreateBullet(Vector2 dir, Vector2 pos, float speed)
         {
-            return base.CreateBullet(dir, pos, speed).SetLifetime(0.5f).SetDamage(15).SetColor(new Color(255, 200, 20) * 0.75f);
+            return base.CreateBullet(dir, pos, speed).SetLifetime(0.5f).SetDamage(damage).SetColor(new Color(255, 200, 20) * 0.75f);
         }
 
         protected override float GetBulletSpeed()

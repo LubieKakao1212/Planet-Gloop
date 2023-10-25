@@ -11,6 +11,8 @@ namespace GlobalLoopGame.Spaceship
         {
             spread = 0;
             RangeRadius = 72f;
+            damage = 200;
+            UpdateText();
         }
 
         protected override AsteroidObject FindTarget()
@@ -47,7 +49,7 @@ namespace GlobalLoopGame.Spaceship
         {
             var bo = new BulletObject(PhysicsBody.World);
             bo.pierce = int.MaxValue;
-            bo.damage = 200;
+            bo.damage = damage;
             return bo.InitializeBullet(pos, dir, speed).SetColor(Color.OrangeRed);
         }
         

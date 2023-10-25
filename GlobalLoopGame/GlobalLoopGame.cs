@@ -23,8 +23,9 @@ namespace GlobalLoopGame
 {
     public class GlobalLoopGame : Game
     {
-        const float MapRadius = 64f;
-        const float PlanetRadius = 12f;
+        public const float MapRadius = 64f;
+        public const float PlanetRadius = 12f;
+        public const int WindowSize = 1000;
 
         private GraphicsDeviceManager _graphics;
 
@@ -36,6 +37,8 @@ namespace GlobalLoopGame
         private InputManager inputManager;
         private Camera camera;
         private SpriteAtlas<Color> spriteAtlas;
+
+        private SpriteBatch textRenderer;
 
         private GameTime GameTime;
 
@@ -55,8 +58,8 @@ namespace GlobalLoopGame
         public GlobalLoopGame()
         {
             _graphics = new GraphicsDeviceManager(this);
-            _graphics.PreferredBackBufferWidth = 1000;
-            _graphics.PreferredBackBufferHeight = 1000;
+            _graphics.PreferredBackBufferWidth = WindowSize;
+            _graphics.PreferredBackBufferHeight = WindowSize;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -72,6 +75,7 @@ namespace GlobalLoopGame
             Effects.Init(Content);
             renderPipeline.Init(GraphicsDevice);
             inputManager = new InputManager(Window);
+            textRenderer = new SpriteBatch(GraphicsDevice);
 
             LoadSounds();
 
@@ -137,13 +141,15 @@ namespace GlobalLoopGame
                 GraphicsDevice.Clear(new Color(0.1f, 0.1f, 0.1f, 1.0f));
                 renderPipeline.RenderScene(hierarchyGame, camera);
                 renderPipeline.RenderScene(hierarchyUI, camera);
+
+                textRenderer.DrawAllText(hierarchyGame, GameSprites.Font, camera);
+                textRenderer.DrawAllText(hierarchyUI, GameSprites.Font, camera);
             }
             else
             {
                 GraphicsDevice.Clear(Color.DarkGoldenrod);
                 renderPipeline.RenderScene(hierarchyMenu, camera);
             }
-            
 
             base.Draw(gameTime);
         }
@@ -240,6 +246,15 @@ namespace GlobalLoopGame
             GameSprites.SmallExplosion = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("explosion2"),
                 new Rectangle(0, 0, 16, 16))[0];
 
+            GameSprites.Health = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("HealthTex"),
+                new Rectangle(0, 0, 32, 32))[0];
+
+            var font = new Font();
+            font.AddSize(12, Content.Load<SpriteFont>("Fonts/Font12"));
+            font.AddSize(36, Content.Load<SpriteFont>("Fonts/Font36"));
+            font.AddSize(72, Content.Load<SpriteFont>("Fonts/Font72"));
+            GameSprites.Font = font;
+            
             //Load Sprites Here
             spriteAtlas.Compact();
             renderPipeline.SpriteAtlas = spriteAtlas.AtlasTextures;
@@ -305,9 +320,14 @@ namespace GlobalLoopGame
         {
             hierarchyUI = new Hierarchy();
             var boost = new Bar(() => Spaceship.BoostLeft, Color.Green, Color.Red);
-            boost.Transform.LocalPosition = new Vector2(-64f, 64f);
-
+            boost.Transform.LocalPosition = new Vector2(-64f, 60f);
             hierarchyUI.AddObject(boost);
+
+            var health = new MultiIconDisplay(GameSprites.Health, 4, 0.5f, 4f, 1f);
+            health.Transform.LocalPosition = new Vector2(-64f, 64f);
+            Planet.HealthChange += health.UpdateCount;
+            Planet.ModifyHealth(0);
+            hierarchyUI.AddObject(health);
         }
 
         private void CreateMenuScene()
