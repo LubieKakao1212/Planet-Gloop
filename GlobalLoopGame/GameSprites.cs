@@ -6,6 +6,7 @@ namespace GlobalLoopGame
     public class GameSprites
     {
         public static Sprite NullSprite; 
+        public static Sprite Circle;
         public static Sprite Planet;
         public static Sprite SpaceshipBody;
         public static Sprite[] SpaceshipThrusterFrames;

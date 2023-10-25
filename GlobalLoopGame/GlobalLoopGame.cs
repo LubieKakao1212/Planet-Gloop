@@ -218,6 +218,7 @@ namespace GlobalLoopGame
 
             GameSprites.MenuBackground = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("MainMenu512x512"), new Rectangle(0, 0, 512, 512))[0];
 
+            GameSprites.Circle = GameSprites.Planet;
 
             //Load Sprites Here
             spriteAtlas.Compact();
@@ -262,7 +263,7 @@ namespace GlobalLoopGame
 
             var turret01 = new ShotgunTurret(world, asteroidManager, 1f);
             turret01.SetSprites(GameSprites.TurretShotgun, GameSprites.TurretShotgunSizes, new Vector2(0f, 12f) / GameSprites.pixelsPerUnit);
-            turret01.Range = 24f;
+            turret01.RangeRadius = 24f;
             turret01.SetStartingPosition(new Vector2(-24f, -20f));
             turret01.Transform.LocalRotation = 2 * MathF.PI / 3;
             Resettables.Add(turret01);

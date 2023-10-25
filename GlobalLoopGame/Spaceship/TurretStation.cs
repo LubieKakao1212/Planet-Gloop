@@ -15,12 +15,13 @@ namespace GlobalLoopGame.Spaceship
 {
     public class TurretStation : PhysicsBodyObject, IDraggable, IResettable
     {
-        public float Range { get; set; } = 32f;
+        public float RangeRadius { get; set; } = 32f;
 
         protected AutoTimeMachine shootingTimer;
         protected AsteroidManager asteroids;
         protected HierarchyObject barrel;
         protected DrawableObject barrelDrawable;
+        protected DrawableObject rangeDisplay;
 
         protected float spread = 5f * MathF.PI / 180f;
 
@@ -33,6 +34,9 @@ namespace GlobalLoopGame.Spaceship
         private float barrelLength;
         private Sprite[] sprites;
         private Vector2[] spriteScales;
+
+        private float rangeDisplayTimer;
+        private bool displayRange;
 
         public TurretStation(World world, AsteroidManager asteroids, float cooldown = 0.125f) : base(null)
         {
@@ -56,6 +60,11 @@ namespace GlobalLoopGame.Spaceship
             //var ratio = 17f / GameSprites.pixelsPerUnit;
             // = GameSprites.TurretCannonSizes[0];
 
+            rangeDisplay = new DrawableObject(Color.White * 0.5f, -10f);
+            rangeDisplay.Sprite = GameSprites.Circle;
+            rangeDisplay.Transform.LocalScale = Vector2.Zero;
+            rangeDisplay.Parent = this;
+
             var barrelRoot = new HierarchyObject();
             barrelDrawable.Parent = barrelRoot;
             barrelRoot.Parent = this;
@@ -78,16 +87,20 @@ namespace GlobalLoopGame.Spaceship
             if (target != null)
             {
                 var dir = target.Transform.GlobalPosition - Transform.GlobalPosition;
-                dir.Normalize();
+                var dist = dir.Length();
+
+                dir = PredictAim(Transform.GlobalPosition, GetBulletSpeed(), target.Transform.GlobalPosition, target.PhysicsBody.LinearVelocity, dist);
                 
                 barrel.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
+
+                var spawnPos = Transform.GlobalPosition + barrel.Transform.Up * barrelLength / 2f;
+
 
                 // spread gets narrower the smaller the target is
                 //spread = (30f - target.size.X) * MathF.PI / 180f;
                 for (int i = 0; i < bulletCount; i++)
                 {
-                    var d1 = Matrix2x2.Rotation(Random.Shared.NextSingle() * spread - spread / 2f) * dir;
-                    CurrentScene.AddObject(CreateProjectile(d1, Transform.GlobalPosition + barrel.Transform.Up * barrelLength / 2f));
+                    CurrentScene.AddObject(CreateProjectile(dir, spawnPos));
                 }
             }
         }
@@ -96,7 +109,7 @@ namespace GlobalLoopGame.Spaceship
         {
             AsteroidObject closest = null;
 
-            var closestDist = Range;
+            var closestDist = RangeRadius;
 
             foreach (var asteroid in asteroids.asteroids)
             {
@@ -114,7 +127,9 @@ namespace GlobalLoopGame.Spaceship
 
         protected virtual BulletObject CreateProjectile(Vector2 dir, Vector2 spawnPos)
         {
-            return new BulletObject(PhysicsBody.World).InitializeBullet(spawnPos, dir, 128f);
+            var bulletSpeed = GetBulletSpeed();
+            dir = RandomizeDirection(dir, spread);
+            return CreateBullet(dir, spawnPos, bulletSpeed);
         }
 
         public override void Update(GameTime time)
@@ -123,6 +138,16 @@ namespace GlobalLoopGame.Spaceship
             {
                 shootingTimer.Forward(time.ElapsedGameTime.TotalSeconds);
             }
+
+            if(displayRange) {
+                rangeDisplayTimer += (float)time.ElapsedGameTime.TotalSeconds;
+            }
+            else
+            {
+                rangeDisplayTimer -= (float)time.ElapsedGameTime.TotalSeconds;
+            }
+            rangeDisplayTimer = MathHelper.Clamp(rangeDisplayTimer, 0f, 1f);
+            rangeDisplay.Transform.LocalScale = Vector2.Lerp(Vector2.Zero, Vector2.One * RangeRadius * 2f, rangeDisplayTimer);
 
             base.Update(time);
         }
@@ -164,6 +189,8 @@ namespace GlobalLoopGame.Spaceship
             GameSounds.magnetEmitter.Play();
 
             UpdateSprite(1);
+
+            displayRange = true;
         }
         
         public void OnBecomeDropped()
@@ -179,6 +206,8 @@ namespace GlobalLoopGame.Spaceship
             GameSounds.magnetEmitter.Pause();
 
             UpdateSprite(0);
+
+            displayRange = false;
         }
 
         public void OnGameEnd()
@@ -197,6 +226,33 @@ namespace GlobalLoopGame.Spaceship
         {
             barrelDrawable.Sprite = sprites[idx];
             barrel.Transform.LocalScale = spriteScales[idx];
+        }
+
+        protected Vector2 PredictAim(Vector2 spawnPos, float bulletSpeed, Vector2 targetPosition, Vector2 targetVelocity, float distanceToTarget)
+        {
+            var predictedTargetPos = targetPosition + targetVelocity * (distanceToTarget / bulletSpeed);
+            var deltaPos = -(spawnPos - predictedTargetPos);
+            var l = deltaPos.Length();
+            if (l < 0.001f)
+            {
+                return Vector2.UnitY;
+            }
+            return deltaPos / l;
+        }
+
+        protected Vector2 RandomizeDirection(Vector2 direction, float spread)
+        {
+            return Matrix2x2.Rotation(Random.Shared.NextSingle() * spread - spread / 2f) * direction;
+        }
+
+        protected virtual BulletObject CreateBullet(Vector2 dir, Vector2 pos, float bulletSpeed)
+        {
+            return new BulletObject(PhysicsBody.World).InitializeBullet(pos, dir, bulletSpeed);
+        }
+
+        protected virtual float GetBulletSpeed()
+        {
+            return 128f;
         }
     }
 }

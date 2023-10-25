@@ -10,6 +10,7 @@ namespace GlobalLoopGame.Spaceship
         public SniperTurret(World world, AsteroidManager asteroids) : base(world, asteroids, 2.5f)
         {
             spread = 0;
+            RangeRadius = 128f;
         }
 
         protected override AsteroidObject FindTarget()
@@ -42,12 +43,17 @@ namespace GlobalLoopGame.Spaceship
             return best;
         }
 
-        protected override BulletObject CreateProjectile(Vector2 dir, Vector2 pos)
+        protected override BulletObject CreateBullet(Vector2 dir, Vector2 pos, float speed)
         {
             var bo = new BulletObject(PhysicsBody.World);
             bo.pierce = int.MaxValue;
-            bo.damage = int.MaxValue;
-            return bo.InitializeBullet(pos, dir, 256f);
+            bo.damage = 200;
+            return bo.InitializeBullet(pos, dir, speed);
+        }
+        
+        protected override float GetBulletSpeed()
+        {
+            return 256f;
         }
     }
 }
