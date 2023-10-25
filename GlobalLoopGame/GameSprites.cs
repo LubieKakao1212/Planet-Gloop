@@ -30,6 +30,7 @@ namespace GlobalLoopGame
 
         public static Sprite SpaceBackground;
         public static Sprite MenuBackground;
+        public static Sprite CircleOverlay;
 
         public static Vector2 PlanetSize; 
         public static Vector2 SpaceshipBodySize;

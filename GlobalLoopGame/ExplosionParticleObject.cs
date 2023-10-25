@@ -43,7 +43,7 @@ namespace GlobalLoopGame
 
             drawable.Transform.LocalPosition = Vector2.Zero;
 
-            drawable.Transform.LocalScale = GameSprites.SmallExplosionSize;
+            drawable.Transform.LocalScale = GameSprites.SmallExplosionSize * spawner.Transform.LocalScale.X;
 
             drawable.Parent = this;
 

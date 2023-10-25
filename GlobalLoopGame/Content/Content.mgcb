@@ -85,6 +85,18 @@
 /processorParam:TextureFormat=Color
 /build:circle.png;CircleTex.png
 
+#begin circleoverlay.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:circleoverlay.png
+
 #begin explosion1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -207,6 +219,24 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/Magnet.wav
+
+#begin Sounds/Music/Song0.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Music/Song0.wav
+
+#begin Sounds/Music/Song1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Music/Song1.wav
+
+#begin Sounds/Music/Song2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Music/Song2.wav
 
 #begin Sounds/PickupTurret.wav
 /importer:WavImporter

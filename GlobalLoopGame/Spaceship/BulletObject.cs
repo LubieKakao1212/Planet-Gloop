@@ -24,6 +24,8 @@ namespace GlobalLoopGame.Spaceship
 
         private bool destroyted = false;
 
+        List<AsteroidObject> hitAsteroids = new List<AsteroidObject>();
+
         public BulletObject(World world) : base(null)
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
@@ -48,7 +50,12 @@ namespace GlobalLoopGame.Spaceship
 
                 if (otherAsteroid != null)
                 {
-                    OnAsteroidHit(otherAsteroid);
+                    if (!hitAsteroids.Contains(otherAsteroid))
+                    {
+                        OnAsteroidHit(otherAsteroid);
+
+                        hitAsteroids.Add(otherAsteroid);
+                    }
                 }
                 else
                 {
@@ -97,6 +104,7 @@ namespace GlobalLoopGame.Spaceship
 
         private void Despawn()
         {
+            hitAsteroids.Clear();
             destroyted = true;
             PhysicsBody.World.RemoveAsync(PhysicsBody);
             CurrentScene.RemoveObject(this);
@@ -106,10 +114,10 @@ namespace GlobalLoopGame.Spaceship
         {
             asteroid.ModifyHealth(-damage);
 
+            CurrentScene.AddObject(new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(asteroid));
+
             if (pierce-- <= 0)
             {
-                CurrentScene.AddObject(new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(this));
-
                 Despawn();
             }
         }
