@@ -5,11 +5,6 @@ using MonoEngine.Scenes;
 using MonoEngine.Util;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace GlobalLoopGame.Planet
 {
@@ -38,6 +33,7 @@ namespace GlobalLoopGame.Planet
             fixture.CollidesWith = Category.None;
             fixture.CollidesWith |= Category.Cat1;
             fixture.CollidesWith |= Category.Cat2;
+            fixture.CollidesWith |= Category.Cat3;
         }
 
         public void ModifyHealth(int healthModification)
@@ -45,6 +41,10 @@ namespace GlobalLoopGame.Planet
             health = MathHelper.Clamp(health + healthModification, 0, maxHealth);
 
             Console.WriteLine("health " + health.ToString());
+
+            GameSounds.planetHurtSound.Play();
+
+            game.asteroidManager.ModifyDifficulty(-1);
 
             if (!isDead && health <= 0)
             {
@@ -58,12 +58,14 @@ namespace GlobalLoopGame.Planet
 
         public void Reset()
         {
+            isDead = false;
+
             health = maxHealth;
         }
 
         public override void Update(GameTime time)
         {
-            Transform.LocalRotation += (float)time.ElapsedGameTime.TotalSeconds / 2f;
+            Transform.LocalRotation += (float)time.ElapsedGameTime.TotalSeconds / 3f;
         }
 
         void Die()

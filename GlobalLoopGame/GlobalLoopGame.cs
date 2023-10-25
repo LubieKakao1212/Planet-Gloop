@@ -16,6 +16,9 @@ using nkast.Aether.Physics2D.Dynamics;
 using System;
 using static System.Formats.Asn1.AsnWriter;
 using System.Collections.Generic;
+using GlobalLoopGame.UI;
+using Microsoft.Xna.Framework.Audio;
+using MonoEngine.Input.Binding;
 
 namespace GlobalLoopGame
 {
@@ -28,8 +31,9 @@ namespace GlobalLoopGame
 
         private RenderPipeline renderPipeline;
         private World world;
-        private Hierarchy hierarchy;
-        private Hierarchy menuHierarchy;
+        private Hierarchy hierarchyMenu;
+        private Hierarchy hierarchyGame;
+        private Hierarchy hierarchyUI;
         private InputManager inputManager;
         private Camera camera;
         private SpriteAtlas<Color> spriteAtlas;
@@ -45,6 +49,8 @@ namespace GlobalLoopGame
         public PlanetObject Planet { get; private set; }
 
         public List<IResettable> Resettables { get; private set; } = new List<IResettable>();
+
+        CompoundAxixBindingInput accelerate, decelerate, rotLeft, rotRight;
 
         public GlobalLoopGame()
         {
@@ -80,6 +86,8 @@ namespace GlobalLoopGame
             CreateBindings();
 
             CreateUpdateables();
+
+            CreateUI();
         }
 
         protected override void Update(GameTime gameTime)
@@ -94,36 +102,45 @@ namespace GlobalLoopGame
             if (!menuDisplayed)
             {
                 world.Step(gameTime.ElapsedGameTime);
-                hierarchy.BeginUpdate();
-                foreach (var updatable in hierarchy.OrderedInstancesOf<IUpdatable>())
+                hierarchyGame.BeginUpdate();
+                foreach (var updatable in hierarchyGame.OrderedInstancesOf<IUpdatable>())
                 {
                     updatable.Update(gameTime);
                 }
-                hierarchy.EndUpdate();
+                hierarchyGame.EndUpdate();
+
+                hierarchyUI.BeginUpdate();
+                foreach (var updatable in hierarchyUI.OrderedInstancesOf<IUpdatable>())
+                {
+                    updatable.Update(gameTime);
+                }
+                hierarchyUI.EndUpdate();
+
             }
             else
             {
-                menuHierarchy.BeginUpdate();
-                foreach (var updatable in menuHierarchy.OrderedInstancesOf<IUpdatable>())
+                hierarchyMenu.BeginUpdate();
+                foreach (var updatable in hierarchyMenu.OrderedInstancesOf<IUpdatable>())
                 {
                     updatable.Update(gameTime);
                 }
-                menuHierarchy.EndUpdate();
+                hierarchyMenu.EndUpdate();
             }
+
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.MidnightBlue);
-
             if (!menuDisplayed)
             {
-                renderPipeline.RenderScene(hierarchy, camera);
+                GraphicsDevice.Clear(Color.MidnightBlue);
+                renderPipeline.RenderScene(hierarchyGame, camera);
+                renderPipeline.RenderScene(hierarchyUI, camera);
             }
             else {
                 GraphicsDevice.Clear(Color.DarkGoldenrod);
-                renderPipeline.RenderScene(menuHierarchy, camera);
+                renderPipeline.RenderScene(hierarchyMenu, camera);
             }
             
 
@@ -133,6 +150,30 @@ namespace GlobalLoopGame
         private void LoadSounds()
         {
             //Load sounds and songs here
+
+            GameSounds.asteroidDeathSound = Content.Load<SoundEffect>("Sounds/AsteroidHurt");
+            GameSounds.dropTurretSound = Content.Load<SoundEffect>("Sounds/DropTurret");
+            GameSounds.magnetSound = Content.Load<SoundEffect>("Sounds/Magnet");
+            GameSounds.pickupTurretSound = Content.Load<SoundEffect>("Sounds/PickupTurret");
+            GameSounds.planetHurtSound = Content.Load<SoundEffect>("Sounds/PlanetHurt");
+            GameSounds.playerHurtSound = Content.Load<SoundEffect>("Sounds/PlayerHurt");
+            GameSounds.sideThrustSound = Content.Load<SoundEffect>("Sounds/SideThrust");
+            GameSounds.thrusterSound = Content.Load<SoundEffect>("Sounds/Thruster");
+            GameSounds.warningSound = Content.Load<SoundEffect>("Sounds/Warning");
+
+            GameSounds.magnetEmitter = GameSounds.magnetSound.CreateInstance();
+            GameSounds.magnetEmitter.IsLooped = true;
+            GameSounds.magnetEmitter.Pause();
+
+            GameSounds.thrusterEmitter = GameSounds.thrusterSound.CreateInstance();
+            GameSounds.thrusterEmitter.IsLooped = true;
+            GameSounds.thrusterEmitter.Volume = 0.1f;
+            GameSounds.thrusterEmitter.Pause();
+
+            GameSounds.sideThrusterEmitter = GameSounds.sideThrustSound.CreateInstance();
+            GameSounds.sideThrusterEmitter.IsLooped = true;
+            GameSounds.sideThrusterEmitter.Volume = 0.1f;
+            GameSounds.sideThrusterEmitter.Pause();
         }
 
         private void LoadSprites()
@@ -172,67 +213,68 @@ namespace GlobalLoopGame
             //Load Sprites Here
             spriteAtlas.Compact();
             renderPipeline.SpriteAtlas = spriteAtlas.AtlasTextures;
-            
 
             GameSprites.Init();
         }
 
         private void CreateScene()
         {
-            hierarchy = new Hierarchy();
-            
+            hierarchyGame = new Hierarchy();
             camera = new Camera() { ViewSize = MapRadius + 4f };
-            hierarchy.AddObject(camera);
+            hierarchyGame.AddObject(camera);
 
             //Create initial scene here
             Planet = new PlanetObject(world);
-            hierarchy.AddObject(Planet);
+            hierarchyGame.AddObject(Planet);
             Planet.game = this;
             Resettables.Add(Planet);
 
             Spaceship = new SpaceshipObject(world, 0f);
-            Spaceship.ThrustMultiplier = 64f;
-            hierarchy.AddObject(Spaceship);
+            Spaceship.ThrustMultiplier = 84f;
+            hierarchyGame.AddObject(Spaceship);
             Resettables.Add(Spaceship);
     
-            asteroidManager = new AsteroidManager(world, hierarchy);
+            asteroidManager = new AsteroidManager(world, hierarchyGame);
+            asteroidManager.game = this;
             Resettables.Add(asteroidManager);
 
             var turret00 = new TurretStation(world, asteroidManager);
-            turret00.SetStartingPosition(new Vector2(0f, 25f));
+            turret00.SetStartingPosition(new Vector2(0f, 27f));
             Resettables.Add(turret00);
-            hierarchy.AddObject(turret00);
-            //turret00.Transform.LocalPosition = new Vector2(0f, 25f);
+            hierarchyGame.AddObject(turret00);
 
             var turret10 = new TurretStation(world, asteroidManager);
-            turret10.SetStartingPosition(new Vector2(22f, -22f));
+            turret10.SetStartingPosition(new Vector2(24f, -20f));
+            turret10.Transform.GlobalRotation = 4 * MathF.PI / 3;
             Resettables.Add(turret10);
-            hierarchy.AddObject(turret10);
-            //turret10.Transform.LocalPosition = new Vector2(22f, -22f);
+            hierarchyGame.AddObject(turret10);
 
             var turret01 = new TurretStation(world, asteroidManager);
-            turret01.SetStartingPosition(new Vector2(-23f, -23f));
+            turret01.SetStartingPosition(new Vector2(-24f, -20f));
+            turret01.Transform.LocalRotation = 2 * MathF.PI / 3;
             Resettables.Add(turret01);
-            hierarchy.AddObject(turret01);
-
-            //turret01.Transform.LocalPosition = new Vector2(-23f, -23f);
-
-            //var turret11 = new TurretStation(world, asteroidManager);
-            //turret11.Transform.LocalPosition = new Vector2(20f, 20f);
-
-            //hierarchy.AddObject(turret11);
+            hierarchyGame.AddObject(turret01);
 
             StartGame();
         }
 
+        private void CreateUI()
+        {
+            hierarchyUI = new Hierarchy();
+            var boost = new Bar(() => Spaceship.BoostLeft, Color.Green, Color.Red);
+            boost.Transform.LocalPosition = new Vector2(-64f, 64f);
+
+            hierarchyUI.AddObject(boost);
+        }
+
         private void CreateMenuScene()
         {
-            menuHierarchy = new Hierarchy();
+            hierarchyMenu = new Hierarchy();
 
             var mBack = new DrawableObject(Color.White, 1f);
             mBack.Sprite = GameSprites.MenuBackground;
             mBack.Transform.LocalScale = new Vector2(128f, 128f);
-            menuHierarchy.AddObject(mBack);
+            hierarchyMenu.AddObject(mBack);
         }
 
         private void CreateWorld()
@@ -242,10 +284,11 @@ namespace GlobalLoopGame
 
         private void CreateBindings()
         {
-            var accelerate = inputManager.CreateSimpleKeysBinding("accelerate", new Keys[2] { Keys.W, Keys.Up });
-            var decelerate = inputManager.CreateSimpleKeysBinding("decelerate", new Keys[2] { Keys.S, Keys.Down });
-            var rotLeft = inputManager.CreateSimpleKeysBinding("rotLeft", new Keys[2] { Keys.A, Keys.Left });
-            var rotRight = inputManager.CreateSimpleKeysBinding("rotRight", new Keys[2] { Keys.D, Keys.Right });
+            accelerate = inputManager.CreateSimpleKeysBinding("accelerate", new Keys[2] { Keys.W, Keys.Up });
+            decelerate = inputManager.CreateSimpleKeysBinding("decelerate", new Keys[2] { Keys.S, Keys.Down });
+            rotLeft = inputManager.CreateSimpleKeysBinding("rotLeft", new Keys[2] { Keys.A, Keys.Left });
+            rotRight = inputManager.CreateSimpleKeysBinding("rotRight", new Keys[2] { Keys.D, Keys.Right });
+            
             var toggleDrag = inputManager.CreateSimpleKeysBinding("toggleDrag", new Keys[1] { Keys.Space });
             var restart = inputManager.CreateSimpleKeysBinding("restart", new Keys[1] { Keys.R });
             var boost = inputManager.CreateSimpleKeysBinding("boost", new Keys[2] { Keys.LeftShift, Keys.RightShift });
@@ -258,10 +301,11 @@ namespace GlobalLoopGame
             ThrusterBinding(decelerate, 2, 3);
             ThrusterBinding(rotLeft, 1, 2);
             ThrusterBinding(rotRight, 0, 3);
+            ThrusterBoostBinding(boost, 0, 1);
 
             toggleDrag.Started += (_) =>
             {
-                Spaceship.TryInitDragging(5f, 10f);
+                Spaceship.TryInitDragging(10f, 15f);
             };
 
             restart.Started += (_) =>
@@ -298,6 +342,21 @@ namespace GlobalLoopGame
             };
         }
 
+        private void ThrusterBoostBinding(IInput input, int one, int two)
+        {
+            input.Started += (input) =>
+            {
+                Spaceship.BoostThruster(one);
+                Spaceship.BoostThruster(two);
+            };
+
+            input.Canceled += (input) =>
+            {
+                Spaceship.DisableBoost(one);
+                Spaceship.DisableBoost(two);
+            };
+        }
+
         public void StartGame()
         {
             if (!gameEnded)
@@ -317,6 +376,14 @@ namespace GlobalLoopGame
         
         public void EndGame()
         {
+            if (accelerate.GetCurrentValue<float>() != 0f ||
+                decelerate.GetCurrentValue<float>() != 0f ||
+                rotLeft.GetCurrentValue<float>() != 0f ||
+                rotRight.GetCurrentValue<float>() != 0f)
+            {
+                return;
+            }
+
             if (gameEnded)
             {
                 return;

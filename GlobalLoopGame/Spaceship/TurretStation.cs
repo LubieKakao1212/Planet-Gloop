@@ -1,6 +1,7 @@
 ﻿using GlobalLoopGame.Asteroid;
 using GlobalLoopGame.Spaceship.Dragging;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using MonoEngine.Math;
 using MonoEngine.Physics;
 using MonoEngine.Scenes;
@@ -39,6 +40,7 @@ namespace GlobalLoopGame.Spaceship
             fixture.CollidesWith = Category.None;
             fixture.CollidesWith |= Category.Cat2;
             fixture.CollidesWith |= Category.Cat3;
+            fixture.CollidesWith |= Category.Cat5;
 
             var barrel = new DrawableObject(Color.White, 0.1f);
             barrel.Sprite = GameSprites.TurretCannon[0];
@@ -120,11 +122,27 @@ namespace GlobalLoopGame.Spaceship
         public void OnBecomeDragged()
         {
             canShoot = false;
+
+            SoundEffectInstance pickupInstance = GameSounds.pickupTurretSound.CreateInstance();
+
+            pickupInstance.Volume = 0.5f;
+
+            pickupInstance.Play();
+
+            GameSounds.magnetEmitter.Play();
         }
 
         public void OnBecomeDropped()
         {
             canShoot = true;
+
+            SoundEffectInstance dropInstance = GameSounds.dropTurretSound.CreateInstance();
+
+            dropInstance.Volume = 0.5f;
+
+            dropInstance.Play();
+
+            GameSounds.magnetEmitter.Pause();
         }
 
         public void OnGameEnd()

@@ -1,11 +1,13 @@
 using GlobalLoopGame.Planet;
 using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using MonoEngine.Physics;
 using MonoEngine.Scenes;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
 using System.Collections.Generic;
+using System.Net.Mime;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace GlobalLoopGame.Asteroid
@@ -31,8 +33,7 @@ namespace GlobalLoopGame.Asteroid
 
             PhysicsBody.OnCollision += (sender, other, contact) =>
             {
-                if (isDead)
-                    return false;
+                if (isDead) return false;
 
                 PlanetObject planet = other.Body.Tag as PlanetObject;
 
@@ -41,9 +42,11 @@ namespace GlobalLoopGame.Asteroid
                     planet.ModifyHealth(-damage);
 
                     Die();
+
+                    return false;
                 }
 
-                return false;
+                return true;
             };
         }
 
@@ -58,6 +61,7 @@ namespace GlobalLoopGame.Asteroid
 
             health = maxHealth;
             PhysicsBody.LinearVelocity = velocity * speed;
+            PhysicsBody.AngularVelocity = Random.Shared.NextSingle();
 
             asteroidDrawable = AddDrawableRectFixture(placement.size, new(0f, 0f), Random.Shared.NextSingle() * 2 * MathF.PI, out var fixture);
             asteroidDrawable.Color = Color.Gray;
@@ -81,6 +85,8 @@ namespace GlobalLoopGame.Asteroid
                 int pointModification = (int)MathF.Round(maxHealth * (20f - speed)/2);
 
                 manager.ModifyPoints(pointModification);
+
+                GameSounds.asteroidDeathSound.Play();
 
                 Die();
             }

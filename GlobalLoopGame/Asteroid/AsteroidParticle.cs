@@ -41,6 +41,7 @@ namespace GlobalLoopGame.Asteroid
             var drawable = new DrawableObject(Color.DarkSlateGray, 0f);
             drawable.Transform.LocalRotation = Random.Shared.NextSingle() * 2 * MathF.PI;
             drawable.Parent = this;
+            drawable.Sprite = ((DrawableObject)spawner.Children[0]).Sprite;
 
             return this;
         }

@@ -1,12 +1,16 @@
-﻿using GlobalLoopGame.Spaceship.Dragging;
+﻿using GlobalLoopGame.Asteroid;
+using GlobalLoopGame.Planet;
+using GlobalLoopGame.Spaceship.Dragging;
 using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using MonoEngine.Physics;
 using MonoEngine.Scenes;
 using nkast.Aether.Physics2D.Dynamics;
 using nkast.Aether.Physics2D.Dynamics.Joints;
 using System;
 using System.Collections.Generic;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace GlobalLoopGame.Spaceship
 {
@@ -17,8 +21,13 @@ namespace GlobalLoopGame.Spaceship
         public Joint CurrentDrag { get; set; }
 
         public PhysicsBodyObject ThisObject => this;
+        public float BoostLeft { get; private set; }
 
         private bool movable = false;
+
+        private float maxBoost = 2f;
+        private float boostThrust = 2f;
+        private float boostRegeneration = 1f;
 
         /// <summary>
         /// BottomLeft, BottomRight, TopLeft, TopRight
@@ -26,13 +35,15 @@ namespace GlobalLoopGame.Spaceship
         private List<HierarchyObject> thrusters = new List<HierarchyObject>();
 
         private List<int> thrust = new List<int>();
+        private List<bool> boost = new List<bool>();
 
         public SpaceshipObject(World world, float drawOrder) : base(null)
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
             PhysicsBody.Tag = this;
-            PhysicsBody.AngularDamping = 10f;
-            PhysicsBody.LinearDamping = 3.5f;
+            PhysicsBody.AngularDamping = 2.5f;
+            PhysicsBody.LinearDamping = 1.5f;
+
             Transform.GlobalPosition = new Vector2(0f, -48f);
             
             var shipBody = AddDrawableRectFixture(GameSprites.SpaceshipBodySize, new(0f, 0f), 0, out var fixture, 0.25f);
@@ -45,6 +56,18 @@ namespace GlobalLoopGame.Spaceship
             fixture.CollidesWith |= Category.Cat1;
             fixture.CollidesWith |= Category.Cat3;
             fixture.CollidesWith |= Category.Cat5;
+
+            PhysicsBody.OnCollision += (sender, other, contact) =>
+            {
+                AsteroidObject asteroid = other.Body.Tag as AsteroidObject;
+
+                if (asteroid != null)
+                {
+                    GameSounds.playerHurtSound.Play();
+                }
+
+                return true;
+            };
 
             shipBody.DrawOrder = drawOrder + 0.01f;
             var t = GameSprites.SpaceshipBodySize;
@@ -60,10 +83,9 @@ namespace GlobalLoopGame.Spaceship
             if (movable)
             {
                 thrust[idx] += 1;
+
                 UpdateThruster(idx);
             }
-
-            // CurrentDrag.BodyB.Tag as IDraggable
         }
 
         public void DecrementThruster(int idx)
@@ -71,6 +93,7 @@ namespace GlobalLoopGame.Spaceship
             if (movable)
             {
                 thrust[idx] -= 1;
+
                 UpdateThruster(idx);
             }
         }
@@ -90,39 +113,128 @@ namespace GlobalLoopGame.Spaceship
             root.Parent = this;
             thrusters.Add(root);
             thrust.Add(0);
+            boost.Add(false);
             UpdateThruster(thrusters.Count - 1);
         }
 
         private void UpdateThruster(int idx)
         {
-            var s = thrusters[idx].Transform.LocalScale;
-            s.Y = thrust[idx];
-            thrusters[idx].Transform.LocalScale = s;
+            var scale = new Vector2(1f, thrust[idx]);
+            if (thrust[idx] > 0 && boost[idx] && BoostLeft > 0)
+            {
+                scale.Y += 1;
+                scale.X += 0.5f;
+            }
+            thrusters[idx].Transform.LocalScale = scale;
         }
 
         public override void Update(GameTime time)
         {
             if (movable)
             {
+                var boostAmount = 0;
                 for (int i = 0; i < thrusters.Count; i++)
                 {
-                    PhysicsBody.ApplyForce(thrusters[i].Transform.Up * ThrustMultiplier, thrusters[i].Transform.GlobalPosition);
+                    if (thrust[i] > 0)
+                    {
+                        var thrustMultiplier = ThrustMultiplier;
+                        if (boost[i])
+                        {
+                            boostAmount++;
+                            if (BoostLeft > 0)
+                            {
+                                thrustMultiplier *= boostThrust;
+                            }
+                            else
+                            { 
+                                UpdateThruster(i);
+                            }
+                        }
+
+                        PhysicsBody.ApplyForce(thrusters[i].Transform.Up * thrustMultiplier, thrusters[i].Transform.GlobalPosition);
+                    }
+                }
+                if (boostAmount > 0)
+                {
+                    BoostLeft -= boostAmount * (float)time.ElapsedGameTime.TotalSeconds;
+                    if (BoostLeft < 0f)
+                    {
+                        BoostLeft -= (float)time.ElapsedGameTime.TotalSeconds;
+                    }
+                    BoostLeft = MathF.Max(BoostLeft, -1);
+                }
+                else
+                {
+                    BoostLeft += boostRegeneration * (float)time.ElapsedGameTime.TotalSeconds;
+                    BoostLeft = MathF.Min(BoostLeft, maxBoost);
                 }
             }
 
+            ProcessSounds();
+
             base.Update(time);
         }
+
+        public void BoostThruster(int idx)
+        {
+            boost[idx] = true;
+            UpdateThruster(idx);
+        }
+
+        public void DisableBoost(int idx)
+        {
+            boost[idx] = false;
+            UpdateThruster(idx);
+        }
+
         public void OnGameEnd()
         {
             PhysicsBody.LinearVelocity = Vector2.Zero;
             PhysicsBody.AngularVelocity = 0f;
+
+            for (int i = 0; i < thrust.Count; i++)
+            {
+                thrust[i] = 0;
+            }
+
             movable = false;
         }
 
         public void Reset()
         {
+            BoostLeft = maxBoost;
             Transform.GlobalPosition = new Vector2(0f, -48f);
+            Transform.GlobalRotation = 0f;
             movable = true;
+        }
+
+        private void ProcessSounds()
+        {
+            if (thrusters.Count < 4)
+            {
+                return;
+            }
+
+            PlayThruserSound(0, 1, GameSounds.thrusterEmitter);
+            PlayThruserSound(2, 3, GameSounds.sideThrusterEmitter);
+        }
+
+        private void PlayThruserSound(int thrusterOne, int thrusterTwo, SoundEffectInstance sound)
+        {
+            if (sound.State == SoundState.Playing)
+            {
+                if (thrust[thrusterOne] < 1 && thrust[thrusterTwo] < 1)
+                {
+                    sound.Pause();
+                }
+            }
+            else
+            {
+                if (thrust[thrusterOne] >= 1 || thrust[thrusterTwo] >= 1)
+                {
+                    sound.Play();
+                }
+            }
         }
     }
 }
