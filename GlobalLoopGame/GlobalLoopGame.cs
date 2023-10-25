@@ -14,7 +14,6 @@ using MonoEngine.Scenes;
 using MonoEngine.Scenes.Events;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
-using static System.Formats.Asn1.AsnWriter;
 using System.Collections.Generic;
 using GlobalLoopGame.UI;
 using Microsoft.Xna.Framework.Audio;
@@ -24,27 +23,33 @@ namespace GlobalLoopGame
 {
     public class GlobalLoopGame : Game
     {
-        const float MapRadius = 64f;
-        const float PlanetRadius = 12f;
+        public const float MapRadius = 64f;
+        public const float PlanetRadius = 12f;
+        public const int WindowSize = 1000;
 
         private GraphicsDeviceManager _graphics;
 
         private RenderPipeline renderPipeline;
         private World world;
+        private Hierarchy hierarchyMenu;
         private Hierarchy hierarchyGame;
         private Hierarchy hierarchyUI;
         private InputManager inputManager;
         private Camera camera;
         private SpriteAtlas<Color> spriteAtlas;
 
+        private SpriteBatch textRenderer;
+
         private GameTime GameTime;
 
         private bool gameEnded = true;
+        private bool menuDisplayed = true;
 
         public AsteroidManager asteroidManager { get; private set; }
 
         public SpaceshipObject Spaceship { get; private set; }
         public PlanetObject Planet { get; private set; }
+        public List<TurretStation> Turrets { get; private set; } = new List<TurretStation>();
 
         public List<IResettable> Resettables { get; private set; } = new List<IResettable>();
 
@@ -53,8 +58,8 @@ namespace GlobalLoopGame
         public GlobalLoopGame()
         {
             _graphics = new GraphicsDeviceManager(this);
-            _graphics.PreferredBackBufferWidth = 1000;
-            _graphics.PreferredBackBufferHeight = 1000;
+            _graphics.PreferredBackBufferWidth = WindowSize;
+            _graphics.PreferredBackBufferHeight = WindowSize;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -70,14 +75,19 @@ namespace GlobalLoopGame
             Effects.Init(Content);
             renderPipeline.Init(GraphicsDevice);
             inputManager = new InputManager(Window);
+            textRenderer = new SpriteBatch(GraphicsDevice);
 
             LoadSounds();
 
             LoadSprites();
+            
+            LoadEffects();
 
             CreateWorld();
 
             CreateScene();
+
+            CreateMenuScene();
 
             CreateBindings();
 
@@ -95,31 +105,53 @@ namespace GlobalLoopGame
 
             inputManager.UpdateState();
 
-            world.Step(gameTime.ElapsedGameTime);
-
-            hierarchyGame.BeginUpdate();
-            foreach (var updatable in hierarchyGame.OrderedInstancesOf<IUpdatable>())
+            if (!menuDisplayed)
             {
-                updatable.Update(gameTime);
-            }
-            hierarchyGame.EndUpdate();
+                world.Step(gameTime.ElapsedGameTime);
+                hierarchyGame.BeginUpdate();
+                foreach (var updatable in hierarchyGame.OrderedInstancesOf<IUpdatable>())
+                {
+                    updatable.Update(gameTime);
+                }
+                hierarchyGame.EndUpdate();
 
-            hierarchyUI.BeginUpdate();
-            foreach (var updatable in hierarchyUI.OrderedInstancesOf<IUpdatable>())
-            {
-                updatable.Update(gameTime);
+                hierarchyUI.BeginUpdate();
+                foreach (var updatable in hierarchyUI.OrderedInstancesOf<IUpdatable>())
+                {
+                    updatable.Update(gameTime);
+                }
+                hierarchyUI.EndUpdate();
+
             }
-            hierarchyUI.EndUpdate();
+            else
+            {
+                hierarchyMenu.BeginUpdate();
+                foreach (var updatable in hierarchyMenu.OrderedInstancesOf<IUpdatable>())
+                {
+                    updatable.Update(gameTime);
+                }
+                hierarchyMenu.EndUpdate();
+            }
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.MidnightBlue);
+            if (!menuDisplayed)
+            {
+                GraphicsDevice.Clear(new Color(0.1f, 0.1f, 0.1f, 1.0f));
+                renderPipeline.RenderScene(hierarchyGame, camera);
+                renderPipeline.RenderScene(hierarchyUI, camera);
 
-            renderPipeline.RenderScene(hierarchyGame, camera);
-            renderPipeline.RenderScene(hierarchyUI, camera);
+                textRenderer.DrawAllText(hierarchyGame, GameSprites.Font, camera);
+                textRenderer.DrawAllText(hierarchyUI, GameSprites.Font, camera);
+            }
+            else
+            {
+                GraphicsDevice.Clear(Color.DarkGoldenrod);
+                renderPipeline.RenderScene(hierarchyMenu, camera);
+            }
 
             base.Draw(gameTime);
         }
@@ -160,17 +192,21 @@ namespace GlobalLoopGame
             var white = new Texture2D(GraphicsDevice, 1, 1);
             white.SetData(new Color[] { Color.White });
             GameSprites.NullSprite = spriteAtlas.AddTextureRects(white, new Rectangle(0, 0, 1, 1))[0];
+            GameSprites.Circle = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("CircleTex"), new Rectangle(0, 0, 256, 256))[0];
+
             GameSprites.Planet = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PlanetTex"), new Rectangle(0, 0, 128, 128))[0];
 
             var spaceshipTextures = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SpaceshipTex"),
                 new Rectangle(0, 6, 32, 20),
-                new Rectangle(36, 17, 12, 18),
-                new Rectangle(35, 8, 6, 6)
+                new Rectangle(37, 36, 22, 22),
+                new Rectangle(35, 8, 6, 6),
+                new Rectangle(4, 30, 22, 34)
                 );
 
             GameSprites.SpaceshipBody = spaceshipTextures[0];
             GameSprites.SpaceshipMagnet = spaceshipTextures[1];
             GameSprites.SpaceshipThrusterFrames = new Sprite[] { spaceshipTextures[2] };
+            GameSprites.SpaceshipMagnetActive = spaceshipTextures[3];
 
             GameSprites.TurretBase = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("TurretPlatformTex"),
                 new Rectangle(0, 0, 48, 48)
@@ -181,15 +217,64 @@ namespace GlobalLoopGame
                 new Rectangle(32, 20, 26, 38)
                 );
 
-            GameSprites.Laser = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("LaserTex"),
-                new Rectangle(1, 0, 4, 27))[0];
+            GameSprites.TurretShotgun = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("ShotgunTex"),
+                new Rectangle(15, 1, 36, 62),
+                new Rectangle(15, 1, 36, 62)
+                );
 
+            GameSprites.TurretSniper = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SniperTex"),
+                new Rectangle(9, 1, 45, 60),
+                new Rectangle(9, 1, 45, 60)
+                );
+
+            GameSprites.Laser = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("LaserTex"),
+                new Rectangle(11, 1, 10, 30))[0];
+
+            GameSprites.MenuBackground = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("MainMenu512x512"), 
+                new Rectangle(0, 0, 512, 512))[0];
+
+            GameSprites.SpaceBackground = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SpaceBackdrop800x800"),
+                new Rectangle(0, 0, 800, 800))[0];
+
+            GameSprites.Warning = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("IncomingWarning"),
+                new Rectangle(65, 8, 32, 32))[0];
+
+            GameSprites.SmallAsteroid = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("Asteroid16x16"),
+                new Rectangle(0, 0, 16, 16))[0];
+
+            GameSprites.LargeAsteroid = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("Asteroid32x32"),
+                new Rectangle(0, 0, 32, 32))[0];
+
+            GameSprites.SmallExplosion = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("explosion2"),
+                new Rectangle(0, 0, 16, 16))[0];
+
+            GameSprites.Health = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("HealthTex"),
+                new Rectangle(0, 0, 32, 32))[0];
+
+            var font = new Font();
+            font.AddSize(12, Content.Load<SpriteFont>("Fonts/Font12"));
+            font.AddSize(36, Content.Load<SpriteFont>("Fonts/Font36"));
+            font.AddSize(72, Content.Load<SpriteFont>("Fonts/Font72"));
+            GameSprites.Font = font;
+            
             //Load Sprites Here
             spriteAtlas.Compact();
             renderPipeline.SpriteAtlas = spriteAtlas.AtlasTextures;
 
             GameSprites.Init();
         }
+
+        private void LoadEffects()
+        {
+            var custom = Content.Load<Effect>("Custom");
+            custom.Parameters["Color"].SetValue(Color.White.ToVector4() * 0.25f);
+            GameEffects.Custom = custom;
+
+
+            var dss = new DepthStencilState();
+            GameEffects.DSS = dss;
+
+        } 
 
         private void CreateScene()
         {
@@ -198,6 +283,12 @@ namespace GlobalLoopGame
             hierarchyGame.AddObject(camera);
 
             //Create initial scene here
+            DrawableObject backgroundObject = new DrawableObject(new Color(0.1f, 0.1f, 0.3f, 0.25f), -2f);
+            hierarchyGame.AddObject(backgroundObject);
+            backgroundObject.Sprite = GameSprites.SpaceBackground;
+            backgroundObject.Transform.GlobalPosition = new Vector2(0, 0);
+            backgroundObject.Transform.LocalScale = new Vector2(150, 150);
+
             Planet = new PlanetObject(world);
             hierarchyGame.AddObject(Planet);
             Planet.game = this;
@@ -212,22 +303,29 @@ namespace GlobalLoopGame
             asteroidManager.game = this;
             Resettables.Add(asteroidManager);
 
-            var turret00 = new TurretStation(world, asteroidManager);
-            turret00.SetStartingPosition(new Vector2(0f, 27f));
+            var turret00 = new TurretStation(world, asteroidManager, renderPipeline);
+            turret00.SetSprites(GameSprites.TurretCannon, GameSprites.TurretCannonSizes, new Vector2(0f, 17f) / GameSprites.pixelsPerUnit);
+            turret00.SetStartingPosition(new Vector2(32f, 0f));
+            turret00.Transform.LocalRotation = MathHelper.ToRadians(270f);
             Resettables.Add(turret00);
             hierarchyGame.AddObject(turret00);
+            Turrets.Add(turret00);
 
-            var turret10 = new TurretStation(world, asteroidManager);
-            turret10.SetStartingPosition(new Vector2(24f, -20f));
-            turret10.Transform.GlobalRotation = 4 * MathF.PI / 3;
+            var turret10 = new SniperTurret(world, asteroidManager, renderPipeline);
+            turret10.SetSprites(GameSprites.TurretSniper, GameSprites.TurretSniperSizes, new Vector2(-6f, 12f) / GameSprites.pixelsPerUnit);
+            turret10.SetStartingPosition(new Vector2(0f, 32f));
             Resettables.Add(turret10);
             hierarchyGame.AddObject(turret10);
+            Turrets.Add(turret10);
 
-            var turret01 = new TurretStation(world, asteroidManager);
-            turret01.SetStartingPosition(new Vector2(-24f, -20f));
-            turret01.Transform.LocalRotation = 2 * MathF.PI / 3;
+            var turret01 = new ShotgunTurret(world, asteroidManager, renderPipeline, 1f);
+            turret01.SetSprites(GameSprites.TurretShotgun, GameSprites.TurretShotgunSizes, new Vector2(0f, 12f) / GameSprites.pixelsPerUnit);
+            turret01.RangeRadius = 24f;
+            turret01.SetStartingPosition(new Vector2(-32f, 0f));
+            turret01.Transform.LocalRotation = MathHelper.ToRadians(90f);
             Resettables.Add(turret01);
             hierarchyGame.AddObject(turret01);
+            Turrets.Add(turret01);
 
             StartGame();
         }
@@ -236,9 +334,24 @@ namespace GlobalLoopGame
         {
             hierarchyUI = new Hierarchy();
             var boost = new Bar(() => Spaceship.BoostLeft, Color.Green, Color.Red);
-            boost.Transform.LocalPosition = new Vector2(-64f, 64f);
-
+            boost.Transform.LocalPosition = new Vector2(-64f, 60f);
             hierarchyUI.AddObject(boost);
+
+            var health = new MultiIconDisplay(GameSprites.Health, 4, 0.5f, 4f, 1f);
+            health.Transform.LocalPosition = new Vector2(-64f, 64f);
+            Planet.HealthChange += health.UpdateCount;
+            Planet.ModifyHealth(0);
+            hierarchyUI.AddObject(health);
+        }
+
+        private void CreateMenuScene()
+        {
+            hierarchyMenu = new Hierarchy();
+
+            var mBack = new DrawableObject(Color.White, 1f);
+            mBack.Sprite = GameSprites.MenuBackground;
+            mBack.Transform.LocalScale = new Vector2(128f, 128f);
+            hierarchyMenu.AddObject(mBack);
         }
 
         private void CreateWorld()
@@ -259,6 +372,8 @@ namespace GlobalLoopGame
             var confirm = inputManager.CreateSimpleKeysBinding("confirm", new Keys[1] { Keys.Enter });
             var cancel = inputManager.CreateSimpleKeysBinding("cancel", new Keys[1] { Keys.Escape });
 
+            var playGame = inputManager.CreateSimpleKeysBinding("playGame", new Keys[1] { Keys.P });
+
             ThrusterBinding(accelerate, 0, 1);
             ThrusterBinding(decelerate, 2, 3);
             ThrusterBinding(rotLeft, 1, 2);
@@ -274,11 +389,19 @@ namespace GlobalLoopGame
             {
                 Restart();
             };
+
+            playGame.Started += (_) =>
+            {
+                menuDisplayed = !menuDisplayed;
+                asteroidManager.Enabled = !menuDisplayed;
+                Console.WriteLine("menuDisplayed is: " + menuDisplayed);
+            };
         }
 
         private void CreateUpdateables()
         {
-            Components.Add(new BoundryFieldComponent(MapRadius, 16f, PlanetRadius + 6f, 32f, Spaceship));
+            Components.Add(new BoundryFieldComponent(MapRadius - 2f, 32f, PlanetRadius + 6f, 64f, Spaceship, Turrets[0], Turrets[1], Turrets[2]));
+            
             Components.Add(asteroidManager);
         }
 
@@ -331,14 +454,6 @@ namespace GlobalLoopGame
         
         public void EndGame()
         {
-            if (accelerate.GetCurrentValue<float>() != 0f ||
-                decelerate.GetCurrentValue<float>() != 0f ||
-                rotLeft.GetCurrentValue<float>() != 0f ||
-                rotRight.GetCurrentValue<float>() != 0f)
-            {
-                return;
-            }
-
             if (gameEnded)
             {
                 return;
@@ -356,10 +471,27 @@ namespace GlobalLoopGame
 
         public void Restart()
         {
+            /*
+            if (accelerate.GetCurrentValue<float>() != 0f ||
+                decelerate.GetCurrentValue<float>() != 0f ||
+                rotLeft.GetCurrentValue<float>() != 0f ||
+                rotRight.GetCurrentValue<float>() != 0f)
+            {
+                return;
+            }
+            */
+
+            /*
             if (!gameEnded)
             {
                 EndGame();
             }
+            */
+
+            // Don't restart unless the game has ended or is paused
+
+            if (gameEnded)
+                return;
 
             StartGame();
         }

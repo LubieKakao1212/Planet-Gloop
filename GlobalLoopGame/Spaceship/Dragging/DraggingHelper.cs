@@ -23,7 +23,7 @@ namespace GlobalLoopGame.Spaceship.Dragging
             IDraggable iDraggable = dragged.PhysicsBody.Tag as IDraggable;
             if (iDraggable != null)
             {
-                iDraggable.OnBecomeDragged();
+                iDraggable.OnBecomeDragged(dragger);
             }
         }
 
@@ -35,7 +35,7 @@ namespace GlobalLoopGame.Spaceship.Dragging
                 IDraggable iDraggable = dragger.CurrentDrag.BodyB.Tag as IDraggable;
                 if (iDraggable != null)
                 {
-                    iDraggable.OnBecomeDropped();
+                    iDraggable.OnBecomeDropped(dragger);
                 }
 
                 obj.PhysicsBody.World.Remove(dragger.CurrentDrag);

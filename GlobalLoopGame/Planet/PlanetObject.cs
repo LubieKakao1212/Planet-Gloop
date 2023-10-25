@@ -10,15 +10,21 @@ namespace GlobalLoopGame.Planet
 {
     public class PlanetObject : PhysicsBodyObject, IResettable
     {
+        public event Action<int> HealthChange;
+
         public GlobalLoopGame game;
         public int health {  get; private set; }
-        private int maxHealth = 1;
+        private int maxHealth = 5;
         public bool isDead { get; private set; }
+        public bool shouldDie { get; private set; }
 
         public PlanetObject(World world) : base(null)
         {
-            PhysicsBody = world.CreateBody(bodyType: BodyType.Static);
+            Order = 10f;
+
+            PhysicsBody = world.CreateBody(bodyType: BodyType.Kinematic);
             PhysicsBody.Tag = this;
+            PhysicsBody.AngularVelocity = 0.25f;
 
             var fixture = PhysicsBody.CreateCircle(12f, 0f);
             var drawable = new DrawableObject(Color.White, -1f);
@@ -27,6 +33,9 @@ namespace GlobalLoopGame.Planet
             drawable.Transform.LocalRotation = 0f;
             drawable.Transform.LocalScale = Vector2.One * 24f;
             drawable.Sprite = GameSprites.Planet;
+
+            fixture.Friction = 1f;
+            fixture.Restitution = 0f;
 
             // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3, bullets - 4
             fixture.CollisionCategories = Category.Cat5;
@@ -42,13 +51,23 @@ namespace GlobalLoopGame.Planet
 
             Console.WriteLine("health " + health.ToString());
 
-            GameSounds.planetHurtSound.Play();
+            if (healthModification < 0)
+            {
+                GameSounds.planetHurtSound.Play();
+                if (game.asteroidManager.difficulty > 3)
+                {
+                    game.asteroidManager.ModifyDifficulty(-1);
+                }
+            }
+
+            HealthChange?.Invoke(health);
 
             if (!isDead && health <= 0)
             {
-                Die();
+                shouldDie = true;
             }
         }
+
         public void OnGameEnd()
         {
 
@@ -57,13 +76,19 @@ namespace GlobalLoopGame.Planet
         public void Reset()
         {
             isDead = false;
+            shouldDie = false;
 
             health = maxHealth;
         }
 
         public override void Update(GameTime time)
         {
-            Transform.LocalRotation += (float)time.ElapsedGameTime.TotalSeconds / 3f;
+            base.Update(time);
+            if(shouldDie && !isDead)
+            {
+                Die();
+            }
+            //Transform.LocalRotation += (float)time.ElapsedGameTime.TotalSeconds / 3f;
         }
 
         void Die()

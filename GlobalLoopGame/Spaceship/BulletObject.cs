@@ -18,6 +18,7 @@ namespace GlobalLoopGame.Spaceship
         public DrawableObject asteroidFixture;
 
         public int damage = 10;
+        public int pierce = 0;
 
         private AutoTimeMachine despawner;
 
@@ -29,7 +30,7 @@ namespace GlobalLoopGame.Spaceship
             PhysicsBody.Tag = this;
             PhysicsBody.Position = Vector2.One * 1024f;
 
-            var visuals = AddDrawableRectFixture(GameSprites.LaserSize, new(0f, 0f), 0, out var fixture);
+            var visuals = AddDrawableRectFixture(GameSprites.LaserSize, new(0f, 0f), 0, out var fixture, 0.01f);
             visuals.Color = Color.White;
             visuals.Sprite = GameSprites.Laser;
 
@@ -43,16 +44,16 @@ namespace GlobalLoopGame.Spaceship
                 if (destroyted)
                     return false;
 
-                destroyted = true;
-
                 AsteroidObject otherAsteroid = other.Body.Tag as AsteroidObject;
 
                 if (otherAsteroid != null)
                 {
-                    otherAsteroid.ModifyHealth(-damage);
+                    OnAsteroidHit(otherAsteroid);
                 }
-
-                Despawn();
+                else
+                {
+                    Despawn();
+                }
 
                 return false;
             };
@@ -70,6 +71,24 @@ namespace GlobalLoopGame.Spaceship
             return this;
         }
 
+        public BulletObject SetLifetime(float lifetime)
+        {
+            despawner.Interval = lifetime;
+            return this;
+        }
+
+        public BulletObject SetDamage(int damage)
+        {
+            this.damage = damage;
+            return this;
+        }
+
+        public BulletObject SetColor(Color color)
+        {
+            ((DrawableObject)Children[0]).Color = color;
+            return this;
+        }
+
         public override void Update(GameTime time)
         {
             base.Update(time);
@@ -78,8 +97,21 @@ namespace GlobalLoopGame.Spaceship
 
         private void Despawn()
         {
+            destroyted = true;
             PhysicsBody.World.RemoveAsync(PhysicsBody);
             CurrentScene.RemoveObject(this);
+        }
+
+        protected virtual void OnAsteroidHit(AsteroidObject asteroid)
+        {
+            asteroid.ModifyHealth(-damage);
+
+            if (pierce-- <= 0)
+            {
+                CurrentScene.AddObject(new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(this));
+
+                Despawn();
+            }
         }
     }
 }
