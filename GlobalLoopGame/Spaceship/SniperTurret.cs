@@ -13,6 +13,7 @@ namespace GlobalLoopGame.Spaceship
             spread = 0;
             RangeRadius = 72f;
             damage = 200;
+            shotIndex = 2;
             UpdateText();
         }
 

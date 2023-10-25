@@ -22,7 +22,7 @@ namespace GlobalLoopGame.Spaceship
 
         private AutoTimeMachine despawner;
 
-        private bool destroyted = false;
+        private bool destroyed = false;
 
         List<AsteroidObject> hitAsteroids = new List<AsteroidObject>();
 
@@ -43,7 +43,7 @@ namespace GlobalLoopGame.Spaceship
 
             PhysicsBody.OnCollision += (sender, other, contact) =>
             {
-                if (destroyted)
+                if (destroyed)
                     return false;
 
                 AsteroidObject otherAsteroid = other.Body.Tag as AsteroidObject;
@@ -105,7 +105,7 @@ namespace GlobalLoopGame.Spaceship
         private void Despawn()
         {
             hitAsteroids.Clear();
-            destroyted = true;
+            destroyed = true;
             PhysicsBody.World.RemoveAsync(PhysicsBody);
             CurrentScene.RemoveObject(this);
         }
