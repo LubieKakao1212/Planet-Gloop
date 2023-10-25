@@ -22,6 +22,7 @@ namespace GlobalLoopGame
         public static Sprite SmallAsteroid;
         public static Sprite LargeAsteroid;
 
+        public static Sprite SpaceBackground;
         public static Sprite MenuBackground;
 
         public static Vector2 PlanetSize; 

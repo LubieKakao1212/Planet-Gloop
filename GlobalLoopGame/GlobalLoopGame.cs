@@ -134,11 +134,12 @@ namespace GlobalLoopGame
         {
             if (!menuDisplayed)
             {
-                GraphicsDevice.Clear(Color.MidnightBlue);
+                GraphicsDevice.Clear(new Color(0.1f, 0.1f, 0.1f, 1.0f));
                 renderPipeline.RenderScene(hierarchyGame, camera);
                 renderPipeline.RenderScene(hierarchyUI, camera);
             }
-            else {
+            else
+            {
                 GraphicsDevice.Clear(Color.DarkGoldenrod);
                 renderPipeline.RenderScene(hierarchyMenu, camera);
             }
@@ -224,6 +225,9 @@ namespace GlobalLoopGame
             GameSprites.MenuBackground = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("MainMenu512x512"), 
                 new Rectangle(0, 0, 512, 512))[0];
 
+            GameSprites.SpaceBackground = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SpaceBackdrop800x800"),
+                new Rectangle(0, 0, 800, 800))[0];
+
             GameSprites.Warning = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("IncomingWarning"),
                 new Rectangle(65, 8, 32, 32))[0];
 
@@ -247,6 +251,12 @@ namespace GlobalLoopGame
             hierarchyGame.AddObject(camera);
 
             //Create initial scene here
+            DrawableObject backgroundObject = new DrawableObject(new Color(0.1f, 0.1f, 0.1f, 0.2f), -2f);
+            hierarchyGame.AddObject(backgroundObject);
+            backgroundObject.Sprite = GameSprites.SpaceBackground;
+            backgroundObject.Transform.GlobalPosition = new Vector2(0, 0);
+            backgroundObject.Transform.LocalScale = new Vector2(150, 150);
+
             Planet = new PlanetObject(world);
             hierarchyGame.AddObject(Planet);
             Planet.game = this;
