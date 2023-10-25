@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using MonoEngine.Math;
 using MonoEngine.Physics;
+using MonoEngine.Rendering.Sprites;
 using MonoEngine.Scenes;
 using MonoEngine.Util;
 using nkast.Aether.Physics2D.Collision;
@@ -16,17 +17,24 @@ namespace GlobalLoopGame.Spaceship
     {
         public float Range { get; set; } = 32f;
 
-        private AutoTimeMachine shootingTimer;
-        private AsteroidManager asteroids;
-        private HierarchyObject barrel;
+        protected AutoTimeMachine shootingTimer;
+        protected AsteroidManager asteroids;
+        protected HierarchyObject barrel;
+        protected DrawableObject barrelDrawable;
 
-        private float spread = 27f * MathF.PI / 180f;
+        protected float spread = 5f * MathF.PI / 180f;
+
+        protected int bulletCount = 1;
 
         private bool canShoot = false;
 
         private Vector2 startingPosition = Vector2.Zero;
 
-        public TurretStation(World world, AsteroidManager asteroids) : base(null)
+        private float barrelLength;
+        private Sprite[] sprites;
+        private Vector2[] spriteScales;
+
+        public TurretStation(World world, AsteroidManager asteroids, float cooldown = 0.125f) : base(null)
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
             PhysicsBody.Tag = this;
@@ -42,25 +50,23 @@ namespace GlobalLoopGame.Spaceship
             fixture.CollidesWith |= Category.Cat3;
             fixture.CollidesWith |= Category.Cat5;
 
-            var barrel = new DrawableObject(Color.White, 0.1f);
-            barrel.Sprite = GameSprites.TurretCannon[0];
+            barrelDrawable = new DrawableObject(Color.White, 0.1f);
+            barrelDrawable.Sprite = GameSprites.TurretCannon[0];
 
-            var ratio = 17f / GameSprites.pixelsPerUnit; 
-            barrel.Transform.LocalPosition = new Vector2(0f, ratio);
-            barrel.Transform.LocalScale = GameSprites.TurretCannonSizes[0];
+            //var ratio = 17f / GameSprites.pixelsPerUnit;
+            // = GameSprites.TurretCannonSizes[0];
 
             var barrelRoot = new HierarchyObject();
-            barrel.Parent = barrelRoot;
+            barrelDrawable.Parent = barrelRoot;
             barrelRoot.Parent = this;
-            this.barrel = barrelRoot;
+            barrel = barrelRoot;
             
             this.asteroids = asteroids;
 
-            shootingTimer = new AutoTimeMachine(TargetAndShoot, 0.125f);
+            shootingTimer = new AutoTimeMachine(TargetAndShoot, cooldown);
         }
 
-
-        private void TargetAndShoot()
+        protected virtual void TargetAndShoot()
         {
             if (!canShoot)
             {
@@ -73,17 +79,20 @@ namespace GlobalLoopGame.Spaceship
             {
                 var dir = target.Transform.GlobalPosition - Transform.GlobalPosition;
                 dir.Normalize();
+                
+                barrel.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
 
                 // spread gets narrower the smaller the target is
-                spread = (30f - target.size.X) * MathF.PI / 180f;
-
-                barrel.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
-                dir = Matrix2x2.Rotation(Random.Shared.NextSingle() * spread - spread / 2f) * dir;
-                CurrentScene.AddObject(new BulletObject(PhysicsBody.World).InitializeBullet(Transform.GlobalPosition + barrel.Transform.Up * 37f / GameSprites.pixelsPerUnit, dir, 128f));
+                //spread = (30f - target.size.X) * MathF.PI / 180f;
+                for (int i = 0; i < bulletCount; i++)
+                {
+                    var d1 = Matrix2x2.Rotation(Random.Shared.NextSingle() * spread - spread / 2f) * dir;
+                    CurrentScene.AddObject(CreateProjectile(d1, Transform.GlobalPosition + barrel.Transform.Up * barrelLength / 2f));
+                }
             }
         }
 
-        private AsteroidObject FindTarget()
+        protected virtual AsteroidObject FindTarget()
         {
             AsteroidObject closest = null;
 
@@ -103,6 +112,11 @@ namespace GlobalLoopGame.Spaceship
             return closest;
         }
 
+        protected virtual BulletObject CreateProjectile(Vector2 dir, Vector2 spawnPos)
+        {
+            return new BulletObject(PhysicsBody.World).InitializeBullet(spawnPos, dir, 128f);
+        }
+
         public override void Update(GameTime time)
         {
             if (canShoot)
@@ -120,6 +134,23 @@ namespace GlobalLoopGame.Spaceship
             Transform.LocalPosition = startingPosition;
         }
 
+        public TurretStation SetSprites(Sprite[] sprites, Vector2[] sizes, Vector2 pivot)
+        {
+            this.sprites = sprites;
+            //this.spriteSizes = sizes;
+
+            barrelDrawable.Transform.LocalScale = sizes[0];
+            barrelDrawable.Transform.LocalPosition = pivot;
+            spriteScales = new Vector2[2];
+            spriteScales[0] = Vector2.One;
+            spriteScales[1] = sizes[1] / sizes[0];
+
+            barrelLength = sizes[0].Y - pivot.Y;
+
+            UpdateSprite(0);
+            return this;
+        }
+        
         public void OnBecomeDragged()
         {
             canShoot = false;
@@ -131,8 +162,10 @@ namespace GlobalLoopGame.Spaceship
             pickupInstance.Play();
 
             GameSounds.magnetEmitter.Play();
-        }
 
+            UpdateSprite(1);
+        }
+        
         public void OnBecomeDropped()
         {
             canShoot = true;
@@ -144,6 +177,8 @@ namespace GlobalLoopGame.Spaceship
             dropInstance.Play();
 
             GameSounds.magnetEmitter.Pause();
+
+            UpdateSprite(0);
         }
 
         public void OnGameEnd()
@@ -156,6 +191,12 @@ namespace GlobalLoopGame.Spaceship
             Transform.LocalPosition = startingPosition;
 
             canShoot = true;
+        }
+
+        private void UpdateSprite(int idx)
+        {
+            barrelDrawable.Sprite = sprites[idx];
+            barrel.Transform.LocalScale = spriteScales[idx];
         }
     }
 }

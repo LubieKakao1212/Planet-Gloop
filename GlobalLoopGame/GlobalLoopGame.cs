@@ -14,7 +14,6 @@ using MonoEngine.Scenes;
 using MonoEngine.Scenes.Events;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
-using static System.Formats.Asn1.AsnWriter;
 using System.Collections.Generic;
 using GlobalLoopGame.UI;
 using Microsoft.Xna.Framework.Audio;
@@ -205,6 +204,16 @@ namespace GlobalLoopGame
                 new Rectangle(32, 20, 26, 38)
                 );
 
+            GameSprites.TurretShotgun = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("ShotgunTex"),
+                new Rectangle(15, 1, 36, 62),
+                new Rectangle(15, 1, 36, 62)
+                );
+
+            GameSprites.TurretSniper = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SniperTex"),
+                new Rectangle(9, 1, 45, 60),
+                new Rectangle(9, 1, 45, 60)
+                );
+
             GameSprites.Laser = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("LaserTex"),
                 new Rectangle(1, 0, 4, 27))[0];
 
@@ -240,19 +249,23 @@ namespace GlobalLoopGame
             Resettables.Add(asteroidManager);
 
             var turret00 = new TurretStation(world, asteroidManager);
+            turret00.SetSprites(GameSprites.TurretCannon, GameSprites.TurretCannonSizes, new Vector2(0f, 17f) / GameSprites.pixelsPerUnit);
             turret00.SetStartingPosition(new Vector2(0f, 27f));
             Resettables.Add(turret00);
             hierarchyGame.AddObject(turret00);
             Turrets.Add(turret00);
 
-            var turret10 = new TurretStation(world, asteroidManager);
-            turret10.SetStartingPosition(new Vector2(24f, -20f));
+            var turret10 = new SniperTurret(world, asteroidManager);
+            turret10.SetSprites(GameSprites.TurretSniper, GameSprites.TurretSniperSizes, new Vector2(-6f, 12f) / GameSprites.pixelsPerUnit);
+            turret10.SetStartingPosition(new Vector2(24f, -22f));
             turret10.Transform.GlobalRotation = 4 * MathF.PI / 3;
             Resettables.Add(turret10);
             hierarchyGame.AddObject(turret10);
             Turrets.Add(turret10);
 
-            var turret01 = new TurretStation(world, asteroidManager);
+            var turret01 = new ShotgunTurret(world, asteroidManager, 1f);
+            turret01.SetSprites(GameSprites.TurretShotgun, GameSprites.TurretShotgunSizes, new Vector2(0f, 12f) / GameSprites.pixelsPerUnit);
+            turret01.Range = 24f;
             turret01.SetStartingPosition(new Vector2(-24f, -20f));
             turret01.Transform.LocalRotation = 2 * MathF.PI / 3;
             Resettables.Add(turret01);
