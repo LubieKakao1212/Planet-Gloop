@@ -31,6 +31,7 @@ namespace GlobalLoopGame
 
         private RenderPipeline renderPipeline;
         private World world;
+        private Hierarchy hierarchyMenu;
         private Hierarchy hierarchyGame;
         private Hierarchy hierarchyUI;
         private InputManager inputManager;
@@ -40,6 +41,7 @@ namespace GlobalLoopGame
         private GameTime GameTime;
 
         private bool gameEnded = true;
+        private bool menuDisplayed = true;
 
         public AsteroidManager asteroidManager { get; private set; }
 
@@ -80,6 +82,8 @@ namespace GlobalLoopGame
 
             CreateScene();
 
+            CreateMenuScene();
+
             CreateBindings();
 
             CreateUpdateables();
@@ -96,31 +100,50 @@ namespace GlobalLoopGame
 
             inputManager.UpdateState();
 
-            world.Step(gameTime.ElapsedGameTime);
-
-            hierarchyGame.BeginUpdate();
-            foreach (var updatable in hierarchyGame.OrderedInstancesOf<IUpdatable>())
+            if (!menuDisplayed)
             {
-                updatable.Update(gameTime);
-            }
-            hierarchyGame.EndUpdate();
+                world.Step(gameTime.ElapsedGameTime);
+                hierarchyGame.BeginUpdate();
+                foreach (var updatable in hierarchyGame.OrderedInstancesOf<IUpdatable>())
+                {
+                    updatable.Update(gameTime);
+                }
+                hierarchyGame.EndUpdate();
 
-            hierarchyUI.BeginUpdate();
-            foreach (var updatable in hierarchyUI.OrderedInstancesOf<IUpdatable>())
-            {
-                updatable.Update(gameTime);
+                hierarchyUI.BeginUpdate();
+                foreach (var updatable in hierarchyUI.OrderedInstancesOf<IUpdatable>())
+                {
+                    updatable.Update(gameTime);
+                }
+                hierarchyUI.EndUpdate();
+
             }
-            hierarchyUI.EndUpdate();
+            else
+            {
+                hierarchyMenu.BeginUpdate();
+                foreach (var updatable in hierarchyMenu.OrderedInstancesOf<IUpdatable>())
+                {
+                    updatable.Update(gameTime);
+                }
+                hierarchyMenu.EndUpdate();
+            }
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.MidnightBlue);
-
-            renderPipeline.RenderScene(hierarchyGame, camera);
-            renderPipeline.RenderScene(hierarchyUI, camera);
+            if (!menuDisplayed)
+            {
+                GraphicsDevice.Clear(Color.MidnightBlue);
+                renderPipeline.RenderScene(hierarchyGame, camera);
+                renderPipeline.RenderScene(hierarchyUI, camera);
+            }
+            else {
+                GraphicsDevice.Clear(Color.DarkGoldenrod);
+                renderPipeline.RenderScene(hierarchyMenu, camera);
+            }
+            
 
             base.Draw(gameTime);
         }
@@ -185,6 +208,9 @@ namespace GlobalLoopGame
             GameSprites.Laser = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("LaserTex"),
                 new Rectangle(1, 0, 4, 27))[0];
 
+            GameSprites.MenuBackground = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("MainMenu512x512"), new Rectangle(0, 0, 512, 512))[0];
+
+
             //Load Sprites Here
             spriteAtlas.Compact();
             renderPipeline.SpriteAtlas = spriteAtlas.AtlasTextures;
@@ -245,6 +271,16 @@ namespace GlobalLoopGame
             hierarchyUI.AddObject(boost);
         }
 
+        private void CreateMenuScene()
+        {
+            hierarchyMenu = new Hierarchy();
+
+            var mBack = new DrawableObject(Color.White, 1f);
+            mBack.Sprite = GameSprites.MenuBackground;
+            mBack.Transform.LocalScale = new Vector2(128f, 128f);
+            hierarchyMenu.AddObject(mBack);
+        }
+
         private void CreateWorld()
         {
             world = new World(new Vector2(0f, 0f));
@@ -263,6 +299,8 @@ namespace GlobalLoopGame
             var confirm = inputManager.CreateSimpleKeysBinding("confirm", new Keys[1] { Keys.Enter });
             var cancel = inputManager.CreateSimpleKeysBinding("cancel", new Keys[1] { Keys.Escape });
 
+            var playGame = inputManager.CreateSimpleKeysBinding("playGame", new Keys[1] { Keys.P });
+
             ThrusterBinding(accelerate, 0, 1);
             ThrusterBinding(decelerate, 2, 3);
             ThrusterBinding(rotLeft, 1, 2);
@@ -277,6 +315,13 @@ namespace GlobalLoopGame
             restart.Started += (_) =>
             {
                 Restart();
+            };
+
+            playGame.Started += (_) =>
+            {
+                menuDisplayed = !menuDisplayed;
+                asteroidManager.Enabled = !menuDisplayed;
+                Console.WriteLine("menuDisplayed is: " + menuDisplayed);
             };
         }
 

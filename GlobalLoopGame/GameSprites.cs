@@ -15,6 +15,8 @@ namespace GlobalLoopGame
         public static Sprite[] TurretCannon;
         public static Sprite Laser;
 
+        public static Sprite MenuBackground;
+
         public static Vector2 PlanetSize; 
         public static Vector2 SpaceshipBodySize;
         //We assume all frames have the same size
