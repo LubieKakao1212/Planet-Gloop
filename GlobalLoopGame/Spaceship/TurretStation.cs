@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using MonoEngine.Math;
 using MonoEngine.Physics;
+using MonoEngine.Rendering.Sprites;
 using MonoEngine.Scenes;
 using MonoEngine.Util;
 using nkast.Aether.Physics2D.Collision;
@@ -19,6 +20,7 @@ namespace GlobalLoopGame.Spaceship
         protected AutoTimeMachine shootingTimer;
         protected AsteroidManager asteroids;
         protected HierarchyObject barrel;
+        protected DrawableObject barrelDrawable;
 
         protected float spread = 5f * MathF.PI / 180f;
 
@@ -29,8 +31,9 @@ namespace GlobalLoopGame.Spaceship
         private Vector2 startingPosition = Vector2.Zero;
 
         private float barrelLength;
+        private Sprite[] sprites;
+        private Vector2[] spriteScales;
 
-        //TODO pass textures
         public TurretStation(World world, AsteroidManager asteroids, float cooldown = 0.125f) : base(null)
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
@@ -47,19 +50,16 @@ namespace GlobalLoopGame.Spaceship
             fixture.CollidesWith |= Category.Cat3;
             fixture.CollidesWith |= Category.Cat5;
 
-            var barrel = new DrawableObject(Color.White, 0.1f);
-            barrel.Sprite = GameSprites.TurretCannon[0];
+            barrelDrawable = new DrawableObject(Color.White, 0.1f);
+            barrelDrawable.Sprite = GameSprites.TurretCannon[0];
 
-            var ratio = 17f / GameSprites.pixelsPerUnit; 
-            barrel.Transform.LocalPosition = new Vector2(0f, ratio);
-            barrel.Transform.LocalScale = GameSprites.TurretCannonSizes[0];
-
-            barrelLength = barrel.Transform.LocalPosition.Y + barrel.Transform.LocalScale.Y;
+            //var ratio = 17f / GameSprites.pixelsPerUnit;
+            // = GameSprites.TurretCannonSizes[0];
 
             var barrelRoot = new HierarchyObject();
-            barrel.Parent = barrelRoot;
+            barrelDrawable.Parent = barrelRoot;
             barrelRoot.Parent = this;
-            this.barrel = barrelRoot;
+            barrel = barrelRoot;
             
             this.asteroids = asteroids;
 
@@ -134,6 +134,23 @@ namespace GlobalLoopGame.Spaceship
             Transform.LocalPosition = startingPosition;
         }
 
+        public TurretStation SetSprites(Sprite[] sprites, Vector2[] sizes, Vector2 pivot)
+        {
+            this.sprites = sprites;
+            //this.spriteSizes = sizes;
+
+            barrelDrawable.Transform.LocalScale = sizes[0];
+            barrelDrawable.Transform.LocalPosition = pivot;
+            spriteScales = new Vector2[2];
+            spriteScales[0] = Vector2.One;
+            spriteScales[1] = sizes[1] / sizes[0];
+
+            barrelLength = sizes[0].Y - pivot.Y;
+
+            UpdateSprite(0);
+            return this;
+        }
+        
         public void OnBecomeDragged()
         {
             canShoot = false;
@@ -145,8 +162,10 @@ namespace GlobalLoopGame.Spaceship
             pickupInstance.Play();
 
             GameSounds.magnetEmitter.Play();
-        }
 
+            UpdateSprite(1);
+        }
+        
         public void OnBecomeDropped()
         {
             canShoot = true;
@@ -158,6 +177,8 @@ namespace GlobalLoopGame.Spaceship
             dropInstance.Play();
 
             GameSounds.magnetEmitter.Pause();
+
+            UpdateSprite(0);
         }
 
         public void OnGameEnd()
@@ -170,6 +191,12 @@ namespace GlobalLoopGame.Spaceship
             Transform.LocalPosition = startingPosition;
 
             canShoot = true;
+        }
+
+        private void UpdateSprite(int idx)
+        {
+            barrelDrawable.Sprite = sprites[idx];
+            barrel.Transform.LocalScale = spriteScales[idx];
         }
     }
 }
