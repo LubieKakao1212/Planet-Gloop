@@ -17,8 +17,16 @@ namespace GlobalLoopGame.Asteroid
         private Hierarchy _hierarchy;
 
         public int points { get; private set; }
-        public bool Enabled { get => enabled; set { enabled = value; EnabledChanged?.Invoke(null, EventArgs.Empty); } }
-        private bool enabled; 
+        public bool Enabled 
+        { 
+            get => enabled; 
+            set 
+            { 
+                enabled = value; 
+                EnabledChanged?.Invoke(null, EventArgs.Empty); 
+            } 
+        }
+        private bool enabled = false; 
 
         public int UpdateOrder { get; }
 

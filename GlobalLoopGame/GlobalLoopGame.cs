@@ -272,7 +272,7 @@ namespace GlobalLoopGame
             playGame.Started += (_) =>
             {
                 menuDisplayed = !menuDisplayed;
-                //asteroidManager.Enabled = !menuDisplayed;
+                asteroidManager.Enabled = !menuDisplayed;
                 Console.WriteLine("menuDisplayed is: " + menuDisplayed);
             };
         }
