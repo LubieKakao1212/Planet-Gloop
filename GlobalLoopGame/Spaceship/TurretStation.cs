@@ -176,7 +176,7 @@ namespace GlobalLoopGame.Spaceship
             return this;
         }
         
-        public void OnBecomeDragged()
+        public void OnBecomeDragged(IDragger dragger)
         {
             canShoot = false;
 
@@ -191,9 +191,17 @@ namespace GlobalLoopGame.Spaceship
             UpdateSprite(1);
 
             displayRange = true;
+
+            SpaceshipObject spaceship = dragger.ThisObject as SpaceshipObject;
+
+            if (spaceship != null)
+            {
+                spaceship.magnetObject.Sprite = GameSprites.SpaceshipMagnetActive;
+                spaceship.magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSizeActive;
+            }
         }
         
-        public void OnBecomeDropped()
+        public void OnBecomeDropped(IDragger dragger)
         {
             canShoot = true;
 
@@ -208,6 +216,15 @@ namespace GlobalLoopGame.Spaceship
             UpdateSprite(0);
 
             displayRange = false;
+
+            SpaceshipObject spaceship = dragger.ThisObject as SpaceshipObject;
+
+            if (spaceship != null)
+            {
+                spaceship.magnetObject.Sprite = GameSprites.SpaceshipMagnet;
+                spaceship.magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSize;
+                spaceship.magnetObject.Transform.LocalRotation = 0f;
+            }
         }
 
         public void OnGameEnd()

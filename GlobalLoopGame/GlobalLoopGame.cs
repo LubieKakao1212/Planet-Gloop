@@ -189,13 +189,15 @@ namespace GlobalLoopGame
 
             var spaceshipTextures = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SpaceshipTex"),
                 new Rectangle(0, 6, 32, 20),
-                new Rectangle(36, 17, 12, 18),
-                new Rectangle(35, 8, 6, 6)
+                new Rectangle(37, 36, 22, 22),
+                new Rectangle(35, 8, 6, 6),
+                new Rectangle(4, 30, 22, 34)
                 );
 
             GameSprites.SpaceshipBody = spaceshipTextures[0];
             GameSprites.SpaceshipMagnet = spaceshipTextures[1];
             GameSprites.SpaceshipThrusterFrames = new Sprite[] { spaceshipTextures[2] };
+            GameSprites.SpaceshipMagnetActive = spaceshipTextures[3];
 
             GameSprites.TurretBase = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("TurretPlatformTex"),
                 new Rectangle(0, 0, 48, 48)

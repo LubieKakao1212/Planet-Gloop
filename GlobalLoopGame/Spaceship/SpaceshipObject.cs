@@ -10,6 +10,7 @@ using nkast.Aether.Physics2D.Dynamics;
 using nkast.Aether.Physics2D.Dynamics.Joints;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace GlobalLoopGame.Spaceship
@@ -20,7 +21,7 @@ namespace GlobalLoopGame.Spaceship
 
         public Joint CurrentDrag { get; set; }
 
-        DrawableObject magnetObject;
+        public DrawableObject magnetObject;
 
         public PhysicsBodyObject ThisObject => this;
         public float BoostLeft { get; private set; }
@@ -80,6 +81,11 @@ namespace GlobalLoopGame.Spaceship
             AddThruster(new(t.X, t.Y / 2f), MathF.PI);
 
             // add magnet
+            magnetObject = new DrawableObject(Color.White, 1f);
+            magnetObject.Sprite = GameSprites.SpaceshipMagnet;
+            magnetObject.Parent = this;
+            magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSize;
+            magnetObject.Transform.LocalPosition = Vector2.Zero;
         }
         
         public void IncrementThruster(int idx)
@@ -158,6 +164,7 @@ namespace GlobalLoopGame.Spaceship
                         PhysicsBody.ApplyForce(thrusters[i].Transform.Up * thrustMultiplier, thrusters[i].Transform.GlobalPosition);
                     }
                 }
+
                 if (boostAmount > 0)
                 {
                     BoostLeft -= boostAmount * (float)time.ElapsedGameTime.TotalSeconds;
@@ -171,6 +178,13 @@ namespace GlobalLoopGame.Spaceship
                 {
                     BoostLeft += boostRegeneration * (float)time.ElapsedGameTime.TotalSeconds;
                     BoostLeft = MathF.Min(BoostLeft, maxBoost);
+                }
+
+                // rotate magnet towards turret if dragging
+                if (CurrentDrag != null)
+                {
+                    var dir = CurrentDrag.BodyB.Position - magnetObject.Transform.GlobalPosition;
+                    magnetObject.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
                 }
             }
 
