@@ -36,7 +36,8 @@ namespace GlobalLoopGame.Asteroid
 
             PhysicsBody.OnCollision += (sender, other, contact) =>
             {
-                if (isDead) return false;
+                if (isDead)
+                    return false;
 
                 PlanetObject planet = other.Body.Tag as PlanetObject;
 
@@ -44,7 +45,11 @@ namespace GlobalLoopGame.Asteroid
                 {
                     planet.ModifyHealth(-damage);
 
-                    CurrentScene.AddObject(new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(this));
+                    ExplosionParticleObject epo = new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(this);
+
+                    epo.Transform.LocalScale = Vector2.One * 4f;
+
+                    CurrentScene.AddObject(epo);
 
                     Die();
 

@@ -157,7 +157,6 @@ namespace GlobalLoopGame
         private void LoadSounds()
         {
             //Load sounds and songs here
-
             GameSounds.asteroidDeathSound = Content.Load<SoundEffect>("Sounds/AsteroidHurt");
             GameSounds.dropTurretSound = Content.Load<SoundEffect>("Sounds/DropTurret");
             GameSounds.magnetSound = Content.Load<SoundEffect>("Sounds/Magnet");
@@ -244,10 +243,13 @@ namespace GlobalLoopGame
                 new Rectangle(0, 0, 32, 32))[0];
 
             GameSprites.SmallExplosion = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("explosion2"),
-                new Rectangle(0, 0, 16, 16))[0];
+                new Rectangle(1, 1, 20, 20))[0];
 
             GameSprites.Health = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("HealthTex"),
                 new Rectangle(0, 0, 32, 32))[0];
+
+            GameSprites.CircleOverlay = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("circleoverlay"),
+                new Rectangle(0, 0, 726,726))[0];
 
             var font = new Font();
             font.AddSize(12, Content.Load<SpriteFont>("Fonts/Font12"));
@@ -289,7 +291,7 @@ namespace GlobalLoopGame
             asteroidManager.game = this;
             Resettables.Add(asteroidManager);
 
-            var turret00 = new TurretStation(world, asteroidManager);
+            var turret00 = new TurretStation(world, asteroidManager, 0.15f);
             turret00.SetSprites(GameSprites.TurretCannon, GameSprites.TurretCannonSizes, new Vector2(0f, 17f) / GameSprites.pixelsPerUnit);
             turret00.SetStartingPosition(new Vector2(32f, 0f));
             turret00.Transform.LocalRotation = MathHelper.ToRadians(270f);
@@ -328,6 +330,12 @@ namespace GlobalLoopGame
             Planet.HealthChange += health.UpdateCount;
             Planet.ModifyHealth(0);
             hierarchyUI.AddObject(health);
+
+            DrawableObject overlayObject = new DrawableObject(Color.DarkSlateGray, -1f);
+            hierarchyUI.AddObject(overlayObject);
+            overlayObject.Sprite = GameSprites.CircleOverlay;
+            overlayObject.Transform.GlobalPosition = new Vector2(0, 0);
+            overlayObject.Transform.LocalScale = new Vector2(136, 136);
         }
 
         private void CreateMenuScene()
