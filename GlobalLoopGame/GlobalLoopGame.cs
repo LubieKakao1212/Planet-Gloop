@@ -270,7 +270,6 @@ namespace GlobalLoopGame
             custom.Parameters["Color"].SetValue(Color.White.ToVector4() * 0.25f);
             GameEffects.Custom = custom;
 
-
             var dss = new DepthStencilState();
             GameEffects.DSS = dss;
 
@@ -336,6 +335,17 @@ namespace GlobalLoopGame
             var boost = new Bar(() => Spaceship.BoostLeft, Color.Green, Color.Red);
             boost.Transform.LocalPosition = new Vector2(-64f, 60f);
             hierarchyUI.AddObject(boost);
+
+            var points = new TextObject();
+            points.Transform.GlobalPosition = new Vector2(60, 60f);
+            points.Color = Color.White;
+            points.FontSize = 36;
+            points.Text = "0";
+            asteroidManager.PointsUpdated += (pointCount) =>
+            {
+                points.Text = $"{pointCount / 100}";
+            };
+            hierarchyUI.AddObject(points);
 
             var health = new MultiIconDisplay(GameSprites.Health, 4, 0.5f, 4f, 1f);
             health.Transform.LocalPosition = new Vector2(-64f, 64f);

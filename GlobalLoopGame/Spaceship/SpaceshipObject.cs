@@ -1,7 +1,5 @@
 ﻿using GlobalLoopGame.Asteroid;
-using GlobalLoopGame.Planet;
 using GlobalLoopGame.Spaceship.Dragging;
-using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using MonoEngine.Physics;
@@ -10,8 +8,6 @@ using nkast.Aether.Physics2D.Dynamics;
 using nkast.Aether.Physics2D.Dynamics.Joints;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace GlobalLoopGame.Spaceship
 {

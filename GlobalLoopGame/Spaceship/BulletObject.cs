@@ -19,6 +19,7 @@ namespace GlobalLoopGame.Spaceship
 
         public int damage = 10;
         public int pierce = 0;
+        public bool damageIsPierce;
 
         private AutoTimeMachine despawner;
 
@@ -104,9 +105,20 @@ namespace GlobalLoopGame.Spaceship
 
         protected virtual void OnAsteroidHit(AsteroidObject asteroid)
         {
-            asteroid.ModifyHealth(-damage);
+            var dmg = damage;
 
-            if (pierce-- <= 0)
+            if (damageIsPierce)
+            {
+                damage -= (int)asteroid.health;
+            }
+            else
+            {
+                pierce -= (int)asteroid.health;
+            }
+
+            asteroid.ModifyHealth(-dmg);
+
+            if (pierce <= 0 || damage <= 0)
             {
                 CurrentScene.AddObject(new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(this));
 
