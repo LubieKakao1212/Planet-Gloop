@@ -247,7 +247,7 @@ namespace GlobalLoopGame.Spaceship
 
         protected virtual BulletObject CreateBullet(Vector2 dir, Vector2 pos, float bulletSpeed)
         {
-            return new BulletObject(PhysicsBody.World).InitializeBullet(pos, dir, bulletSpeed);
+            return new BulletObject(PhysicsBody.World).InitializeBullet(pos, dir, bulletSpeed).SetColor(Color.LightGray);
         }
 
         protected virtual float GetBulletSpeed()

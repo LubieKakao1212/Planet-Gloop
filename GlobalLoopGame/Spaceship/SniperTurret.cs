@@ -10,7 +10,7 @@ namespace GlobalLoopGame.Spaceship
         public SniperTurret(World world, AsteroidManager asteroids) : base(world, asteroids, 2.5f)
         {
             spread = 0;
-            RangeRadius = 128f;
+            RangeRadius = 72f;
         }
 
         protected override AsteroidObject FindTarget()
@@ -20,8 +20,8 @@ namespace GlobalLoopGame.Spaceship
             var world = PhysicsBody.World;
             foreach (var asteroid in asteroids.asteroids)
             {
-                if (asteroid.health > maxHealth)
-                {
+                if (asteroid.health > maxHealth && (asteroid.Transform.GlobalPosition - Transform.GlobalPosition).LengthSquared() < RangeRadius * RangeRadius)
+                { 
                     bool lineOfSight = true;
                     world.RayCast((fixture, point, normal, fraction) =>
                     {
@@ -48,7 +48,7 @@ namespace GlobalLoopGame.Spaceship
             var bo = new BulletObject(PhysicsBody.World);
             bo.pierce = int.MaxValue;
             bo.damage = 200;
-            return bo.InitializeBullet(pos, dir, speed);
+            return bo.InitializeBullet(pos, dir, speed).SetColor(Color.OrangeRed);
         }
         
         protected override float GetBulletSpeed()

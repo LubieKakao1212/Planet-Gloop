@@ -31,7 +31,7 @@
 /processorParam:DebugMode=Auto
 /build:../../Shaders/Tilemap.fx;Tilemap.fx
 
-#begin LazerBulletsVariousColors.png
+#begin circle.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -41,7 +41,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:LazerBulletsVariousColors.png;LaserTex.png
+/build:circle.png;CircleTex.png
 
 #begin MainMenu512x512.png
 /importer:TextureImporter
@@ -180,4 +180,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:TurretPlatform1.png;TurretPlatformTex.png
+
+#begin whitebullet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:whitebullet.png;LaserTex.png
 

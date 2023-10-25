@@ -83,6 +83,12 @@ namespace GlobalLoopGame.Spaceship
             return this;
         }
 
+        public BulletObject SetColor(Color color)
+        {
+            ((DrawableObject)Children[0]).Color = color;
+            return this;
+        }
+
         public override void Update(GameTime time)
         {
             base.Update(time);
