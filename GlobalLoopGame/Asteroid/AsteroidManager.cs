@@ -423,7 +423,7 @@ namespace GlobalLoopGame.Asteroid
             }),
             new AsteroidWave(new List<AsteroidPlacement>()
             {
-                new AsteroidPlacement(Vector2.One * 18f, 80f, 100f, 5.4f, 280)
+                new AsteroidPlacement(Vector2.One * 18f, 80f, 100f, 5.4f, 300)
             },
             4,
             new List<float>()
@@ -767,7 +767,7 @@ namespace GlobalLoopGame.Asteroid
             }),
             new AsteroidWave(new List<AsteroidPlacement>()
             {
-                new AsteroidPlacement(Vector2.One * 22f, 270f, 359f, 4.5f, 450)
+                new AsteroidPlacement(Vector2.One * 22f, 270f, 359f, 5f, 500)
             },
             10,
             new List<float>()
