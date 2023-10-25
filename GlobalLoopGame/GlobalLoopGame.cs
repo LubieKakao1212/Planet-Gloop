@@ -274,7 +274,7 @@ namespace GlobalLoopGame
             asteroidManager.game = this;
             Resettables.Add(asteroidManager);
 
-            var turret00 = new TurretStation(world, asteroidManager);
+            var turret00 = new TurretStation(world, asteroidManager, 0.15f);
             turret00.SetSprites(GameSprites.TurretCannon, GameSprites.TurretCannonSizes, new Vector2(0f, 17f) / GameSprites.pixelsPerUnit);
             turret00.SetStartingPosition(new Vector2(32f, 0f));
             turret00.Transform.LocalRotation = MathHelper.ToRadians(270f);

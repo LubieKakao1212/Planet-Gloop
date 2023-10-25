@@ -108,7 +108,7 @@ namespace GlobalLoopGame.Spaceship
 
             if (pierce-- <= 0)
             {
-                CurrentScene.AddObject(new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(this));
+                CurrentScene.AddObject(new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(asteroid));
 
                 Despawn();
             }

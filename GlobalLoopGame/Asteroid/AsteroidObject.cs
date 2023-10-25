@@ -36,7 +36,8 @@ namespace GlobalLoopGame.Asteroid
 
             PhysicsBody.OnCollision += (sender, other, contact) =>
             {
-                if (isDead) return false;
+                if (isDead)
+                    return false;
 
                 PlanetObject planet = other.Body.Tag as PlanetObject;
 
