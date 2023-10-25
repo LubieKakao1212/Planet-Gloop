@@ -44,6 +44,8 @@ namespace GlobalLoopGame.Planet
 
             GameSounds.planetHurtSound.Play();
 
+            game.asteroidManager.ModifyDifficulty(-1);
+
             if (!isDead && health <= 0)
             {
                 Die();
@@ -56,12 +58,14 @@ namespace GlobalLoopGame.Planet
 
         public void Reset()
         {
+            isDead = false;
+
             health = maxHealth;
         }
 
         public override void Update(GameTime time)
         {
-            Transform.LocalRotation += (float)time.ElapsedGameTime.TotalSeconds / 2f;
+            Transform.LocalRotation += (float)time.ElapsedGameTime.TotalSeconds / 3f;
         }
 
         void Die()

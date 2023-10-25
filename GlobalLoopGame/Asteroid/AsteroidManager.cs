@@ -16,8 +16,17 @@ namespace GlobalLoopGame.Asteroid
 
         private Hierarchy _hierarchy;
 
-        public int points {  get; private set; }
-        public bool Enabled => true;
+        public int points { get; private set; }
+        public bool Enabled 
+        { 
+            get => enabled; 
+            set 
+            { 
+                enabled = value; 
+                EnabledChanged?.Invoke(null, EventArgs.Empty); 
+            } 
+        }
+        private bool enabled = false; 
 
         public int UpdateOrder { get; }
 
@@ -74,7 +83,7 @@ namespace GlobalLoopGame.Asteroid
         {
             if (!active) return;
 
-            Console.WriteLine("selecting wave and placing warning");
+            // Console.WriteLine("selecting wave and placing warning");
 
             waveNumber++; 
             
@@ -117,30 +126,24 @@ namespace GlobalLoopGame.Asteroid
             if (wave is null || !active)
                 return;
 
-            Console.WriteLine("spawning asteroids in placement");
+            // Console.WriteLine("spawning asteroids in placement");
 
             foreach (AsteroidPlacement aPlacement in wave.asteroidPlacements)
             {
                 CreateAsteroid(aPlacement);
             }
             
-            /*
-            if (waveNumber % 4 == 0)
+            if (waveNumber % (difficulty+1) == 0)
             {
                 ModifyDifficulty(1);
             }
-            */
 
-            ModifyDifficulty(1);
+            SetInterval(10, 7);
         }
 
         public void ModifyDifficulty(int difficultyModification)
         {
             difficulty = MathHelper.Clamp(difficulty + difficultyModification, 0, 10);
-
-            // waveInterval = MathHelper.Clamp(7 - difficulty, 1, 999);
-
-            SetInterval(MathHelper.Clamp(16 - difficulty, 6, 999), MathHelper.Clamp(11 - difficulty, 1, 999));
         }
 
         public void ModifyPoints(int pointModification)
@@ -160,6 +163,8 @@ namespace GlobalLoopGame.Asteroid
             waveInterval = interval;
 
             waveWarningTime = warningTime;
+
+            //  Console.WriteLine(waveInterval.ToString());
 
             dirty = true;
         }
@@ -213,7 +218,7 @@ namespace GlobalLoopGame.Asteroid
             active = true; 
             
             difficulty = 0;
-            waveInterval = 5;
+            SetInterval(3, 3);
             waveNumber = 0;
             points = 0;
 

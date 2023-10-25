@@ -1,12 +1,16 @@
-﻿using GlobalLoopGame.Spaceship.Dragging;
+﻿using GlobalLoopGame.Asteroid;
+using GlobalLoopGame.Planet;
+using GlobalLoopGame.Spaceship.Dragging;
 using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using MonoEngine.Physics;
 using MonoEngine.Scenes;
 using nkast.Aether.Physics2D.Dynamics;
 using nkast.Aether.Physics2D.Dynamics.Joints;
 using System;
 using System.Collections.Generic;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace GlobalLoopGame.Spaceship
 {
@@ -39,6 +43,7 @@ namespace GlobalLoopGame.Spaceship
             PhysicsBody.Tag = this;
             PhysicsBody.AngularDamping = 2.5f;
             PhysicsBody.LinearDamping = 1.5f;
+
             Transform.GlobalPosition = new Vector2(0f, -48f);
             
             var shipBody = AddDrawableRectFixture(GameSprites.SpaceshipBodySize, new(0f, 0f), 0, out var fixture, 0.25f);
@@ -51,6 +56,18 @@ namespace GlobalLoopGame.Spaceship
             fixture.CollidesWith |= Category.Cat1;
             fixture.CollidesWith |= Category.Cat3;
             fixture.CollidesWith |= Category.Cat5;
+
+            PhysicsBody.OnCollision += (sender, other, contact) =>
+            {
+                AsteroidObject asteroid = other.Body.Tag as AsteroidObject;
+
+                if (asteroid != null)
+                {
+                    GameSounds.playerHurtSound.Play();
+                }
+
+                return true;
+            };
 
             shipBody.DrawOrder = drawOrder + 0.01f;
             var t = GameSprites.SpaceshipBodySize;
@@ -109,41 +126,6 @@ namespace GlobalLoopGame.Spaceship
                 scale.X += 0.5f;
             }
             thrusters[idx].Transform.LocalScale = scale;
-
-            if (thrusters.Count < 4)
-            {
-                return;
-            }
-
-            if (GameSounds.thrusterEmitter.State == Microsoft.Xna.Framework.Audio.SoundState.Playing)
-            {
-                if (thrusters[0].Transform.LocalScale.Y < 1f && thrusters[1].Transform.LocalScale.Y < 1f)
-                {
-                    GameSounds.thrusterEmitter.Pause();
-                }
-            }
-            else
-            {
-                if (thrusters[0].Transform.LocalScale.Y >= 1f || thrusters[1].Transform.LocalScale.Y >= 1f)
-                {
-                    GameSounds.thrusterEmitter.Play();
-                }
-            }
-
-            if (GameSounds.sideThrusterEmitter.State == Microsoft.Xna.Framework.Audio.SoundState.Playing)
-            {
-                if (thrusters[2].Transform.LocalScale.Y < 1f && thrusters[3].Transform.LocalScale.Y < 1f)
-                {
-                    GameSounds.sideThrusterEmitter.Pause();
-                }
-            }
-            else
-            {
-                if (thrusters[2].Transform.LocalScale.Y >= 1f || thrusters[3].Transform.LocalScale.Y >= 1f)
-                {
-                    GameSounds.sideThrusterEmitter.Play();
-                }
-            }
         }
 
         public override void Update(GameTime time)
@@ -188,6 +170,8 @@ namespace GlobalLoopGame.Spaceship
                 }
             }
 
+            ProcessSounds();
+
             base.Update(time);
         }
 
@@ -222,6 +206,35 @@ namespace GlobalLoopGame.Spaceship
             Transform.GlobalPosition = new Vector2(0f, -48f);
             Transform.GlobalRotation = 0f;
             movable = true;
+        }
+
+        private void ProcessSounds()
+        {
+            if (thrusters.Count < 4)
+            {
+                return;
+            }
+
+            PlayThruserSound(0, 1, GameSounds.thrusterEmitter);
+            PlayThruserSound(2, 3, GameSounds.sideThrusterEmitter);
+        }
+
+        private void PlayThruserSound(int thrusterOne, int thrusterTwo, SoundEffectInstance sound)
+        {
+            if (sound.State == SoundState.Playing)
+            {
+                if (thrust[thrusterOne] < 1 && thrust[thrusterTwo] < 1)
+                {
+                    sound.Pause();
+                }
+            }
+            else
+            {
+                if (thrust[thrusterOne] >= 1 || thrust[thrusterTwo] >= 1)
+                {
+                    sound.Play();
+                }
+            }
         }
     }
 }

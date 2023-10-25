@@ -33,8 +33,7 @@ namespace GlobalLoopGame.Asteroid
 
             PhysicsBody.OnCollision += (sender, other, contact) =>
             {
-                if (isDead)
-                    return false;
+                if (isDead) return false;
 
                 PlanetObject planet = other.Body.Tag as PlanetObject;
 
@@ -43,9 +42,11 @@ namespace GlobalLoopGame.Asteroid
                     planet.ModifyHealth(-damage);
 
                     Die();
+
+                    return false;
                 }
 
-                return false;
+                return true;
             };
         }
 
@@ -60,6 +61,7 @@ namespace GlobalLoopGame.Asteroid
 
             health = maxHealth;
             PhysicsBody.LinearVelocity = velocity * speed;
+            PhysicsBody.AngularVelocity = Random.Shared.NextSingle();
 
             asteroidDrawable = AddDrawableRectFixture(placement.size, new(0f, 0f), Random.Shared.NextSingle() * 2 * MathF.PI, out var fixture);
             asteroidDrawable.Color = Color.Gray;
