@@ -59,6 +59,7 @@ namespace GlobalLoopGame.Spaceship
             shootingTimer = new AutoTimeMachine(TargetAndShoot, 0.125f);
         }
 
+
         private void TargetAndShoot()
         {
             if (!canShoot)

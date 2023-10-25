@@ -45,6 +45,7 @@ namespace GlobalLoopGame
 
         public SpaceshipObject Spaceship { get; private set; }
         public PlanetObject Planet { get; private set; }
+        public List<TurretStation> Turrets { get; private set; } = new List<TurretStation>();
 
         public List<IResettable> Resettables { get; private set; } = new List<IResettable>();
 
@@ -216,18 +217,21 @@ namespace GlobalLoopGame
             turret00.SetStartingPosition(new Vector2(0f, 27f));
             Resettables.Add(turret00);
             hierarchyGame.AddObject(turret00);
+            Turrets.Add(turret00);
 
             var turret10 = new TurretStation(world, asteroidManager);
             turret10.SetStartingPosition(new Vector2(24f, -20f));
             turret10.Transform.GlobalRotation = 4 * MathF.PI / 3;
             Resettables.Add(turret10);
             hierarchyGame.AddObject(turret10);
+            Turrets.Add(turret10);
 
             var turret01 = new TurretStation(world, asteroidManager);
             turret01.SetStartingPosition(new Vector2(-24f, -20f));
             turret01.Transform.LocalRotation = 2 * MathF.PI / 3;
             Resettables.Add(turret01);
             hierarchyGame.AddObject(turret01);
+            Turrets.Add(turret01);
 
             StartGame();
         }
@@ -278,7 +282,8 @@ namespace GlobalLoopGame
 
         private void CreateUpdateables()
         {
-            Components.Add(new BoundryFieldComponent(MapRadius, 16f, PlanetRadius + 6f, 32f, Spaceship));
+            Components.Add(new BoundryFieldComponent(MapRadius - 2f, 32f, PlanetRadius + 6f, 64f, Spaceship, Turrets[0], Turrets[1], Turrets[2]));
+            
             Components.Add(asteroidManager);
         }
 
@@ -331,14 +336,6 @@ namespace GlobalLoopGame
         
         public void EndGame()
         {
-            if (accelerate.GetCurrentValue<float>() != 0f ||
-                decelerate.GetCurrentValue<float>() != 0f ||
-                rotLeft.GetCurrentValue<float>() != 0f ||
-                rotRight.GetCurrentValue<float>() != 0f)
-            {
-                return;
-            }
-
             if (gameEnded)
             {
                 return;
@@ -356,10 +353,27 @@ namespace GlobalLoopGame
 
         public void Restart()
         {
+            /*
+            if (accelerate.GetCurrentValue<float>() != 0f ||
+                decelerate.GetCurrentValue<float>() != 0f ||
+                rotLeft.GetCurrentValue<float>() != 0f ||
+                rotRight.GetCurrentValue<float>() != 0f)
+            {
+                return;
+            }
+            */
+
+            /*
             if (!gameEnded)
             {
                 EndGame();
             }
+            */
+
+            // Don't restart unless the game has ended or is paused
+
+            if (gameEnded)
+                return;
 
             StartGame();
         }
