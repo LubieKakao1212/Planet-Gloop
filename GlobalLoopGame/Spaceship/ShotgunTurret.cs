@@ -17,10 +17,14 @@ namespace GlobalLoopGame.Spaceship
             spread = 30f * MathF.PI / 180f;
         }
 
-        protected override BulletObject CreateProjectile(Vector2 dir, Vector2 pos)
+        protected override BulletObject CreateBullet(Vector2 dir, Vector2 pos, float speed)
         {
-            var bo = new BulletObject(PhysicsBody.World);
-            return bo.InitializeBullet(pos, dir, Random.Shared.NextSingle() * 16f + 64f).SetLifetime(0.5f);
+            return base.CreateBullet(dir, pos, speed).SetLifetime(0.5f).SetDamage(15).SetColor(new Color(255, 200, 20) * 0.75f);
+        }
+
+        protected override float GetBulletSpeed()
+        {
+            return Random.Shared.NextSingle() * 16f + 64f;
         }
     }
 }

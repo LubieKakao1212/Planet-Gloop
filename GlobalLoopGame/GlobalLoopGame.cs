@@ -183,6 +183,8 @@ namespace GlobalLoopGame
             var white = new Texture2D(GraphicsDevice, 1, 1);
             white.SetData(new Color[] { Color.White });
             GameSprites.NullSprite = spriteAtlas.AddTextureRects(white, new Rectangle(0, 0, 1, 1))[0];
+            GameSprites.Circle = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("CircleTex"), new Rectangle(0, 0, 256, 256))[0];
+
             GameSprites.Planet = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PlanetTex"), new Rectangle(0, 0, 128, 128))[0];
 
             var spaceshipTextures = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SpaceshipTex"),
@@ -215,7 +217,7 @@ namespace GlobalLoopGame
                 );
 
             GameSprites.Laser = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("LaserTex"),
-                new Rectangle(1, 0, 4, 27))[0];
+                new Rectangle(11, 1, 10, 30))[0];
 
             GameSprites.MenuBackground = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("MainMenu512x512"), 
                 new Rectangle(0, 0, 512, 512))[0];
@@ -274,7 +276,7 @@ namespace GlobalLoopGame
 
             var turret01 = new ShotgunTurret(world, asteroidManager, 1f);
             turret01.SetSprites(GameSprites.TurretShotgun, GameSprites.TurretShotgunSizes, new Vector2(0f, 12f) / GameSprites.pixelsPerUnit);
-            turret01.Range = 24f;
+            turret01.RangeRadius = 24f;
             turret01.SetStartingPosition(new Vector2(-24f, -20f));
             turret01.Transform.LocalRotation = 2 * MathF.PI / 3;
             Resettables.Add(turret01);

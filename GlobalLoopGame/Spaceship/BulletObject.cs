@@ -30,7 +30,7 @@ namespace GlobalLoopGame.Spaceship
             PhysicsBody.Tag = this;
             PhysicsBody.Position = Vector2.One * 1024f;
 
-            var visuals = AddDrawableRectFixture(GameSprites.LaserSize, new(0f, 0f), 0, out var fixture);
+            var visuals = AddDrawableRectFixture(GameSprites.LaserSize, new(0f, 0f), 0, out var fixture, 0.01f);
             visuals.Color = Color.White;
             visuals.Sprite = GameSprites.Laser;
 
@@ -43,8 +43,6 @@ namespace GlobalLoopGame.Spaceship
             {
                 if (destroyted)
                     return false;
-
-                destroyted = true;
 
                 AsteroidObject otherAsteroid = other.Body.Tag as AsteroidObject;
 
@@ -79,6 +77,18 @@ namespace GlobalLoopGame.Spaceship
             return this;
         }
 
+        public BulletObject SetDamage(int damage)
+        {
+            this.damage = damage;
+            return this;
+        }
+
+        public BulletObject SetColor(Color color)
+        {
+            ((DrawableObject)Children[0]).Color = color;
+            return this;
+        }
+
         public override void Update(GameTime time)
         {
             base.Update(time);
@@ -87,6 +97,7 @@ namespace GlobalLoopGame.Spaceship
 
         private void Despawn()
         {
+            destroyted = true;
             PhysicsBody.World.RemoveAsync(PhysicsBody);
             CurrentScene.RemoveObject(this);
         }
