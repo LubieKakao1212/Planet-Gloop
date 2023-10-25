@@ -273,15 +273,15 @@ namespace GlobalLoopGame
 
             var turret00 = new TurretStation(world, asteroidManager);
             turret00.SetSprites(GameSprites.TurretCannon, GameSprites.TurretCannonSizes, new Vector2(0f, 17f) / GameSprites.pixelsPerUnit);
-            turret00.SetStartingPosition(new Vector2(0f, 27f));
+            turret00.SetStartingPosition(new Vector2(32f, 0f));
+            turret00.Transform.LocalRotation = MathHelper.ToRadians(270f);
             Resettables.Add(turret00);
             hierarchyGame.AddObject(turret00);
             Turrets.Add(turret00);
 
             var turret10 = new SniperTurret(world, asteroidManager);
             turret10.SetSprites(GameSprites.TurretSniper, GameSprites.TurretSniperSizes, new Vector2(-6f, 12f) / GameSprites.pixelsPerUnit);
-            turret10.SetStartingPosition(new Vector2(24f, -22f));
-            turret10.Transform.GlobalRotation = 4 * MathF.PI / 3;
+            turret10.SetStartingPosition(new Vector2(0f, 32f));
             Resettables.Add(turret10);
             hierarchyGame.AddObject(turret10);
             Turrets.Add(turret10);
@@ -289,8 +289,8 @@ namespace GlobalLoopGame
             var turret01 = new ShotgunTurret(world, asteroidManager, 1f);
             turret01.SetSprites(GameSprites.TurretShotgun, GameSprites.TurretShotgunSizes, new Vector2(0f, 12f) / GameSprites.pixelsPerUnit);
             turret01.RangeRadius = 24f;
-            turret01.SetStartingPosition(new Vector2(-24f, -20f));
-            turret01.Transform.LocalRotation = 2 * MathF.PI / 3;
+            turret01.SetStartingPosition(new Vector2(-32f, 0f));
+            turret01.Transform.LocalRotation = MathHelper.ToRadians(90f);
             Resettables.Add(turret01);
             hierarchyGame.AddObject(turret01);
             Turrets.Add(turret01);
