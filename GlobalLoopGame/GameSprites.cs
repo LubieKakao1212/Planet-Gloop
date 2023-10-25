@@ -16,6 +16,7 @@ namespace GlobalLoopGame
         public static Sprite[] TurretShotgun;
         public static Sprite[] TurretSniper;
         public static Sprite Laser;
+        public static Sprite Warning;
 
         public static Sprite MenuBackground;
 

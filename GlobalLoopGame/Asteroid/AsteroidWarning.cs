@@ -27,10 +27,10 @@ namespace GlobalLoopGame.Asteroid
 
             asteroidManager = manager;
 
-            var visuals = AddDrawableRectFixture(new(2f, 6f), new(0f, 0f), 0, out var fixture);
-            visuals.Color = Color.OrangeRed;
+            var visuals = AddDrawableRectFixture(new(6f, 6f), new(0f, 0f), 0, out var fixture);
+            // visuals.Color = Color.OrangeRed;
             visuals.DrawOrder = 999;
-            visuals.Sprite = GameSprites.NullSprite;
+            visuals.Sprite = GameSprites.Warning;
 
             fixture.CollisionCategories = Category.None;
             fixture.CollidesWith = Category.None;
