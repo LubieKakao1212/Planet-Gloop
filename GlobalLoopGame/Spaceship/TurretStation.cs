@@ -35,8 +35,12 @@ namespace GlobalLoopGame.Spaceship
         private Sprite[] sprites;
         private Vector2[] spriteScales;
 
-        private float rangeDisplayTimer;
-        private bool displayRange;
+        private float grabTimer;
+        private bool grabbed;
+
+        private TextObject popupDescription;
+
+        protected int damage = 10;
 
         public TurretStation(World world, AsteroidManager asteroids, float cooldown = 0.125f) : base(null)
         {
@@ -59,8 +63,12 @@ namespace GlobalLoopGame.Spaceship
 
             //var ratio = 17f / GameSprites.pixelsPerUnit;
             // = GameSprites.TurretCannonSizes[0];
+            popupDescription = new TextObject();
+            popupDescription.Color = Color.White;
+            popupDescription.Parent = this;
+            UpdateText();
 
-            rangeDisplay = new DrawableObject(Color.White * 0.5f, -10f);
+            rangeDisplay = new DrawableObject(Color.White * 0.125f, -10f);
             rangeDisplay.Sprite = GameSprites.Circle;
             rangeDisplay.Transform.LocalScale = Vector2.Zero;
             rangeDisplay.Parent = this;
@@ -139,15 +147,18 @@ namespace GlobalLoopGame.Spaceship
                 shootingTimer.Forward(time.ElapsedGameTime.TotalSeconds);
             }
 
-            if(displayRange) {
-                rangeDisplayTimer += (float)time.ElapsedGameTime.TotalSeconds;
+            if(grabbed) {
+                grabTimer += (float)time.ElapsedGameTime.TotalSeconds;
             }
             else
             {
-                rangeDisplayTimer -= (float)time.ElapsedGameTime.TotalSeconds;
+                grabTimer -= (float)time.ElapsedGameTime.TotalSeconds;
             }
-            rangeDisplayTimer = MathHelper.Clamp(rangeDisplayTimer, 0f, 1f);
-            rangeDisplay.Transform.LocalScale = Vector2.Lerp(Vector2.Zero, Vector2.One * RangeRadius * 2f, rangeDisplayTimer);
+            grabTimer = MathHelper.Clamp(grabTimer, 0f, 1f);
+            rangeDisplay.Transform.LocalScale = Vector2.Lerp(Vector2.Zero, Vector2.One * RangeRadius * 2f, grabTimer);
+            popupDescription.Transform.GlobalPosition = Transform.GlobalPosition + Vector2.UnitY * 10f;
+            popupDescription.Transform.GlobalRotation = 0;
+            popupDescription.Color = Color.Lerp(Color.White, Color.Transparent, 1f - Math.Min(grabTimer * 3f, 1f));
 
             base.Update(time);
         }
@@ -190,7 +201,7 @@ namespace GlobalLoopGame.Spaceship
 
             UpdateSprite(1);
 
-            displayRange = true;
+            grabbed = true;
         }
         
         public void OnBecomeDropped()
@@ -207,7 +218,7 @@ namespace GlobalLoopGame.Spaceship
 
             UpdateSprite(0);
 
-            displayRange = false;
+            grabbed = false;
         }
 
         public void OnGameEnd()
@@ -238,6 +249,11 @@ namespace GlobalLoopGame.Spaceship
                 return Vector2.UnitY;
             }
             return deltaPos / l;
+        }
+
+        protected void UpdateText()
+        {
+            popupDescription.Text = $"Damage: {damage}";
         }
 
         protected Vector2 RandomizeDirection(Vector2 direction, float spread)

@@ -23,8 +23,9 @@ namespace GlobalLoopGame
 {
     public class GlobalLoopGame : Game
     {
-        const float MapRadius = 64f;
-        const float PlanetRadius = 12f;
+        public const float MapRadius = 64f;
+        public const float PlanetRadius = 12f;
+        public const int WindowSize = 1000;
 
         private GraphicsDeviceManager _graphics;
 
@@ -36,6 +37,8 @@ namespace GlobalLoopGame
         private InputManager inputManager;
         private Camera camera;
         private SpriteAtlas<Color> spriteAtlas;
+
+        private SpriteBatch textRenderer;
 
         private GameTime GameTime;
 
@@ -55,8 +58,8 @@ namespace GlobalLoopGame
         public GlobalLoopGame()
         {
             _graphics = new GraphicsDeviceManager(this);
-            _graphics.PreferredBackBufferWidth = 1000;
-            _graphics.PreferredBackBufferHeight = 1000;
+            _graphics.PreferredBackBufferWidth = WindowSize;
+            _graphics.PreferredBackBufferHeight = WindowSize;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -72,6 +75,7 @@ namespace GlobalLoopGame
             Effects.Init(Content);
             renderPipeline.Init(GraphicsDevice);
             inputManager = new InputManager(Window);
+            textRenderer = new SpriteBatch(GraphicsDevice);
 
             LoadSounds();
 
@@ -137,12 +141,14 @@ namespace GlobalLoopGame
                 GraphicsDevice.Clear(Color.MidnightBlue);
                 renderPipeline.RenderScene(hierarchyGame, camera);
                 renderPipeline.RenderScene(hierarchyUI, camera);
+
+                textRenderer.DrawAllText(hierarchyGame, GameSprites.Font, camera);
             }
-            else {
+            else
+            {
                 GraphicsDevice.Clear(Color.DarkGoldenrod);
                 renderPipeline.RenderScene(hierarchyMenu, camera);
             }
-            
 
             base.Draw(gameTime);
         }
@@ -224,7 +230,9 @@ namespace GlobalLoopGame
 
             GameSprites.Warning = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("IncomingWarning"),
                 new Rectangle(65, 8, 32, 32))[0];
-            
+
+            GameSprites.Font = Content.Load<SpriteFont>("Fonts/Font");
+
             //Load Sprites Here
             spriteAtlas.Compact();
             renderPipeline.SpriteAtlas = spriteAtlas.AtlasTextures;

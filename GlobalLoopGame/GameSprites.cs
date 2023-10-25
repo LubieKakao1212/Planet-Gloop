@@ -1,9 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using MonoEngine.Rendering.Sprites;
 
 namespace GlobalLoopGame
 {
-    public class GameSprites
+    public static class GameSprites
     {
         public static Sprite NullSprite; 
         public static Sprite Circle;
@@ -18,6 +19,8 @@ namespace GlobalLoopGame
         public static Sprite[] TurretSniper;
         public static Sprite Laser;
         public static Sprite Warning;
+
+        public static SpriteFont Font;
 
         public static Sprite MenuBackground;
 
