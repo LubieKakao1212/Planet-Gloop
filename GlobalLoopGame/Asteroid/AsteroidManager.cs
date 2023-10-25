@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MonoEngine.Util;
+using GlobalLoopGame.Audio;
 
 namespace GlobalLoopGame.Asteroid
 {
@@ -132,8 +133,8 @@ namespace GlobalLoopGame.Asteroid
             {
                 CreateAsteroid(aPlacement);
             }
-            
-            if (difficulty < 2 || waveNumber % difficulty == 0)
+
+            if (difficulty < 2 || waveNumber % (difficulty-1) == 0)
             {
                 ModifyDifficulty(1);
             }
@@ -144,6 +145,23 @@ namespace GlobalLoopGame.Asteroid
         public void ModifyDifficulty(int difficultyModification)
         {
             difficulty = MathHelper.Clamp(difficulty + difficultyModification, 0, 10);
+
+            switch (difficulty)
+            {
+                case 0:
+                    MusicManager.SetIntensity(0);
+                    break;
+                case 5:
+                    MusicManager.SetIntensity(1);
+                    break;
+                case 10:
+                    MusicManager.SetIntensity(2);
+                    break;
+                default:
+                    break;
+            }
+
+            // MusicManager.ModifyIntensity((float)difficultyModification * 10f / 100f);
 
             // Console.WriteLine("setting difficulty to " + difficulty.ToString());
         }
@@ -165,8 +183,6 @@ namespace GlobalLoopGame.Asteroid
             waveInterval = interval;
 
             waveWarningTime = warningTime;
-
-            //  Console.WriteLine(waveInterval.ToString());
 
             dirty = true;
         }

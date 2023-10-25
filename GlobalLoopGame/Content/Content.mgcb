@@ -220,6 +220,24 @@
 /processorParam:Quality=Best
 /build:Sounds/Magnet.wav
 
+#begin Sounds/Music/Song0.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Music/Song0.wav
+
+#begin Sounds/Music/Song1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Music/Song1.wav
+
+#begin Sounds/Music/Song2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Music/Song2.wav
+
 #begin Sounds/PickupTurret.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

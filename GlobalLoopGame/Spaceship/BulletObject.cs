@@ -48,11 +48,14 @@ namespace GlobalLoopGame.Spaceship
 
                 AsteroidObject otherAsteroid = other.Body.Tag as AsteroidObject;
 
-                if (otherAsteroid != null && !hitAsteroids.Contains(otherAsteroid))
+                if (otherAsteroid != null)
                 {
-                    OnAsteroidHit(otherAsteroid);
+                    if (!hitAsteroids.Contains(otherAsteroid))
+                    {
+                        OnAsteroidHit(otherAsteroid);
 
-                    hitAsteroids.Add(otherAsteroid);
+                        hitAsteroids.Add(otherAsteroid);
+                    }
                 }
                 else
                 {

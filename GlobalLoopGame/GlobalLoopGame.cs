@@ -3,6 +3,7 @@ using GlobalLoopGame.Spaceship.Dragging;
 using GlobalLoopGame.Updaters;
 using GlobalLoopGame.Asteroid;
 using GlobalLoopGame.Planet;
+using GlobalLoopGame.Audio;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -46,6 +47,7 @@ namespace GlobalLoopGame
         private bool menuDisplayed = true;
 
         public AsteroidManager asteroidManager { get; private set; }
+        public MusicManager musicManager { get; private set; }
 
         public SpaceshipObject Spaceship { get; private set; }
         public PlanetObject Planet { get; private set; }
@@ -169,6 +171,10 @@ namespace GlobalLoopGame
             GameSounds.thrusterSound = Content.Load<SoundEffect>("Sounds/Thruster");
             GameSounds.warningSound = Content.Load<SoundEffect>("Sounds/Warning");
 
+            GameSounds.musicIntensityOne = Content.Load<SoundEffect>("Sounds/Music/Song0");
+            GameSounds.musicIntensityTwo = Content.Load<SoundEffect>("Sounds/Music/Song1");
+            GameSounds.musicIntensityThree = Content.Load<SoundEffect>("Sounds/Music/Song2");
+
             GameSounds.magnetEmitter = GameSounds.magnetSound.CreateInstance();
             GameSounds.magnetEmitter.IsLooped = true;
             GameSounds.magnetEmitter.Pause();
@@ -182,6 +188,21 @@ namespace GlobalLoopGame
             GameSounds.sideThrusterEmitter.IsLooped = true;
             GameSounds.sideThrusterEmitter.Volume = 0.1f;
             GameSounds.sideThrusterEmitter.Pause();
+
+            GameSounds.firstMusicInstance = GameSounds.musicIntensityOne.CreateInstance();
+            GameSounds.firstMusicInstance.IsLooped = true;
+            GameSounds.firstMusicInstance.Volume = 0f;
+            GameSounds.firstMusicInstance.Play();
+
+            GameSounds.secondMusicInstance = GameSounds.musicIntensityTwo.CreateInstance();
+            GameSounds.secondMusicInstance.IsLooped = true;
+            GameSounds.secondMusicInstance.Volume = 0f;
+            GameSounds.secondMusicInstance.Play();
+
+            GameSounds.thirdMusicInstance = GameSounds.musicIntensityThree.CreateInstance();
+            GameSounds.thirdMusicInstance.IsLooped = true;
+            GameSounds.thirdMusicInstance.Volume = 0f;
+            GameSounds.thirdMusicInstance.Play();
         }
 
         private void LoadSprites()
@@ -305,7 +326,10 @@ namespace GlobalLoopGame
             asteroidManager.game = this;
             Resettables.Add(asteroidManager);
 
-            var turret00 = new TurretStation(world, asteroidManager, 0.15f);
+            musicManager = new MusicManager();
+            Resettables.Add(musicManager);
+
+            var turret00 = new TurretStation(world, asteroidManager, renderPipeline);
             turret00.SetSprites(GameSprites.TurretCannon, GameSprites.TurretCannonSizes, new Vector2(0f, 17f) / GameSprites.pixelsPerUnit);
             turret00.SetStartingPosition(new Vector2(32f, 0f));
             turret00.Transform.LocalRotation = MathHelper.ToRadians(270f);
@@ -339,7 +363,7 @@ namespace GlobalLoopGame
             boost.Transform.LocalPosition = new Vector2(-64f, 60f);
             hierarchyUI.AddObject(boost);
 
-            var health = new MultiIconDisplay(GameSprites.Health, 4, 0.5f, 4f, 1f);
+            var health = new MultiIconDisplay(GameSprites.Health, 5, 0.5f, 4f, 1f);
             health.Transform.LocalPosition = new Vector2(-64f, 64f);
             Planet.HealthChange += health.UpdateCount;
             Planet.ModifyHealth(0);
@@ -408,9 +432,11 @@ namespace GlobalLoopGame
 
         private void CreateUpdateables()
         {
-            Components.Add(new BoundryFieldComponent(MapRadius - 2f, 32f, PlanetRadius + 6f, 64f, Spaceship, Turrets[0], Turrets[1], Turrets[2]));
+            Components.Add(new BoundryFieldComponent(MapRadius - 2f, 32f, PlanetRadius + 6f, 64f, Spaceship,  Turrets[0], Turrets[1], Turrets[2]));
             
             Components.Add(asteroidManager);
+
+            Components.Add(musicManager);
         }
 
         private void ThrusterBinding(IInput input, int one, int two)
@@ -479,26 +505,8 @@ namespace GlobalLoopGame
 
         public void Restart()
         {
-            /*
-            if (accelerate.GetCurrentValue<float>() != 0f ||
-                decelerate.GetCurrentValue<float>() != 0f ||
-                rotLeft.GetCurrentValue<float>() != 0f ||
-                rotRight.GetCurrentValue<float>() != 0f)
-            {
-                return;
-            }
-            */
-
-            /*
-            if (!gameEnded)
-            {
-                EndGame();
-            }
-            */
-
             // Don't restart unless the game has ended or is paused
-
-            if (gameEnded)
+            if (!gameEnded)
                 return;
 
             StartGame();
