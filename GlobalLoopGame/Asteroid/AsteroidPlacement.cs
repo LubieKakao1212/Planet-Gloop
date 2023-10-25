@@ -22,7 +22,7 @@ namespace GlobalLoopGame.Asteroid
             size = startingSize;
             float randTheta = MathHelper.ToRadians(MathHelper.Lerp(startingTheta, endingTheta, Random.Shared.NextSingle()));
             Vector2 thetaVector = new Vector2(MathF.Cos(randTheta), MathF.Sin(randTheta));
-            location = (thetaVector * 65f) + size;
+            location = (thetaVector * 65f) + size/2;
             velocity = -thetaVector;
             speed = startingSpeed;
             maxHealth = startingHealth;
