@@ -1,4 +1,5 @@
 using GlobalLoopGame.Planet;
+using GlobalLoopGame.UI;
 using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -19,6 +20,7 @@ namespace GlobalLoopGame.Asteroid
         public Vector2 velocity { get; private set; }
         public float speed { get; private set; }
         public float health { get; private set; }
+        public float healthToDisplay { get => (health / maxHealth); }
         public Vector2 size { get; private set; }
         public DrawableObject asteroidDrawable { get; private set; }
         private bool isDead = false;
@@ -27,6 +29,7 @@ namespace GlobalLoopGame.Asteroid
         private int damage = 1;
 
         private AutoTimeMachine despawner;
+        private Bar healthBar;
 
         public AsteroidObject(World world, float drawOrder) : base(null)
         {
@@ -85,12 +88,21 @@ namespace GlobalLoopGame.Asteroid
             fixture.CollidesWith |= Category.Cat2;
             fixture.CollidesWith |= Category.Cat4;
             fixture.CollidesWith |= Category.Cat5;
+
+            healthBar = new Bar(() => healthToDisplay, Color.Red, Color.Red, Color.White);
+            healthBar.Parent = this;
+            healthBar.Transform.LocalPosition = new Vector2(-size.X / 4, size.Y / 2);
+            //healthBar.Transform.LocalScale = Vector2.One * 0.8f;
+            //manager.game.hierarchyUI.AddObject(healthBar);
         }
 
         public override void Update(GameTime time)
         {
             base.Update(time);
+
             despawner.Forward(time.ElapsedGameTime.TotalSeconds);
+
+            healthBar.Transform.LocalRotation = -Transform.LocalRotation;
         }
 
         public void ModifyHealth(float healthModification)
@@ -135,6 +147,8 @@ namespace GlobalLoopGame.Asteroid
             CurrentScene.AddObject(new AsteroidParticleObject(PhysicsBody.World).InitializeParticle(this, -u + r));
             CurrentScene.AddObject(new AsteroidParticleObject(PhysicsBody.World).InitializeParticle(this, -u - r));
             CurrentScene.AddObject(new AsteroidParticleObject(PhysicsBody.World).InitializeParticle(this, u - r));
+
+            //CurrentScene.RemoveObject(healthBar);
 
             manager.RemoveAsteroid(this);
             PhysicsBody.World.RemoveAsync(PhysicsBody);

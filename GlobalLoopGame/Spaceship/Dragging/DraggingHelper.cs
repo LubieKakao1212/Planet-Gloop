@@ -30,6 +30,7 @@ namespace GlobalLoopGame.Spaceship.Dragging
         public static void TryInitDragging(this IDragger dragger, float distance, float interactionDistance)
         {
             var obj = dragger.ThisObject;
+
             if (dragger.CurrentDrag != null)
             {
                 IDraggable iDraggable = dragger.CurrentDrag.BodyB.Tag as IDraggable;

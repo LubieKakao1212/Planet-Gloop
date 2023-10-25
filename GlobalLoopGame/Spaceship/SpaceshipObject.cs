@@ -25,6 +25,7 @@ namespace GlobalLoopGame.Spaceship
 
         public PhysicsBodyObject ThisObject => this;
         public float BoostLeft { get; private set; }
+        public float DisplayedBoost { get => (BoostLeft / maxBoost); }
 
         private bool movable = false;
 
@@ -86,6 +87,7 @@ namespace GlobalLoopGame.Spaceship
             magnetObject.Parent = this;
             magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSize;
             magnetObject.Transform.LocalPosition = Vector2.Zero;
+            magnetObject.Transform.LocalRotation = MathHelper.ToRadians(180f);
         }
         
         public void IncrementThruster(int idx)
@@ -254,6 +256,11 @@ namespace GlobalLoopGame.Spaceship
             for (int i = 0; i < thrust.Count; i++)
             {
                 thrust[i] = 0;
+            }
+
+            if (CurrentDrag != null)
+            {
+                DraggingHelper.TryInitDragging(this, 10f, 15f);
             }
 
             movable = false;

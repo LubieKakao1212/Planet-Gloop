@@ -379,8 +379,10 @@ namespace GlobalLoopGame
         private void CreateUI()
         {
             hierarchyUI = new Hierarchy();
-            var boost = new Bar(() => Spaceship.BoostLeft, Color.Green, Color.Red);
-            boost.Transform.LocalPosition = new Vector2(-64f, 60f);
+
+            var boost = new Bar(() => Spaceship.DisplayedBoost, Color.Green, Color.Red, Color.Transparent);
+            boost.Transform.LocalPosition = new Vector2(-58f, 58f);
+            boost.Transform.LocalScale = Vector2.One * 2f;
             hierarchyUI.AddObject(boost);
 
             var health = new MultiIconDisplay(GameSprites.Health, 5, 0.5f, 4f, 1f);

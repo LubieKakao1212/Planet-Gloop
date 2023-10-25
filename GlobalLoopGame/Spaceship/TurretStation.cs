@@ -257,6 +257,7 @@ namespace GlobalLoopGame.Spaceship
             {
                 spaceship.magnetObject.Sprite = GameSprites.SpaceshipMagnetActive;
                 spaceship.magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSizeActive;
+                //spaceship.magnetObject.Transform.LocalPosition = new Vector2(0, GameSprites.SpaceshipMagnetSizeActive.Y / 2);
             }
         }
         
@@ -282,7 +283,8 @@ namespace GlobalLoopGame.Spaceship
             {
                 spaceship.magnetObject.Sprite = GameSprites.SpaceshipMagnet;
                 spaceship.magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSize;
-                spaceship.magnetObject.Transform.LocalRotation = 0f;
+                spaceship.magnetObject.Transform.LocalRotation = MathHelper.ToRadians(180f);
+                //spaceship.magnetObject.Transform.LocalPosition = Vector2.Zero;
             }
         }
 
