@@ -385,6 +385,17 @@ namespace GlobalLoopGame
             boost.Transform.LocalScale = Vector2.One * 2f;
             hierarchyUI.AddObject(boost);
 
+            var points = new TextObject();
+            points.Transform.GlobalPosition = new Vector2(60, 60f);
+            points.Color = Color.White;
+            points.FontSize = 36;
+            points.Text = "0";
+            asteroidManager.PointsUpdated += (pointCount) =>
+            {
+                points.Text = $"{pointCount / 100}";
+            };
+            hierarchyUI.AddObject(points);
+
             var health = new MultiIconDisplay(GameSprites.Health, 5, 0.5f, 4f, 1f);
             health.Transform.LocalPosition = new Vector2(-64f, 64f);
             Planet.HealthChange += health.UpdateCount;

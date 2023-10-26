@@ -48,7 +48,8 @@ namespace GlobalLoopGame.Asteroid
                 {
                     planet.ModifyHealth(-damage);
 
-                    ExplosionParticleObject epo = new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(this);
+                    contact.GetWorldManifold(out var normal, out var points);
+                    ExplosionParticleObject epo = new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(points[0]);
 
                     epo.Transform.LocalScale = Vector2.One * 4f;
 
