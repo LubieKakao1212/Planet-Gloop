@@ -398,6 +398,17 @@ namespace GlobalLoopGame
             };
             hierarchyUI.AddObject(points);
 
+            var waves = new TextObject();
+            waves.Transform.GlobalPosition = new Vector2(58f, -58f);
+            waves.Color = Color.White;
+            waves.FontSize = 36;
+            waves.Text = "";
+            asteroidManager.WavesUpdated += (waveCount) =>
+            {
+                if (waveCount > 1) waves.Text = $"Wave {waveCount - 1}";
+            };
+            hierarchyUI.AddObject(points);
+
             var health = new MultiIconDisplay(GameSprites.Health, 5, 0.5f, 4f, 1f);
             health.Transform.LocalPosition = new Vector2(-64f, 64f);
             Planet.HealthChange += health.UpdateCount;

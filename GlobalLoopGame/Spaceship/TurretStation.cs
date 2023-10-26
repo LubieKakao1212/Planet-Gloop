@@ -304,8 +304,8 @@ namespace GlobalLoopGame.Spaceship
 
             grabbed = true;
 
-            turretBaseDrawable.Color = new Color(1, 1, 1, 0.7f);
-            barrelDrawable.Color = new Color(1, 1, 1, 0.7f);
+            turretBaseDrawable.Color = new Color(0.8f, 0.8f, 0.8f, 0.6f);
+            barrelDrawable.Color = new Color(0.8f, 0.8f, 0.8f, 0.6f);
 
             SpaceshipObject spaceship = dragger.ThisObject as SpaceshipObject;
 
