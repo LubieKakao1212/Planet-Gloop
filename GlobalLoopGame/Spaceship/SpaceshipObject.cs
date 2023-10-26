@@ -21,6 +21,7 @@ namespace GlobalLoopGame.Spaceship
 
         public PhysicsBodyObject ThisObject => this;
         public float BoostLeft { get; private set; }
+        public float DisplayedBoost { get => (BoostLeft / maxBoost); }
 
         private bool movable = false;
 
@@ -35,6 +36,8 @@ namespace GlobalLoopGame.Spaceship
 
         private List<int> thrust = new List<int>();
         private List<bool> boost = new List<bool>();
+
+        public DrawableObject magnetPivot;
 
         public SpaceshipObject(World world, float drawOrder) : base(null)
         {
@@ -59,7 +62,9 @@ namespace GlobalLoopGame.Spaceship
 
                 if (asteroid != null)
                 {
-                    GameSounds.playerHurtSound.Play();
+                    // GameSounds.playerHurtSound.Play();
+
+                    GameSounds.PlaySound(GameSounds.playerHurtSound, 2);
                 }
 
                 return true;
@@ -73,12 +78,18 @@ namespace GlobalLoopGame.Spaceship
             AddThruster(new(-t.X, t.Y / 2f), MathF.PI);
             AddThruster(new(t.X, t.Y / 2f), MathF.PI);
 
+            magnetPivot = new DrawableObject(Color.Transparent, 0f);
+            magnetPivot.Parent = this;
+            magnetPivot.Transform.LocalPosition = Vector2.Zero;
+            magnetPivot.Transform.LocalRotation = MathHelper.ToRadians(180f);
+
             // add magnet
             magnetObject = new DrawableObject(Color.White, 1f);
             magnetObject.Sprite = GameSprites.SpaceshipMagnet;
-            magnetObject.Parent = this;
+            magnetObject.Parent = magnetPivot;
             magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSize;
             magnetObject.Transform.LocalPosition = Vector2.Zero;
+            //magnetObject.Transform.LocalRotation = MathHelper.ToRadians(180f);
         }
         
         public void IncrementThruster(int idx)
@@ -200,7 +211,17 @@ namespace GlobalLoopGame.Spaceship
                 if (CurrentDrag != null)
                 {
                     var dir = CurrentDrag.BodyB.Position - magnetObject.Transform.GlobalPosition;
-                    magnetObject.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
+
+                    magnetPivot.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
+
+                    if (dir.Length() > 5)
+                    {
+                        magnetObject.Color = Color.White;
+                    }
+                    else
+                    {
+                        magnetObject.Color = Color.Transparent;
+                    }
                 }
             }
 
@@ -247,6 +268,11 @@ namespace GlobalLoopGame.Spaceship
             for (int i = 0; i < thrust.Count; i++)
             {
                 thrust[i] = 0;
+            }
+
+            if (CurrentDrag != null)
+            {
+                DraggingHelper.TryInitDragging(this, 10f, 15f);
             }
 
             movable = false;

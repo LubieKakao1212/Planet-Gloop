@@ -15,7 +15,7 @@ namespace GlobalLoopGame.Planet
 
         public GlobalLoopGame game;
         public int health {  get; private set; }
-        private int maxHealth = 5;
+        private int maxHealth = 1;
         public bool isDead { get; private set; }
         public bool shouldDie { get; private set; }
 
@@ -44,6 +44,8 @@ namespace GlobalLoopGame.Planet
             // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3, bullets - 4
             fixture.CollisionCategories = CollisionCats.Planet;
             fixture.CollidesWith = CollisionCats.CollisionsPlanet;
+            
+            health = maxHealth;
         }
 
         public void ModifyHealth(int healthModification)
@@ -54,7 +56,10 @@ namespace GlobalLoopGame.Planet
 
             if (healthModification < 0)
             {
-                GameSounds.planetHurtSound.Play();
+                //GameSounds.planetHurtSound.Play();
+
+                GameSounds.PlaySound(GameSounds.planetHurtSound, 2);
+
                 if (game.asteroidManager.difficulty > 3)
                 {
                     game.asteroidManager.ModifyDifficulty(-1);

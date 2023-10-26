@@ -119,7 +119,9 @@ namespace GlobalLoopGame.Spaceship
         {
             var spawnPos = Transform.GlobalPosition + barrel.Transform.Up * barrelLength / 2f;
 
-            GameSounds.shotSounds[shotIndex].Play();
+            // GameSounds.shotSounds[shotIndex].Play();
+
+            GameSounds.PlaySound(GameSounds.shotSounds[shotIndex], 2);
 
             for (int i = 0; i < bulletCount; i++)
             {
@@ -287,6 +289,8 @@ namespace GlobalLoopGame.Spaceship
 
             pickupInstance.Volume = 0.5f;
 
+            pickupInstance.Pitch = (float)Random.Shared.Next(-10, 10) * 1f / 10f;
+
             pickupInstance.Play();
 
             GameSounds.magnetEmitter.Play();
@@ -300,6 +304,7 @@ namespace GlobalLoopGame.Spaceship
             {
                 spaceship.magnetObject.Sprite = GameSprites.SpaceshipMagnetActive;
                 spaceship.magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSizeActive;
+                spaceship.magnetObject.Transform.LocalPosition = new Vector2(0f, 17f) / GameSprites.pixelsPerUnit;
             }
         }
         
@@ -310,6 +315,8 @@ namespace GlobalLoopGame.Spaceship
             SoundEffectInstance dropInstance = GameSounds.dropTurretSound.CreateInstance();
 
             dropInstance.Volume = 0.5f;
+
+            dropInstance.Pitch = (float)Random.Shared.Next(-10, 10) * 1f / 10f;
 
             dropInstance.Play();
 
@@ -325,7 +332,9 @@ namespace GlobalLoopGame.Spaceship
             {
                 spaceship.magnetObject.Sprite = GameSprites.SpaceshipMagnet;
                 spaceship.magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSize;
-                spaceship.magnetObject.Transform.LocalRotation = 0f;
+                spaceship.magnetPivot.Transform.LocalRotation = MathHelper.ToRadians(180f);
+                spaceship.magnetObject.Transform.LocalPosition = Vector2.Zero;
+                spaceship.magnetObject.Color = Color.White;
             }
         }
 

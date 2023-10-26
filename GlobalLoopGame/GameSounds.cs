@@ -46,5 +46,14 @@ namespace GlobalLoopGame
         public static SoundEffectInstance firstMusicInstance;
         public static SoundEffectInstance secondMusicInstance;
         public static SoundEffectInstance thirdMusicInstance;
+
+        public static void PlaySound(SoundEffect soundEffect, int variance)
+        {
+            SoundEffectInstance instance = soundEffect.CreateInstance();
+
+            instance.Pitch = (float)Random.Shared.Next(-variance, variance) * 1f / 10f;
+
+            instance.Play();
+        }
     }
 }

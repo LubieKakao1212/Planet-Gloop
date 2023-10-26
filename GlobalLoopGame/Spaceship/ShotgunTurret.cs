@@ -26,7 +26,9 @@ namespace GlobalLoopGame.Spaceship
         {
             if (willReload)
             {
-                GameSounds.shotgunReloadSound.Play();
+                // GameSounds.shotgunReloadSound.Play();
+
+                GameSounds.PlaySound(GameSounds.shotgunReloadSound, 2);
             }
 
             base.Reload();
