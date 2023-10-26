@@ -42,7 +42,10 @@ namespace GlobalLoopGame.Spaceship.Dragging
                     iDraggable.OnBecomeDropped(dragger);
                 }
 
-                obj.PhysicsBody.World.Remove(dragger.CurrentDrag);
+                if (!iDraggable.IsDestroyed)
+                {
+                    obj.PhysicsBody.World.Remove(dragger.CurrentDrag);
+                }
                 dragger.CurrentDrag = null;
                 return;
             }

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace GlobalLoopGame.Planet
 {
-    public class SegmentedShield : PhysicsBodyObject
+    public class SegmentedShield : PhysicsBodyObject, IResettable
     {
         public const int segmentResolution = 15;
 
@@ -21,9 +21,11 @@ namespace GlobalLoopGame.Planet
         private int[] segmentHealth;
         private Fixture[] segments;
 
+        public int maxHealth { get; private set; }
+
         private static Color[] healthColors = new Color[]
         {
-            Color.Transparent,
+            Color.Cyan * 0.25f,
             Color.Red,
             Color.Orange,
             Color.Cyan
@@ -32,6 +34,7 @@ namespace GlobalLoopGame.Planet
         public SegmentedShield(World world, RenderPipeline renderer, int segments, float radius, float arcAngle, int healthPerSegment) : base(null)
         {
             var body = world.CreateBody(bodyType: BodyType.Kinematic);
+            body.Tag = this;
             PhysicsBody = body;
 
             float angle = arcAngle / segments;
@@ -41,6 +44,7 @@ namespace GlobalLoopGame.Planet
             display.Transform.LocalScale = new Vector2(radius * 3f);
             display.Parent = this;
 
+            maxHealth = healthPerSegment;
             segmentHealth = Enumerable.Repeat(healthPerSegment, segments).ToArray();
             this.segments = new Fixture[segments];
             
@@ -52,6 +56,7 @@ namespace GlobalLoopGame.Planet
                 fixture.CollisionCategories = CollisionCats.Shield;
                 fixture.CollidesWith = CollisionCats.CollisionsShield;
                 this.segments[i] = fixture;
+                fixture.Tag = i;
                 var i1 = i;
                 fixture.OnCollision += (thisFixture, otherFixture, contact) =>
                 {
@@ -64,14 +69,25 @@ namespace GlobalLoopGame.Planet
             }
         }
 
+        public int GetSegmentHealth(int idx)
+        {
+            return segmentHealth[idx];
+        }
+
         public void ModifySegment(int idx, int amount)
         {
             var health = segmentHealth[idx];
-            health = MathHelper.Max(health + amount, 0);
+            health = MathHelper.Clamp(health + amount, 0, maxHealth);
             segmentHealth[idx] = health;
+            UpdateSegment(idx);
+        }
+
+        private void UpdateSegment(int idx)
+        {
+            var health = segmentHealth[idx];
             if (health == 0)
             {
-                segments[idx].CollidesWith = Category.None;
+                segments[idx].CollidesWith = CollisionCats.CollisionsShieldDestroyed;
             }
             else
             {
@@ -80,5 +96,18 @@ namespace GlobalLoopGame.Planet
             display.SetSegmentColor(idx, healthColors[MathHelper.Min(health, healthColors.Length)]);
         }
 
+        public void OnGameEnd()
+        {
+
+        }
+
+        public void Reset()
+        {
+            for (int i = 0; i < segmentHealth.Length; i++)
+            {
+                segmentHealth[i] = maxHealth;
+                UpdateSegment(i);
+            }
+        }
     }
 }

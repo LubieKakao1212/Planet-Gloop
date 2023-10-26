@@ -356,6 +356,9 @@ namespace GlobalLoopGame
             GameSprites.CircleOverlay = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("circleoverlay"),
                 new Rectangle(0, 0, 726,726))[0];
 
+            GameSprites.RepairCharge = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("ChargeTex"),
+                new Rectangle(2, 0, 12, 16))[0];
+
             var font = new Font();
             font.AddSize(12, Content.Load<SpriteFont>("Fonts/Font12"));
             font.AddSize(24, Content.Load<SpriteFont>("Fonts/Font24"));
@@ -451,8 +454,8 @@ namespace GlobalLoopGame
             hierarchyUI = new Hierarchy();
 
             var boost = new Bar(() => Spaceship.DisplayedBoost, Color.Green, Color.Red, Color.Transparent);
-            boost.Transform.LocalPosition = new Vector2(-58f, 58f);
-            boost.Transform.LocalScale = Vector2.One * 2f;
+            boost.Transform.LocalPosition = new Vector2(-56f, 56f);
+            boost.Transform.LocalScale = Vector2.One * 3f;
             hierarchyUI.AddObject(boost);
 
             var points = new TextObject();
@@ -485,7 +488,7 @@ namespace GlobalLoopGame
             Planet.ModifyHealth(0);
             hierarchyUI.AddObject(health);
 
-            DrawableObject overlayObject = new DrawableObject(Color.DarkSlateGray, -1f);
+            DrawableObject overlayObject = new DrawableObject(new Color(0.3f, 0.15f, 0.15f, 1.0f), -1f);
             hierarchyUI.AddObject(overlayObject);
             overlayObject.Sprite = GameSprites.CircleOverlay;
             overlayObject.Transform.GlobalPosition = new Vector2(0, 0);

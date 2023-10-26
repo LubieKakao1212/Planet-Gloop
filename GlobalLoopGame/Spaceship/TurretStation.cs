@@ -21,6 +21,8 @@ namespace GlobalLoopGame.Spaceship
     {
         public float RangeRadius { get; set; } = 32f;
 
+        public bool IsDestroyed => false;
+
         private const int meshResolution = 4095;
 
         //protected AutoTimeMachine shootingTimer;
@@ -82,24 +84,13 @@ namespace GlobalLoopGame.Spaceship
             fixture.CollidesWith = CollisionCats.CollisionsTurrets;
 
             barrelBaseDrawable = new DrawableObject(Color.White, 0.1f);
-            //barrelBaseDrawable.Sprite = GameSprites.TurretCannon[2];
-            // barrelBaseDrawable.Transform.LocalScale = Vector2.One;
-
             barrelDrawable = new DrawableObject(Color.White, 0.1f);
-            //barrelDrawable.Sprite = GameSprites.TurretCannon[0];
 
-            //var ratio = 17f / GameSprites.pixelsPerUnit;
-            // = GameSprites.TurretCannonSizes[0];
             popupDescription = new TextObject();
             popupDescription.Color = Color.White;
             popupDescription.Parent = this;
             popupDescription.FontSize = 12;
             UpdateText();
-
-            /*rangeDisplay = new DrawableObject(Color.White * 0.125f, -10f);
-            rangeDisplay.Sprite = GameSprites.Circle;
-            rangeDisplay.Transform.LocalScale = Vector2.Zero;
-            rangeDisplay.Parent = this;*/
 
             rangeDisplay = MeshObject.CreateNew(renderer, Vertex2DPosition.VertexDeclaration, new Vertex2DPosition[meshResolution + 1], new int[meshResolution * 3], Color.White, -10f, GameEffects.Custom, GameEffects.DSS);
             rangeDisplay.Parent = this;
@@ -109,18 +100,10 @@ namespace GlobalLoopGame.Spaceship
             barrelBaseDrawable.Parent = barrelPivot;
             barrelDrawable.Parent = barrelPivot;
             barrelPivot.Parent = this;
-            // barrel = barrelRoot;
             
             this.asteroids = asteroids;
-
             this.cooldown = cooldown;
             this.chargeTime = chargeTime;
-
-            //shootingTimer = new AutoTimeMachine(TargetAndShoot, cooldown);
-            /*shootingTimer = new SequentialAutoTimeMachine(
-                (TargetAndShoot, cooldown),
-                (Reload, cooldown + 1)
-                );*/
         }
 
         /// <summary>
@@ -250,9 +233,8 @@ namespace GlobalLoopGame.Spaceship
             }
 
             grabTimer = MathHelper.Clamp(grabTimer, 0f, 1f);
-            //rangeDisplay.Transform.LocalScale = Vector2.Lerp(Vector2.Zero, Vector2.One * RangeRadius * 2f, grabTimer);
 
-            UpdateRangeMesh(RangeRadius * 2f * grabTimer);
+            UpdateRangeMesh(RangeRadius * grabTimer);
 
             popupDescription.Transform.GlobalPosition = Transform.GlobalPosition + Vector2.UnitY * 10f;
             popupDescription.Transform.GlobalRotation = 0;
@@ -278,13 +260,9 @@ namespace GlobalLoopGame.Spaceship
         public TurretStation SetSprites(Sprite[] sprites, Vector2[] sizes, Vector2 pivot)
         {
             this.sprites = sprites;
-            //this.spriteSizes = sizes;
 
             barrelDrawable.Transform.LocalScale = sizes[0];
             barrelBaseDrawable.Transform.LocalScale = sizes[0];
-
-            // barrelBaseDrawable.Transform.LocalScale = GameSprites.TurretBarrelSize;
-            // barrelDrawable.Transform.LocalScale = GameSprites.TurretBarrelSize;
 
             barrelBaseDrawable.Transform.LocalPosition = pivot;
             barrelDrawable.Transform.LocalPosition = pivot;
@@ -318,8 +296,11 @@ namespace GlobalLoopGame.Spaceship
 
             grabbed = true;
 
-            turretBaseDrawable.Color = new Color(0.8f, 0.8f, 0.8f, 0.6f);
-            barrelDrawable.Color = new Color(0.8f, 0.8f, 0.8f, 0.6f);
+            Color faded = new Color(0.8f, 0.8f, 0.8f, 0.6f);
+
+            turretBaseDrawable.Color = faded;
+            barrelDrawable.Color = faded;
+            barrelBaseDrawable.Color = faded;
 
             SpaceshipObject spaceship = dragger.ThisObject as SpaceshipObject;
 
@@ -351,6 +332,7 @@ namespace GlobalLoopGame.Spaceship
 
             turretBaseDrawable.Color = Color.White;
             barrelDrawable.Color = Color.White;
+            barrelBaseDrawable.Color = Color.White;
 
             SpaceshipObject spaceship = dragger.ThisObject as SpaceshipObject;
 
@@ -382,8 +364,6 @@ namespace GlobalLoopGame.Spaceship
         {
             barrelDrawable.Sprite = sprites[idx];
             barrelBaseDrawable.Sprite = sprites[2];
-
-            // barrelDrawable.Transform.LocalScale = spriteScales[idx];
         }
 
         protected Vector2 PredictAim(Vector2 spawnPos, float bulletSpeed, Vector2 targetPosition, Vector2 targetVelocity, float distanceToTarget)

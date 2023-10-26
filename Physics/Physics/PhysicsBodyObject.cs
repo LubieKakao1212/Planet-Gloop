@@ -3,6 +3,7 @@ using MonoEngine.Scenes;
 using MonoEngine.Scenes.Events;
 using nkast.Aether.Physics2D.Common;
 using nkast.Aether.Physics2D.Dynamics;
+using System;
 using System.Runtime.Serialization;
 
 namespace MonoEngine.Physics

@@ -29,7 +29,6 @@ namespace GlobalLoopGame.Spaceship
                     bool lineOfSight = true;
                     world.RayCast((fixture, point, normal, fraction) =>
                     {
-                        //the planet
                         if(fixture.CollisionCategories.HasFlag(CollisionCats.Planet) || fixture.CollisionCategories.HasFlag(CollisionCats.Shield))
                         {
                             lineOfSight = false;

@@ -21,7 +21,7 @@ namespace GlobalLoopGame.UI
         private Color negativeColor;
         private Color backgroundColor;
 
-        private bool visible;
+        private bool visible = true;
 
         public Bar(Func<float> fillAmount, Color positiveColor, Color negativeColor, Color backgroundColor)
         {

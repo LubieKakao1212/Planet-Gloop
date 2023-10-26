@@ -53,6 +53,7 @@ namespace GlobalLoopGame.Spaceship
                     if (!hitAsteroids.Contains(otherAsteroid))
                     {
                         contact.GetWorldManifold(out var normal, out var points);
+
                         CurrentScene.AddObject(new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(points[0]));
 
                         OnAsteroidHit(otherAsteroid);

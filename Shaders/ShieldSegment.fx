@@ -67,7 +67,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
     float distance = length(input.OPos);
     float angle = atan2(input.OPos.y, input.OPos.x);
 
-    float d = clamp(-1.0f/Falloffs.x * (abs(distance - SS.x) - SS.y), 0.0f, 1.0f); 
+    float d = clamp(-1.0f/Falloffs.x * (abs(distance - SS.x) - SS.y), 0.0f, 1.0f);
     float a = clamp(-1.0f/Falloffs.y * (abs(fmod(angle, PI * 2) - SS.z) - SS.w), 0.0f, 1.0f);
     //float a1 = clamp(-1.0f/Falloffs.y * (abs(angle - SS.z) - SS.w), 0.0f, 1.0f);
     
