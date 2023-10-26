@@ -152,7 +152,16 @@ namespace GlobalLoopGame
                         updatable.Update(gameTime);
                     }
                     hierarchyPressEnter.EndUpdate();
-                }
+                } 
+                else if (gameEnded)
+                {
+                    hierarchyGameOver.BeginUpdate();
+                    foreach (var updatable in hierarchyGameOver.OrderedInstancesOf<IUpdatable>())
+                    {
+                        updatable.Update(gameTime);
+                    }
+                    hierarchyGameOver.EndUpdate();
+                } 
                 else
                 {
                     hierarchyPaused.BeginUpdate();
@@ -552,7 +561,7 @@ namespace GlobalLoopGame
             gameOverText.Text = "Game Over";
             hierarchyGameOver.AddObject(gameOverText);
 
-            var resetText = new TextObject();
+            var resetText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.25f);
             resetText.Transform.GlobalPosition = new Vector2(0, -40);
             resetText.Color = Color.White;
             resetText.FontSize = 36;
