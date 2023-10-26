@@ -28,6 +28,9 @@ namespace GlobalLoopGame.Spaceship
         private float maxBoost = 2f;
         private float boostThrust = 2f;
         private float boostRegeneration = 1f;
+        private float targetThrusterVolume = 0f;
+        private float targetSideThrusterVolume = 0f;
+        private float targetBoosterVolume = 0f;
 
         /// <summary>
         /// BottomLeft, BottomRight, TopLeft, TopRight
@@ -174,6 +177,8 @@ namespace GlobalLoopGame.Spaceship
                                 {
                                     GameSounds.boostEmitter.Pause();
 
+                                    targetBoosterVolume = 0f;
+
                                     GameSounds.boostOverloadSound.Play();
                                 }
                             }
@@ -231,11 +236,21 @@ namespace GlobalLoopGame.Spaceship
 
             ProcessSounds();
 
+            // fade engine sound
+            GameSounds.thrusterEmitter.Volume = MathHelper.Clamp(GameSounds.thrusterEmitter.Volume + MathF.Sign(targetThrusterVolume - GameSounds.thrusterEmitter.Volume) * (float)time.ElapsedGameTime.TotalSeconds / 2f, 0f, 2f);
+            GameSounds.sideThrusterEmitter.Volume = MathHelper.Clamp(GameSounds.sideThrusterEmitter.Volume + MathF.Sign(targetSideThrusterVolume - GameSounds.sideThrusterEmitter.Volume) * (float)time.ElapsedGameTime.TotalSeconds / 2f, 0f, 2f);
+            GameSounds.boostEmitter.Volume = MathHelper.Clamp(GameSounds.boostEmitter.Volume + MathF.Sign(targetBoosterVolume - GameSounds.boostEmitter.Volume) * (float)time.ElapsedGameTime.TotalSeconds / 2f, 0f, 2f);
+            
             base.Update(time);
         }
 
         public void BoostThruster(int idx)
         {
+            if (!movable)
+            {
+                return;
+            }
+
             if (BoostLeft <= 0f)
             {
                 GameSounds.boostUnableSound.Play();
@@ -254,6 +269,8 @@ namespace GlobalLoopGame.Spaceship
                 if (GameSounds.boostEmitter.State != SoundState.Playing)
                 {
                     GameSounds.boostEmitter.Play();
+
+                    targetBoosterVolume = 0.15f;
                 }
             }
             
@@ -268,6 +285,8 @@ namespace GlobalLoopGame.Spaceship
             if (GameSounds.boostEmitter.State == SoundState.Playing)
             {
                 GameSounds.boostEmitter.Pause();
+
+                targetBoosterVolume = 0f;
             }
         }
 
@@ -275,6 +294,8 @@ namespace GlobalLoopGame.Spaceship
         {
             PhysicsBody.LinearVelocity = Vector2.Zero;
             PhysicsBody.AngularVelocity = 0f;
+
+            targetThrusterVolume = 0f;
 
             for (int i = 0; i < thrust.Count; i++)
             {
@@ -305,6 +326,7 @@ namespace GlobalLoopGame.Spaceship
             }
 
             PlayThrusterSound(0, 1, GameSounds.thrusterEmitter);
+
             PlayThrusterSound(2, 3, GameSounds.sideThrusterEmitter);
         }
 
@@ -315,6 +337,15 @@ namespace GlobalLoopGame.Spaceship
                 if (thrust[thrusterOne] < 1 && thrust[thrusterTwo] < 1)
                 {
                     sound.Pause();
+                    
+                    if (thrusterOne == 0)
+                    {
+                        targetThrusterVolume = 0f;
+                    }
+                    else if (thrusterOne == 2)
+                    {
+                        targetSideThrusterVolume = 0f;
+                    }
                 }
             }
             else
@@ -322,6 +353,15 @@ namespace GlobalLoopGame.Spaceship
                 if (thrust[thrusterOne] >= 1 || thrust[thrusterTwo] >= 1)
                 {
                     sound.Play();
+
+                    if (thrusterOne == 0)
+                    {
+                        targetThrusterVolume = 0.15f;
+                    }
+                    else if (thrusterOne == 2)
+                    {
+                        targetSideThrusterVolume = 0.15f;
+                    }
                 }
             }
         }

@@ -241,17 +241,17 @@ namespace GlobalLoopGame
 
             GameSounds.thrusterEmitter = GameSounds.thrusterSound.CreateInstance();
             GameSounds.thrusterEmitter.IsLooped = true;
-            GameSounds.thrusterEmitter.Volume = 0.1f;
+            GameSounds.thrusterEmitter.Volume = 0f;
             GameSounds.thrusterEmitter.Pause();
 
             GameSounds.sideThrusterEmitter = GameSounds.sideThrustSound.CreateInstance();
             GameSounds.sideThrusterEmitter.IsLooped = true;
-            GameSounds.sideThrusterEmitter.Volume = 0.1f;
+            GameSounds.sideThrusterEmitter.Volume = 0f;
             GameSounds.sideThrusterEmitter.Pause();
 
             GameSounds.boostEmitter = GameSounds.boostSound.CreateInstance();
             GameSounds.boostEmitter.IsLooped = true;
-            GameSounds.boostEmitter.Volume = 0.1f;
+            GameSounds.boostEmitter.Volume = 0f;
             GameSounds.boostEmitter.Pause();
 
             GameSounds.boostChargingEmitter = GameSounds.boostChargingSound.CreateInstance();
