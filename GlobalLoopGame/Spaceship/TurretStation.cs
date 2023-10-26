@@ -23,7 +23,8 @@ namespace GlobalLoopGame.Spaceship
 
         private const int meshResolution = 4095;
 
-        protected AutoTimeMachine shootingTimer;
+        //protected AutoTimeMachine shootingTimer;
+        protected SequentialAutoTimeMachine shootingTimer;
         protected AsteroidManager asteroids;
         protected HierarchyObject barrel;
         protected DrawableObject barrelDrawable;
@@ -32,6 +33,7 @@ namespace GlobalLoopGame.Spaceship
         protected float spread = 5f * MathF.PI / 180f;
 
         protected int bulletCount = 1;
+        protected bool willReload = false;
 
         private bool canShoot = false;
 
@@ -47,6 +49,7 @@ namespace GlobalLoopGame.Spaceship
         private TextObject popupDescription;
 
         protected int damage = 10;
+        protected int shotIndex = 0;
 
         public TurretStation(World world, AsteroidManager asteroids, RenderPipeline renderer, float cooldown = 0.125f) : base(null)
         {
@@ -90,7 +93,11 @@ namespace GlobalLoopGame.Spaceship
             
             this.asteroids = asteroids;
 
-            shootingTimer = new AutoTimeMachine(TargetAndShoot, cooldown);
+            //shootingTimer = new AutoTimeMachine(TargetAndShoot, cooldown);
+            shootingTimer = new SequentialAutoTimeMachine(
+                (TargetAndShoot, cooldown),
+                (Reload, cooldown + 1)
+                );
         }
 
         protected virtual void TargetAndShoot()
@@ -113,14 +120,20 @@ namespace GlobalLoopGame.Spaceship
 
                 var spawnPos = Transform.GlobalPosition + barrel.Transform.Up * barrelLength / 2f;
 
+                GameSounds.shotSounds[shotIndex].Play();
 
-                // spread gets narrower the smaller the target is
-                //spread = (30f - target.size.X) * MathF.PI / 180f;
                 for (int i = 0; i < bulletCount; i++)
                 {
                     CurrentScene.AddObject(CreateProjectile(dir, spawnPos));
                 }
+
+                willReload = true;
             }
+        }
+
+        protected virtual void Reload()
+        {
+            willReload = false;
         }
 
         protected virtual AsteroidObject FindTarget()
@@ -171,13 +184,15 @@ namespace GlobalLoopGame.Spaceship
                 shootingTimer.Forward(time.ElapsedGameTime.TotalSeconds);
             }
 
-            if(grabbed) {
+            if (grabbed)
+            {
                 grabTimer += (float)time.ElapsedGameTime.TotalSeconds;
             }
             else
             {
                 grabTimer -= (float)time.ElapsedGameTime.TotalSeconds;
             }
+
             grabTimer = MathHelper.Clamp(grabTimer, 0f, 1f);
             //rangeDisplay.Transform.LocalScale = Vector2.Lerp(Vector2.Zero, Vector2.One * RangeRadius * 2f, grabTimer);
 

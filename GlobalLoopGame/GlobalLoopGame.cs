@@ -161,15 +161,27 @@ namespace GlobalLoopGame
         private void LoadSounds()
         {
             //Load sounds and songs here
-            GameSounds.asteroidDeathSound = Content.Load<SoundEffect>("Sounds/AsteroidHurt");
-            GameSounds.dropTurretSound = Content.Load<SoundEffect>("Sounds/DropTurret");
+            GameSounds.asteroidHurtSound = Content.Load<SoundEffect>("Sounds/AsteroidHurt");
+            GameSounds.bigAsteroidDeath = Content.Load<SoundEffect>("Sounds/AsteroidBig");
+            GameSounds.smallAsteroidDeath = Content.Load<SoundEffect>("Sounds/Asteroid");
             GameSounds.magnetSound = Content.Load<SoundEffect>("Sounds/Magnet");
+            GameSounds.dropTurretSound = Content.Load<SoundEffect>("Sounds/DropTurret");
             GameSounds.pickupTurretSound = Content.Load<SoundEffect>("Sounds/PickupTurret");
             GameSounds.planetHurtSound = Content.Load<SoundEffect>("Sounds/PlanetHurt");
             GameSounds.playerHurtSound = Content.Load<SoundEffect>("Sounds/PlayerHurt");
             GameSounds.sideThrustSound = Content.Load<SoundEffect>("Sounds/SideThrust");
             GameSounds.thrusterSound = Content.Load<SoundEffect>("Sounds/Thruster");
             GameSounds.warningSound = Content.Load<SoundEffect>("Sounds/Warning");
+
+            GameSounds.boostSound = Content.Load<SoundEffect>("Sounds/Boosting");
+            GameSounds.boostChargingSound = Content.Load<SoundEffect>("Sounds/BoostCharging");
+            GameSounds.boostOverloadSound = Content.Load<SoundEffect>("Sounds/BoostOverload");
+            GameSounds.boostUnableSound = Content.Load<SoundEffect>("Sounds/BoostUnable");
+
+            GameSounds.shotSounds[0] = Content.Load<SoundEffect>("Sounds/RegularShot");
+            GameSounds.shotSounds[1] = Content.Load<SoundEffect>("Sounds/ShotgunShot");
+            GameSounds.shotSounds[2] = Content.Load<SoundEffect>("Sounds/SniperShot");
+            GameSounds.shotgunReloadSound = Content.Load<SoundEffect>("Sounds/ShotgunReload");
 
             GameSounds.musicIntensityOne = Content.Load<SoundEffect>("Sounds/Music/Song0");
             GameSounds.musicIntensityTwo = Content.Load<SoundEffect>("Sounds/Music/Song1");
@@ -188,6 +200,16 @@ namespace GlobalLoopGame
             GameSounds.sideThrusterEmitter.IsLooped = true;
             GameSounds.sideThrusterEmitter.Volume = 0.1f;
             GameSounds.sideThrusterEmitter.Pause();
+
+            GameSounds.boostEmitter = GameSounds.boostSound.CreateInstance();
+            GameSounds.boostEmitter.IsLooped = true;
+            GameSounds.boostEmitter.Volume = 0.1f;
+            GameSounds.boostEmitter.Pause();
+
+            GameSounds.boostChargingEmitter = GameSounds.boostChargingSound.CreateInstance();
+            GameSounds.boostChargingEmitter.IsLooped = true;
+            GameSounds.boostChargingEmitter.Volume = 1.0f;
+            GameSounds.boostChargingEmitter.Pause();
 
             GameSounds.firstMusicInstance = GameSounds.musicIntensityOne.CreateInstance();
             GameSounds.firstMusicInstance.IsLooped = true;
@@ -295,7 +317,6 @@ namespace GlobalLoopGame
 
             var dss = new DepthStencilState();
             GameEffects.DSS = dss;
-
         } 
 
         private void CreateScene()

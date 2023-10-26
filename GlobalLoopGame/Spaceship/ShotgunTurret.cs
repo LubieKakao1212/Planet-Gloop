@@ -1,6 +1,7 @@
 ﻿using GlobalLoopGame.Asteroid;
 using Microsoft.Xna.Framework;
 using MonoEngine.Rendering;
+using MonoEngine.Util;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,18 @@ namespace GlobalLoopGame.Spaceship
             bulletCount = 16;
             spread = 30f * MathF.PI / 180f;
             damage = 15;
+            shotIndex = 1;
             UpdateText();
+        }
+
+        protected override void Reload()
+        {
+            if (willReload)
+            {
+                GameSounds.shotgunReloadSound.Play();
+            }
+
+            base.Reload();
         }
 
         protected override BulletObject CreateBullet(Vector2 dir, Vector2 pos, float speed)

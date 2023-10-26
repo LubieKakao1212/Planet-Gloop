@@ -105,9 +105,20 @@ namespace GlobalLoopGame.Asteroid
 
                 manager.ModifyPoints(pointModification);
 
-                GameSounds.asteroidDeathSound.Play();
+                if (size.X > 5f)
+                {
+                    GameSounds.bigAsteroidDeath.Play();
+                }
+                else
+                {
+                    GameSounds.smallAsteroidDeath.Play();
+                }
 
                 Die();
+            }
+            else
+            {
+                GameSounds.asteroidHurtSound.Play();
             }
         }
 
