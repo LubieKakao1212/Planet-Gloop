@@ -309,6 +309,7 @@ namespace GlobalLoopGame
 
             var font = new Font();
             font.AddSize(12, Content.Load<SpriteFont>("Fonts/Font12"));
+            font.AddSize(24, Content.Load<SpriteFont>("Fonts/Font24"));
             font.AddSize(36, Content.Load<SpriteFont>("Fonts/Font36"));
             font.AddSize(72, Content.Load<SpriteFont>("Fonts/Font72"));
             font.AddSize(128, Content.Load<SpriteFont>("Fonts/Font128"));
@@ -438,6 +439,17 @@ namespace GlobalLoopGame
             gameTitle.FontSize = 128;
             gameTitle.Text = "Gloop \nGame";
             hierarchyMenu.AddObject(gameTitle);
+
+            var controlsText = new TextObject();
+            controlsText.Transform.GlobalPosition = new Vector2(-8, -50);
+            controlsText.Color = Color.White;
+            controlsText.FontSize = 24;
+            controlsText.Text = "Controls:\n" +
+                "w/s - move spaceship forwards/backwards\n" +
+                "a/d - rotate spaceship left/right\n" +
+                "esc - exit game\n" +
+                "p - pause game";
+            hierarchyMenu.AddObject(controlsText);
         }
 
         private void CreateGameOverScene()
