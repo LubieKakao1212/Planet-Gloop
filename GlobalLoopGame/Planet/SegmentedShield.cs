@@ -25,7 +25,7 @@ namespace GlobalLoopGame.Planet
 
         private static Color[] healthColors = new Color[]
         {
-            Color.Transparent,
+            Color.Cyan * 0.25f,
             Color.Red,
             Color.Orange,
             Color.Cyan
