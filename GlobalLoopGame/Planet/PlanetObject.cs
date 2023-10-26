@@ -43,6 +43,8 @@ namespace GlobalLoopGame.Planet
             fixture.CollidesWith |= Category.Cat1;
             fixture.CollidesWith |= Category.Cat2;
             fixture.CollidesWith |= Category.Cat3;
+
+            health = maxHealth;
         }
 
         public void ModifyHealth(int healthModification)
@@ -53,7 +55,10 @@ namespace GlobalLoopGame.Planet
 
             if (healthModification < 0)
             {
-                GameSounds.planetHurtSound.Play();
+                //GameSounds.planetHurtSound.Play();
+
+                GameSounds.PlaySound(GameSounds.planetHurtSound, 2);
+
                 if (game.asteroidManager.difficulty > 3)
                 {
                     game.asteroidManager.ModifyDifficulty(-1);

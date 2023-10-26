@@ -49,6 +49,7 @@ namespace GlobalLoopGame.Asteroid
                     planet.ModifyHealth(-damage);
 
                     contact.GetWorldManifold(out var normal, out var points);
+
                     ExplosionParticleObject epo = new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(points[0]);
 
                     epo.Transform.LocalScale = Vector2.One * 4f;
@@ -122,18 +123,21 @@ namespace GlobalLoopGame.Asteroid
 
                 if (size.X > 5f)
                 {
-                    GameSounds.bigAsteroidDeath.Play();
+                    // GameSounds.bigAsteroidDeath.Play();
+                    GameSounds.PlaySound(GameSounds.bigAsteroidDeath, 2);
                 }
                 else
                 {
-                    GameSounds.smallAsteroidDeath.Play();
+                    //GameSounds.smallAsteroidDeath.Play();
+                    GameSounds.PlaySound(GameSounds.smallAsteroidDeath, 2);
                 }
 
                 Die();
             }
             else
             {
-                GameSounds.asteroidHurtSound.Play();
+                //GameSounds.asteroidHurtSound.Play();
+                GameSounds.PlaySound(GameSounds.asteroidHurtSound, 2);
             }
         }
 

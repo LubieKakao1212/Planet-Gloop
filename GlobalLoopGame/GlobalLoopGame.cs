@@ -325,6 +325,8 @@ namespace GlobalLoopGame
             camera = new Camera() { ViewSize = MapRadius + 4f };
             hierarchyGame.AddObject(camera);
 
+            gameEnded = true;
+
             //Create initial scene here
             DrawableObject backgroundObject = new DrawableObject(new Color(0.1f, 0.1f, 0.3f, 0.25f), -2f);
             hierarchyGame.AddObject(backgroundObject);
@@ -373,7 +375,7 @@ namespace GlobalLoopGame
             hierarchyGame.AddObject(turret01);
             Turrets.Add(turret01);
 
-            StartGame();
+            // StartGame();
         }
 
         private void CreateUI()
@@ -436,8 +438,7 @@ namespace GlobalLoopGame
             var boost = inputManager.CreateSimpleKeysBinding("boost", new Keys[2] { Keys.LeftShift, Keys.RightShift });
             var confirm = inputManager.CreateSimpleKeysBinding("confirm", new Keys[1] { Keys.Enter });
             var cancel = inputManager.CreateSimpleKeysBinding("cancel", new Keys[1] { Keys.Escape });
-
-            var playGame = inputManager.CreateSimpleKeysBinding("playGame", new Keys[1] { Keys.P });
+            var pauseGame = inputManager.CreateSimpleKeysBinding("pauseGame", new Keys[1] { Keys.P });
 
             ThrusterBinding(accelerate, 0, 1);
             ThrusterBinding(decelerate, 2, 3);
@@ -447,7 +448,19 @@ namespace GlobalLoopGame
 
             toggleDrag.Started += (_) =>
             {
-                Spaceship.TryInitDragging(10f, 15f);
+                if (menuDisplayed && gameEnded)
+                {
+                    StartGame();
+                    /*
+                    menuDisplayed = !menuDisplayed;
+
+                    asteroidManager.Enabled = !menuDisplayed;
+                    */
+                }
+                else
+                {
+                    Spaceship.TryInitDragging(10f, 15f);
+                }
             };
 
             restart.Started += (_) =>
@@ -455,11 +468,30 @@ namespace GlobalLoopGame
                 Restart();
             };
 
-            playGame.Started += (_) =>
+            pauseGame.Started += (_) =>
             {
+                TogglePause();
+
+                /*
                 menuDisplayed = !menuDisplayed;
+
                 asteroidManager.Enabled = !menuDisplayed;
+
                 Console.WriteLine("menuDisplayed is: " + menuDisplayed);
+                */
+            };
+
+            confirm.Started += (_) =>
+            {
+                if (menuDisplayed && gameEnded)
+                {
+                    StartGame();
+                    /*
+                    menuDisplayed = !menuDisplayed;
+
+                    asteroidManager.Enabled = !menuDisplayed;
+                    */
+                }
             };
         }
 
@@ -511,6 +543,10 @@ namespace GlobalLoopGame
 
             gameEnded = false;
 
+            menuDisplayed = false;
+
+            asteroidManager.Enabled = true;
+
             Console.WriteLine("Game started!");
 
             foreach (IResettable resettable in Resettables)
@@ -543,6 +579,16 @@ namespace GlobalLoopGame
                 return;
 
             StartGame();
+        }
+
+        public void TogglePause()
+        {
+            if (!gameEnded)
+            {
+                menuDisplayed = !menuDisplayed;
+
+                asteroidManager.Enabled = !menuDisplayed;
+            }
         }
     }
 }

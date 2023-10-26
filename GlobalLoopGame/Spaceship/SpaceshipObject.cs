@@ -65,7 +65,9 @@ namespace GlobalLoopGame.Spaceship
 
                 if (asteroid != null)
                 {
-                    GameSounds.playerHurtSound.Play();
+                    // GameSounds.playerHurtSound.Play();
+
+                    GameSounds.PlaySound(GameSounds.playerHurtSound, 2);
                 }
 
                 return true;
@@ -213,17 +215,15 @@ namespace GlobalLoopGame.Spaceship
                 {
                     var dir = CurrentDrag.BodyB.Position - magnetObject.Transform.GlobalPosition;
 
-                    //magnetObject.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
-
-                    // Console.WriteLine(dir.Length().ToString());
-
-                    // magnetPivot.Transform.LocalPosition = new Vector2(0, -dir.Length()/6);
-
-                    // magnetPivot.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
+                    magnetPivot.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
 
                     if (dir.Length() > 5)
                     {
-                        magnetPivot.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
+                        magnetObject.Color = Color.White;
+                    }
+                    else
+                    {
+                        magnetObject.Color = Color.Transparent;
                     }
                 }
             }
