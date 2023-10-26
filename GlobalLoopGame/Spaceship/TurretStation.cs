@@ -31,6 +31,7 @@ namespace GlobalLoopGame.Spaceship
 
         protected AsteroidManager asteroids;
         protected HierarchyObject barrel;
+        protected DrawableObject turretBaseDrawable;
         protected DrawableObject barrelDrawable;
         protected MeshObject rangeDisplay;
 
@@ -69,8 +70,9 @@ namespace GlobalLoopGame.Spaceship
             PhysicsBody.Tag = this;
             PhysicsBody.AngularDamping = 1f;
             PhysicsBody.LinearDamping = 1f;
-            var drawable = AddDrawableRectFixture(GameSprites.TurretBaseSize, Vector2.Zero, 0f, out var fixture, 0.125f);
-            drawable.Sprite = GameSprites.TurretBase;
+
+            turretBaseDrawable = AddDrawableRectFixture(GameSprites.TurretBaseSize, Vector2.Zero, 0f, out var fixture, 0.125f);
+            turretBaseDrawable.Sprite = GameSprites.TurretBase;
 
             // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3
             fixture.CollisionCategories = Category.Cat3;
@@ -299,7 +301,11 @@ namespace GlobalLoopGame.Spaceship
             GameSounds.magnetEmitter.Play();
 
             UpdateSprite(1);
+
             grabbed = true;
+
+            turretBaseDrawable.Color = new Color(1, 1, 1, 0.7f);
+            barrelDrawable.Color = new Color(1, 1, 1, 0.7f);
 
             SpaceshipObject spaceship = dragger.ThisObject as SpaceshipObject;
 
@@ -328,6 +334,9 @@ namespace GlobalLoopGame.Spaceship
             UpdateSprite(0);
             
             grabbed = false;
+
+            turretBaseDrawable.Color = Color.White;
+            barrelDrawable.Color = Color.White;
 
             SpaceshipObject spaceship = dragger.ThisObject as SpaceshipObject;
 
