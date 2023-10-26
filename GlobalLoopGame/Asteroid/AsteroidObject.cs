@@ -56,6 +56,10 @@ namespace GlobalLoopGame.Asteroid
 
                     return false;
                 }
+                else if (other.CollisionCategories.HasFlag(CollisionCats.Shield))
+                {
+                    Die();
+                }
 
                 return true;
             };
@@ -81,11 +85,8 @@ namespace GlobalLoopGame.Asteroid
             asteroidDrawable.Sprite = placement.size.X > 5f ? GameSprites.LargeAsteroid : GameSprites.SmallAsteroid;
 
             // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3, bullets - 4
-            fixture.CollisionCategories = Category.Cat1;
-            fixture.CollidesWith = Category.None;
-            fixture.CollidesWith |= Category.Cat2;
-            fixture.CollidesWith |= Category.Cat4;
-            fixture.CollidesWith |= Category.Cat5;
+            fixture.CollisionCategories = CollisionCats.Asteroids;
+            fixture.CollidesWith = CollisionCats.CollisionsAsteroids;
         }
 
         public override void Update(GameTime time)

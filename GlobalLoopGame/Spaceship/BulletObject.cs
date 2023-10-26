@@ -38,9 +38,8 @@ namespace GlobalLoopGame.Spaceship
             visuals.Sprite = GameSprites.Laser;
 
             // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3, bullets - 4
-            fixture.CollisionCategories = Category.Cat4;
-            fixture.CollidesWith = Category.None;
-            fixture.CollidesWith |= Category.Cat1;
+            fixture.CollisionCategories = CollisionCats.Bullets;
+            fixture.CollidesWith = CollisionCats.CollisionsBullets;
 
             PhysicsBody.OnCollision += (sender, other, contact) =>
             {

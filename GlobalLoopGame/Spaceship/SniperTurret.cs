@@ -30,7 +30,7 @@ namespace GlobalLoopGame.Spaceship
                     world.RayCast((fixture, point, normal, fraction) =>
                     {
                         //the planet
-                        if(fixture.CollisionCategories.HasFlag(Category.Cat5))
+                        if(fixture.CollisionCategories.HasFlag(CollisionCats.Planet) || fixture.CollisionCategories.HasFlag(CollisionCats.Shield))
                         {
                             lineOfSight = false;
                             return 0f;

@@ -50,11 +50,8 @@ namespace GlobalLoopGame.Spaceship
             shipBody.Color = Color.White;
 
             // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3
-            fixture.CollisionCategories = Category.Cat2;
-            fixture.CollidesWith = Category.None;
-            fixture.CollidesWith |= Category.Cat1;
-            fixture.CollidesWith |= Category.Cat3;
-            fixture.CollidesWith |= Category.Cat5;
+            fixture.CollisionCategories = CollisionCats.Spaceship;
+            fixture.CollidesWith = CollisionCats.CollisionsSpaceship;
 
             PhysicsBody.OnCollision += (sender, other, contact) =>
             {

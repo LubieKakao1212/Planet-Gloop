@@ -1,6 +1,7 @@
 ﻿using GlobalLoopGame.Asteroid;
 using Microsoft.Xna.Framework;
 using MonoEngine.Physics;
+using MonoEngine.Rendering;
 using MonoEngine.Scenes;
 using MonoEngine.Util;
 using nkast.Aether.Physics2D.Dynamics;
@@ -18,13 +19,16 @@ namespace GlobalLoopGame.Planet
         public bool isDead { get; private set; }
         public bool shouldDie { get; private set; }
 
-        public PlanetObject(World world) : base(null)
+        public PlanetObject(World world, RenderPipeline renderer) : base(null)
         {
             Order = 10f;
 
             PhysicsBody = world.CreateBody(bodyType: BodyType.Kinematic);
             PhysicsBody.Tag = this;
             PhysicsBody.AngularVelocity = 0.25f;
+
+            var shield = new SegmentedShield(world, renderer, 6, 20f, MathHelper.TwoPi, 3);
+            shield.Parent = this;
 
             var fixture = PhysicsBody.CreateCircle(12f, 0f);
             var drawable = new DrawableObject(Color.White, -1f);
@@ -38,11 +42,8 @@ namespace GlobalLoopGame.Planet
             fixture.Restitution = 0f;
 
             // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3, bullets - 4
-            fixture.CollisionCategories = Category.Cat5;
-            fixture.CollidesWith = Category.None;
-            fixture.CollidesWith |= Category.Cat1;
-            fixture.CollidesWith |= Category.Cat2;
-            fixture.CollidesWith |= Category.Cat3;
+            fixture.CollisionCategories = CollisionCats.Planet;
+            fixture.CollidesWith = CollisionCats.CollisionsPlanet;
         }
 
         public void ModifyHealth(int healthModification)

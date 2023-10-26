@@ -73,11 +73,8 @@ namespace GlobalLoopGame.Spaceship
             drawable.Sprite = GameSprites.TurretBase;
 
             // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3
-            fixture.CollisionCategories = Category.Cat3;
-            fixture.CollidesWith = Category.None;
-            fixture.CollidesWith |= Category.Cat2;
-            fixture.CollidesWith |= Category.Cat3;
-            fixture.CollidesWith |= Category.Cat5;
+            fixture.CollisionCategories = CollisionCats.Turrets;
+            fixture.CollidesWith = CollisionCats.CollisionsTurrets;
 
             barrelDrawable = new DrawableObject(Color.White, 0.1f);
             barrelDrawable.Sprite = GameSprites.TurretCannon[0];
@@ -152,8 +149,8 @@ namespace GlobalLoopGame.Spaceship
                     bool lineOfSight = true;
                     PhysicsBody.World.RayCast((fixture, point, normal, fraction) =>
                     {
-                        //the planet
-                        if (fixture.CollisionCategories.HasFlag(Category.Cat5))
+                        if (fixture.CollisionCategories.HasFlag(CollisionCats.Planet) ||
+                            fixture.CollisionCategories.HasFlag(CollisionCats.Shield) )
                         {
                             lineOfSight = false;
                             return 0f;
@@ -253,7 +250,7 @@ namespace GlobalLoopGame.Spaceship
 
         private void UpdateRangeMesh(float radius)
         {
-            ViewMesh.CalculateMesh(PhysicsBody.World, Transform.GlobalPosition, radius, meshResolution, out var verts, out var inds, Category.Cat5);
+            ViewMesh.CalculateMesh(PhysicsBody.World, Transform.GlobalPosition, radius, meshResolution, out var verts, out var inds, CollisionCats.Planet | CollisionCats.Shield);
             rangeDisplay.UpdateMesh(verts, inds);
             rangeDisplay.Transform.GlobalRotation = 0f;
         }

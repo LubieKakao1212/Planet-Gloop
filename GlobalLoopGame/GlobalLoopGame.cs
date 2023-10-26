@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using GlobalLoopGame.UI;
 using Microsoft.Xna.Framework.Audio;
 using MonoEngine.Input.Binding;
+using nkast.Aether.Physics2D.Diagnostics;
 
 namespace GlobalLoopGame
 {
@@ -32,6 +33,8 @@ namespace GlobalLoopGame
 
         private RenderPipeline renderPipeline;
         private World world;
+        //Physics Debug
+        private DebugView physicsDebug;
         private Hierarchy hierarchyMenu;
         private Hierarchy hierarchyGame;
         private Hierarchy hierarchyUI;
@@ -137,7 +140,7 @@ namespace GlobalLoopGame
 
             base.Update(gameTime);
         }
-
+        
         protected override void Draw(GameTime gameTime)
         {
             if (!menuDisplayed)
@@ -148,6 +151,8 @@ namespace GlobalLoopGame
 
                 textRenderer.DrawAllText(hierarchyGame, GameSprites.Font, camera);
                 textRenderer.DrawAllText(hierarchyUI, GameSprites.Font, camera);
+
+                //physicsDebug.RenderDebugData(camera.ProjectionMatrix.ToMatrixXNA(), Matrix.Identity);
             }
             else
             {
@@ -315,6 +320,10 @@ namespace GlobalLoopGame
             custom.Parameters["Color"].SetValue(Color.White.ToVector4() * 0.25f);
             GameEffects.Custom = custom;
 
+            var shield = Content.Load<Effect>("Shield");
+            //custom.Parameters["Color"].SetValue(Color.White.ToVector4() * 0.25f);
+            GameEffects.Shield = shield;
+
             var dss = new DepthStencilState();
             GameEffects.DSS = dss;
         } 
@@ -332,7 +341,7 @@ namespace GlobalLoopGame
             backgroundObject.Transform.GlobalPosition = new Vector2(0, 0);
             backgroundObject.Transform.LocalScale = new Vector2(150, 150);
 
-            Planet = new PlanetObject(world);
+            Planet = new PlanetObject(world, renderPipeline);
             hierarchyGame.AddObject(Planet);
             Planet.game = this;
             Resettables.Add(Planet);
@@ -420,6 +429,9 @@ namespace GlobalLoopGame
         private void CreateWorld()
         {
             world = new World(new Vector2(0f, 0f));
+            physicsDebug = new DebugView(world);
+
+            physicsDebug.LoadContent(GraphicsDevice, Content);
         }
 
         private void CreateBindings()

@@ -43,6 +43,12 @@
 /processorParam:DebugMode=Auto
 /build:../../Shaders/DepthMarchedColor.fx;DepthMarchedColor.fx
 
+#begin ../../Shaders/ShieldSegment.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:../../Shaders/ShieldSegment.fx;Shield.fx
+
 #begin ../../Shaders/Tilemap.fx
 /importer:EffectImporter
 /processor:EffectProcessor
@@ -220,12 +226,6 @@
 /processorParam:Quality=Best
 /build:Sounds/AsteroidHurt.wav
 
-#begin Sounds/AsteroidHurt.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/AsteroidHurt.wav
-
 #begin Sounds/BoostCharging.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -255,18 +255,6 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/DropTurret.wav
-
-#begin Sounds/DropTurret.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/DropTurret.wav
-
-#begin Sounds/Magnet.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/Magnet.wav
 
 #begin Sounds/Magnet.wav
 /importer:WavImporter
@@ -304,29 +292,11 @@
 /processorParam:Quality=Best
 /build:Sounds/PickupTurret.wav
 
-#begin Sounds/PickupTurret.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/PickupTurret.wav
-
 #begin Sounds/PlanetHurt.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/PlanetHurt.wav
-
-#begin Sounds/PlanetHurt.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/PlanetHurt.wav
-
-#begin Sounds/PlayerHurt.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/PlayerHurt.wav
 
 #begin Sounds/PlayerHurt.wav
 /importer:WavImporter
@@ -351,12 +321,6 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/ShotgunShot.wav
-
-#begin Sounds/SideThrust.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/SideThrust.wav
 
 #begin Sounds/SideThrust.wav
 /importer:WavImporter
@@ -393,18 +357,6 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/Thruster.wav
-
-#begin Sounds/Thruster.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/Thruster.wav
-
-#begin Sounds/Warning.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/Warning.wav
 
 #begin Sounds/Warning.wav
 /importer:WavImporter
