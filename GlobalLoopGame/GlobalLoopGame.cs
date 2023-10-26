@@ -405,9 +405,10 @@ namespace GlobalLoopGame
             waves.Text = "";
             asteroidManager.WavesUpdated += (waveCount) =>
             {
-                if (waveCount > 1) waves.Text = $"Wave {waveCount - 1}";
+                if (waveCount > 1)
+                    waves.Text = $"Wave {waveCount - 1}";
             };
-            hierarchyUI.AddObject(points);
+            hierarchyUI.AddObject(waves);
 
             var health = new MultiIconDisplay(GameSprites.Health, 5, 0.5f, 4f, 1f);
             health.Transform.LocalPosition = new Vector2(-64f, 64f);
