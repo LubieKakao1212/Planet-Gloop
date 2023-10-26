@@ -19,8 +19,16 @@ namespace GlobalLoopGame
         public static SoundEffect sideThrustSound;
         public static SoundEffect warningSound;
 
+        public static SoundEffect musicIntensityOne;
+        public static SoundEffect musicIntensityTwo;
+        public static SoundEffect musicIntensityThree;
+
         public static SoundEffectInstance magnetEmitter;
         public static SoundEffectInstance thrusterEmitter;
         public static SoundEffectInstance sideThrusterEmitter;
+
+        public static SoundEffectInstance firstMusicInstance;
+        public static SoundEffectInstance secondMusicInstance;
+        public static SoundEffectInstance thirdMusicInstance;
     }
 }
