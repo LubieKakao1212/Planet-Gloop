@@ -40,6 +40,7 @@ namespace GlobalLoopGame
         private Hierarchy hierarchyUI;
         private Hierarchy hierarchyGameOver;
         private Hierarchy hierarchyPressEnter;
+        private Hierarchy hierarchyPaused;
         private InputManager inputManager;
         private Camera camera;
         private SpriteAtlas<Color> spriteAtlas;
@@ -142,6 +143,25 @@ namespace GlobalLoopGame
                     updatable.Update(gameTime);
                 }
                 hierarchyMenu.EndUpdate();
+
+                if(gameEnded && enterKeyEnteredCounter == 0)
+                {
+                    hierarchyPressEnter.BeginUpdate();
+                    foreach (var updatable in hierarchyPressEnter.OrderedInstancesOf<IUpdatable>())
+                    {
+                        updatable.Update(gameTime);
+                    }
+                    hierarchyPressEnter.EndUpdate();
+                }
+                else
+                {
+                    hierarchyPaused.BeginUpdate();
+                    foreach (var updatable in hierarchyPaused.OrderedInstancesOf<IUpdatable>())
+                    {
+                        updatable.Update(gameTime);
+                    }
+                    hierarchyPaused.EndUpdate();
+                }
             }
 
             base.Update(gameTime);
@@ -164,11 +184,6 @@ namespace GlobalLoopGame
                     //GraphicsDevice.Clear(Color.Red);
                     renderPipeline.RenderScene(hierarchyGameOver, camera);
                     textRenderer.DrawAllText(hierarchyGameOver, GameSprites.Font, camera);
-                    if(enterKeyEnteredCounter == 0)
-                    {
-                        renderPipeline.RenderScene(hierarchyPressEnter, camera);
-                        textRenderer.DrawAllText(hierarchyPressEnter, GameSprites.Font, camera);
-                    }
                 }
             }
             else
@@ -176,6 +191,16 @@ namespace GlobalLoopGame
                 GraphicsDevice.Clear(Color.DarkGoldenrod);
                 renderPipeline.RenderScene(hierarchyMenu, camera);
                 textRenderer.DrawAllText(hierarchyMenu, GameSprites.Font, camera);
+                if (gameEnded && enterKeyEnteredCounter == 0)
+                {
+                    renderPipeline.RenderScene(hierarchyPressEnter, camera);
+                    textRenderer.DrawAllText(hierarchyPressEnter, GameSprites.Font, camera);
+                }
+                else
+                {
+                    renderPipeline.RenderScene(hierarchyPaused, camera);
+                    textRenderer.DrawAllText(hierarchyPaused, GameSprites.Font, camera);
+                }
             }
 
             base.Draw(gameTime);
@@ -326,6 +351,8 @@ namespace GlobalLoopGame
             font.AddSize(12, Content.Load<SpriteFont>("Fonts/Font12"));
             font.AddSize(24, Content.Load<SpriteFont>("Fonts/Font24"));
             font.AddSize(36, Content.Load<SpriteFont>("Fonts/Font36"));
+            font.AddSize(48, Content.Load<SpriteFont>("Fonts/Font48"));
+            font.AddSize(56, Content.Load<SpriteFont>("Fonts/Font56"));
             font.AddSize(72, Content.Load<SpriteFont>("Fonts/Font72"));
             font.AddSize(128, Content.Load<SpriteFont>("Fonts/Font128"));
             GameSprites.Font = font;
@@ -487,12 +514,21 @@ namespace GlobalLoopGame
 
             hierarchyPressEnter = new Hierarchy();
 
-            var pressEnterText = new TextObject();
-            pressEnterText.Transform.GlobalPosition = new Vector2(-25, 0);
+            var pressEnterText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.25f);
+            pressEnterText.Transform.GlobalPosition = new Vector2(-12, 0);
             pressEnterText.Color = Color.White;
-            pressEnterText.FontSize = 36;
+            pressEnterText.FontSize = 48;
             pressEnterText.Text = "Press [Enter] to play";
             hierarchyPressEnter.AddObject(pressEnterText);
+
+            hierarchyPaused = new Hierarchy();
+
+            var gamePausedText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.8f);
+            gamePausedText.Transform.GlobalPosition = new Vector2(-25, 0);
+            gamePausedText.Color = Color.White;
+            gamePausedText.FontSize = 48;
+            gamePausedText.Text = "[Game Paused]";
+            hierarchyPaused.AddObject(gamePausedText);
         }
 
         private void CreateGameOverScene()

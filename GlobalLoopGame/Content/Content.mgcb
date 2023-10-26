@@ -155,6 +155,20 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Font36.spritefont
 
+#begin Fonts/Font48.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Font48.spritefont
+
+#begin Fonts/Font56.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Font56.spritefont
+
 #begin Fonts/Font72.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
