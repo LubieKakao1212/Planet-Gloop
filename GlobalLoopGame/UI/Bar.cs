@@ -19,6 +19,9 @@ namespace GlobalLoopGame.UI
         private DrawableObject background;
         private Color positiveColor;
         private Color negativeColor;
+        private Color backgroundColor;
+
+        private bool visible;
 
         public Bar(Func<float> fillAmount, Color positiveColor, Color negativeColor, Color backgroundColor)
         {
@@ -38,10 +41,13 @@ namespace GlobalLoopGame.UI
             
             this.positiveColor = positiveColor;
             this.negativeColor = negativeColor;
+            this.backgroundColor = backgroundColor;
         }
 
         public void Update(GameTime time)
         {
+            if (!visible) return;
+
             var fill = fillAmount();
 
             bar.Transform.LocalScale = new Vector2(fill, 1f * MathF.Sign(fill));
@@ -55,6 +61,14 @@ namespace GlobalLoopGame.UI
             {
                 bar.Color = negativeColor;
             }
+        }
+
+        public void ToggleVisibility(bool newVisibility)
+        {
+            visible = newVisibility;
+
+            bar.Color = newVisibility ? positiveColor : Color.Transparent;
+            background.Color = newVisibility ? backgroundColor : Color.Transparent;
         }
     }
 }

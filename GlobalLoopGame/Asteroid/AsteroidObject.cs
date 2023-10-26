@@ -93,6 +93,7 @@ namespace GlobalLoopGame.Asteroid
             healthBar = new Bar(() => healthToDisplay, Color.Red, Color.Red, Color.White);
             healthBar.Parent = this;
             healthBar.Transform.LocalPosition = new Vector2(-size.X / 4, size.Y / 2);
+            healthBar.ToggleVisibility(false);
             //healthBar.Transform.LocalScale = Vector2.One * 0.8f;
             //manager.game.hierarchyUI.AddObject(healthBar);
         }
@@ -109,6 +110,8 @@ namespace GlobalLoopGame.Asteroid
         public void ModifyHealth(float healthModification)
         {
             health = MathHelper.Clamp(health + healthModification, 0, maxHealth);
+
+            healthBar.ToggleVisibility(health > 0 && health < maxHealth);
 
             if (health <= 0)
             {
