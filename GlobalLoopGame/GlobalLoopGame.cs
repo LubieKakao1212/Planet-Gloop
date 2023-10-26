@@ -287,7 +287,7 @@ namespace GlobalLoopGame
             GameSprites.Planet = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PlanetTex"), new Rectangle(0, 0, 128, 128))[0];
 
             var spaceshipTextures = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SpaceshipTex"),
-                new Rectangle(0, 6, 32, 20),
+                new Rectangle(0, 1, 32, 25),
                 new Rectangle(37, 36, 22, 22),
                 new Rectangle(35, 8, 6, 6),
                 new Rectangle(4, 30, 22, 34)
@@ -420,8 +420,7 @@ namespace GlobalLoopGame
 
             var turret10 = new SniperTurret(world, asteroidManager, renderPipeline);
             turret10.SetSprites(GameSprites.TurretSniper, GameSprites.TurretSniperSizes, new Vector2(-6f, 12f) / GameSprites.pixelsPerUnit);
-            turret10.SetStartingPosition(new Vector2(-32f, 0f));
-            turret10.Transform.LocalRotation = MathHelper.ToRadians(90f); 
+            turret10.SetStartingPosition(new Vector2(0f, 32f));
             Resettables.Add(turret10);
             hierarchyGame.AddObject(turret10);
             Turrets.Add(turret10);
@@ -429,7 +428,8 @@ namespace GlobalLoopGame
             var turret01 = new ShotgunTurret(world, asteroidManager, renderPipeline, 1f);
             turret01.SetSprites(GameSprites.TurretShotgun, GameSprites.TurretShotgunSizes, new Vector2(0f, 12f) / GameSprites.pixelsPerUnit);
             turret01.RangeRadius = 24f;
-            turret01.SetStartingPosition(new Vector2(0f, 32f));
+            turret01.SetStartingPosition(new Vector2(-32f, 0f));
+            turret01.Transform.LocalRotation = MathHelper.ToRadians(90f);
             Resettables.Add(turret01);
             hierarchyGame.AddObject(turret01);
             Turrets.Add(turret01);

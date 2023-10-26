@@ -88,8 +88,8 @@ namespace GlobalLoopGame.Spaceship
             magnetObject.Sprite = GameSprites.SpaceshipMagnet;
             magnetObject.Parent = magnetPivot;
             magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSize;
-            magnetObject.Transform.LocalPosition = Vector2.Zero;
-            //magnetObject.Transform.LocalRotation = MathHelper.ToRadians(180f);
+            magnetObject.Transform.LocalPosition = new Vector2(0f, 2f);
+            // magnetObject.Transform.LocalRotation = MathHelper.ToRadians(180f);
         }
         
         public void IncrementThruster(int idx)
