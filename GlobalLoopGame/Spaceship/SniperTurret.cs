@@ -8,7 +8,7 @@ namespace GlobalLoopGame.Spaceship
 {
     public class SniperTurret : TurretStation
     {
-        public SniperTurret(World world, AsteroidManager asteroids, RenderPipeline renderer) : base(world, asteroids, renderer, 2.5f)
+        public SniperTurret(World world, AsteroidManager asteroids, RenderPipeline renderer) : base(world, asteroids, renderer, 2.5f, 0.5f)
         {
             spread = 0;
             RangeRadius = 72f;
@@ -50,7 +50,8 @@ namespace GlobalLoopGame.Spaceship
         protected override BulletObject CreateBullet(Vector2 dir, Vector2 pos, float speed)
         {
             var bo = new BulletObject(PhysicsBody.World);
-            bo.pierce = int.MaxValue;
+            bo.damageIsPierce = true;
+            bo.pierce = 1;
             bo.damage = damage;
             return bo.InitializeBullet(pos, dir, speed).SetColor(Color.OrangeRed);
         }

@@ -35,8 +35,6 @@ namespace GlobalLoopGame
         private Hierarchy hierarchyMenu;
         private Hierarchy hierarchyGame;
         private Hierarchy hierarchyUI;
-        private Hierarchy hierarchyGameOver;
-        private Hierarchy hierarchyModalBox;
         private InputManager inputManager;
         private Camera camera;
         private SpriteAtlas<Color> spriteAtlas;
@@ -47,7 +45,7 @@ namespace GlobalLoopGame
 
         private bool gameEnded = true;
         private bool menuDisplayed = true;
-        private bool modalBoxActive = false;
+
         public AsteroidManager asteroidManager { get; private set; }
         public MusicManager musicManager { get; private set; }
 
@@ -92,8 +90,6 @@ namespace GlobalLoopGame
             CreateScene();
 
             CreateMenuScene();
-            CreateGameOverScene();
-            CreateModalBox();
 
             CreateBindings();
 
@@ -152,24 +148,11 @@ namespace GlobalLoopGame
 
                 textRenderer.DrawAllText(hierarchyGame, GameSprites.Font, camera);
                 textRenderer.DrawAllText(hierarchyUI, GameSprites.Font, camera);
-
-                if (gameEnded)
-                {
-                    GraphicsDevice.Clear(Color.DarkRed);
-                    renderPipeline.RenderScene(hierarchyGameOver, camera);
-                    textRenderer.DrawAllText(hierarchyGameOver, GameSprites.Font, camera);
-                }
             }
             else
             {
                 GraphicsDevice.Clear(Color.DarkGoldenrod);
                 renderPipeline.RenderScene(hierarchyMenu, camera);
-            }
-
-
-            if (modalBoxActive)
-            {
-                renderPipeline.RenderScene(hierarchyModalBox, camera);
             }
 
             base.Draw(gameTime);
@@ -342,6 +325,8 @@ namespace GlobalLoopGame
             camera = new Camera() { ViewSize = MapRadius + 4f };
             hierarchyGame.AddObject(camera);
 
+            gameEnded = true;
+
             //Create initial scene here
             DrawableObject backgroundObject = new DrawableObject(new Color(0.1f, 0.1f, 0.3f, 0.25f), -2f);
             hierarchyGame.AddObject(backgroundObject);
@@ -376,7 +361,8 @@ namespace GlobalLoopGame
 
             var turret10 = new SniperTurret(world, asteroidManager, renderPipeline);
             turret10.SetSprites(GameSprites.TurretSniper, GameSprites.TurretSniperSizes, new Vector2(-6f, 12f) / GameSprites.pixelsPerUnit);
-            turret10.SetStartingPosition(new Vector2(0f, 32f));
+            turret10.SetStartingPosition(new Vector2(-32f, 0f));
+            turret10.Transform.LocalRotation = MathHelper.ToRadians(90f); 
             Resettables.Add(turret10);
             hierarchyGame.AddObject(turret10);
             Turrets.Add(turret10);
@@ -384,21 +370,33 @@ namespace GlobalLoopGame
             var turret01 = new ShotgunTurret(world, asteroidManager, renderPipeline, 1f);
             turret01.SetSprites(GameSprites.TurretShotgun, GameSprites.TurretShotgunSizes, new Vector2(0f, 12f) / GameSprites.pixelsPerUnit);
             turret01.RangeRadius = 24f;
-            turret01.SetStartingPosition(new Vector2(-32f, 0f));
-            turret01.Transform.LocalRotation = MathHelper.ToRadians(90f);
+            turret01.SetStartingPosition(new Vector2(0f, 32f));
             Resettables.Add(turret01);
             hierarchyGame.AddObject(turret01);
             Turrets.Add(turret01);
 
-            StartGame();
+            // StartGame();
         }
 
         private void CreateUI()
         {
             hierarchyUI = new Hierarchy();
-            var boost = new Bar(() => Spaceship.BoostLeft, Color.Green, Color.Red);
-            boost.Transform.LocalPosition = new Vector2(-64f, 60f);
+
+            var boost = new Bar(() => Spaceship.DisplayedBoost, Color.Green, Color.Red, Color.Transparent);
+            boost.Transform.LocalPosition = new Vector2(-58f, 58f);
+            boost.Transform.LocalScale = Vector2.One * 2f;
             hierarchyUI.AddObject(boost);
+
+            var points = new TextObject();
+            points.Transform.GlobalPosition = new Vector2(60, 60f);
+            points.Color = Color.White;
+            points.FontSize = 36;
+            points.Text = "0";
+            asteroidManager.PointsUpdated += (pointCount) =>
+            {
+                points.Text = $"{pointCount / 100}";
+            };
+            hierarchyUI.AddObject(points);
 
             var health = new MultiIconDisplay(GameSprites.Health, 5, 0.5f, 4f, 1f);
             health.Transform.LocalPosition = new Vector2(-64f, 64f);
@@ -417,38 +415,10 @@ namespace GlobalLoopGame
         {
             hierarchyMenu = new Hierarchy();
 
-            var background = new DrawableObject(Color.White, 1f);
-            background.Sprite = GameSprites.MenuBackground;
-            background.Transform.LocalScale = new Vector2(128f, 128f);
-            hierarchyMenu.AddObject(background);
-        }
-
-        private void CreateGameOverScene()
-        {
-            hierarchyGameOver = new Hierarchy();
-
-            var background = new DrawableObject(Color.Red, 1f);
-            background.Transform.LocalScale = new Vector2(128f, 128f);
-            hierarchyGameOver.AddObject(background);
-
-            var gameOverMessage = new TextObject();
-            gameOverMessage.Transform.LocalPosition = new Vector2(0, 0);
-            gameOverMessage.Color = Color.White;
-            gameOverMessage.Text = "Game Over";
-            gameOverMessage.FontSize = 72;
-            hierarchyGameOver.AddObject(gameOverMessage);
-        }
-
-        private void CreateModalBox()
-        {
-            hierarchyModalBox = new Hierarchy();
-
-            var accent = new DrawableObject(Color.White, 3f);
-            accent.Transform.LocalScale = new Vector2(120f, 60f);
-            hierarchyModalBox.AddObject(accent);
-            var background = new DrawableObject(Color.DarkOliveGreen, 2f);
-            background.Transform.LocalScale = new Vector2(110f, 55f);
-            hierarchyModalBox.AddObject(background);
+            var mBack = new DrawableObject(Color.White, 1f);
+            mBack.Sprite = GameSprites.MenuBackground;
+            mBack.Transform.LocalScale = new Vector2(128f, 128f);
+            hierarchyMenu.AddObject(mBack);
         }
 
         private void CreateWorld()
@@ -468,10 +438,7 @@ namespace GlobalLoopGame
             var boost = inputManager.CreateSimpleKeysBinding("boost", new Keys[2] { Keys.LeftShift, Keys.RightShift });
             var confirm = inputManager.CreateSimpleKeysBinding("confirm", new Keys[1] { Keys.Enter });
             var cancel = inputManager.CreateSimpleKeysBinding("cancel", new Keys[1] { Keys.Escape });
-
-            var playGame = inputManager.CreateSimpleKeysBinding("playGame", new Keys[1] { Keys.P });
-            var exitGame = inputManager.CreateSimpleKeysBinding("exitGame", new Keys[1] { Keys.X });
-            var debugKey = inputManager.CreateSimpleKeysBinding("debugKey", new Keys[1] { Keys.N });
+            var pauseGame = inputManager.CreateSimpleKeysBinding("pauseGame", new Keys[1] { Keys.P });
 
             ThrusterBinding(accelerate, 0, 1);
             ThrusterBinding(decelerate, 2, 3);
@@ -481,7 +448,19 @@ namespace GlobalLoopGame
 
             toggleDrag.Started += (_) =>
             {
-                Spaceship.TryInitDragging(10f, 15f);
+                if (menuDisplayed && gameEnded)
+                {
+                    StartGame();
+                    /*
+                    menuDisplayed = !menuDisplayed;
+
+                    asteroidManager.Enabled = !menuDisplayed;
+                    */
+                }
+                else
+                {
+                    Spaceship.TryInitDragging(10f, 15f);
+                }
             };
 
             restart.Started += (_) =>
@@ -489,21 +468,30 @@ namespace GlobalLoopGame
                 Restart();
             };
 
-            playGame.Started += (_) =>
+            pauseGame.Started += (_) =>
             {
+                TogglePause();
+
+                /*
                 menuDisplayed = !menuDisplayed;
+
                 asteroidManager.Enabled = !menuDisplayed;
-                //Console.WriteLine("menuDisplayed is: " + menuDisplayed);
+
+                Console.WriteLine("menuDisplayed is: " + menuDisplayed);
+                */
             };
 
-            exitGame.Started += (_) =>
+            confirm.Started += (_) =>
             {
+                if (menuDisplayed && gameEnded)
+                {
+                    StartGame();
+                    /*
+                    menuDisplayed = !menuDisplayed;
 
-            };
-
-            debugKey.Started += (_) =>
-            {
-                modalBoxActive = !modalBoxActive;
+                    asteroidManager.Enabled = !menuDisplayed;
+                    */
+                }
             };
         }
 
@@ -546,11 +534,6 @@ namespace GlobalLoopGame
             };
         }
 
-        private void DisplayModalBox()
-        {
-
-        }
-
         public void StartGame()
         {
             if (!gameEnded)
@@ -559,6 +542,10 @@ namespace GlobalLoopGame
             }
 
             gameEnded = false;
+
+            menuDisplayed = false;
+
+            asteroidManager.Enabled = true;
 
             Console.WriteLine("Game started!");
 
@@ -592,6 +579,16 @@ namespace GlobalLoopGame
                 return;
 
             StartGame();
+        }
+
+        public void TogglePause()
+        {
+            if (!gameEnded)
+            {
+                menuDisplayed = !menuDisplayed;
+
+                asteroidManager.Enabled = !menuDisplayed;
+            }
         }
     }
 }

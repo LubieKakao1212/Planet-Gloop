@@ -31,9 +31,9 @@ namespace GlobalLoopGame
             despawner = new AutoTimeMachine(Despawn, lifetime);
         }
 
-        public ExplosionParticleObject InitializeParticle(PhysicsBodyObject spawner)
+        public ExplosionParticleObject InitializeParticle(Vector2 spawnPos)
         {
-            Transform.GlobalPosition = spawner.Transform.GlobalPosition;
+            Transform.GlobalPosition = spawnPos;
 
             Transform.LocalScale = Vector2.One;
 
@@ -43,7 +43,7 @@ namespace GlobalLoopGame
 
             drawable.Transform.LocalPosition = Vector2.Zero;
 
-            drawable.Transform.LocalScale = GameSprites.SmallExplosionSize * spawner.Transform.LocalScale.X;
+            drawable.Transform.LocalScale = GameSprites.SmallExplosionSize;// * spawner.Transform.LocalScale.X;
 
             drawable.Parent = this;
 

@@ -17,8 +17,21 @@ namespace GlobalLoopGame.Asteroid
 
         private Hierarchy _hierarchy;
 
-        public int points { get; private set; }
-        public bool Enabled 
+        public event Action<int> PointsUpdated;
+
+        public int Points 
+        { 
+            get => points; 
+            private set 
+            { 
+                points = value; 
+                PointsUpdated?.Invoke(value); 
+            } 
+        }
+
+        private int points;
+
+        public bool Enabled
         { 
             get => enabled; 
             set 
@@ -168,14 +181,14 @@ namespace GlobalLoopGame.Asteroid
 
         public void ModifyPoints(int pointModification)
         {
-            points += pointModification;
+            Points += pointModification;
 
-            if (points < 0)
+            if (Points < 0)
             {
-                points = 0;
+                Points = 0;
             }
 
-            Console.WriteLine("points " + points.ToString());
+            Console.WriteLine("points " + Points.ToString());
         }
 
         public void SetInterval(float interval, float warningTime)
@@ -238,7 +251,7 @@ namespace GlobalLoopGame.Asteroid
             difficulty = 0;
             SetInterval(3, 3);
             waveNumber = 0;
-            points = 0;
+            Points = 0;
 
             waveMachine = new SequentialAutoTimeMachine(
                 (() => SelectWaveAndPlaceWarning(this.difficulty), this.waveWarningTime),
@@ -256,24 +269,6 @@ namespace GlobalLoopGame.Asteroid
             new List<float>()
             {
                 10f
-            }),
-            new AsteroidWave(new List<AsteroidPlacement>()
-            {
-                new AsteroidPlacement(Vector2.One * 3f, 90f, 90f, 8f, 120)
-            },
-            0,
-            new List<float>()
-            {
-                90f
-            }),
-            new AsteroidWave(new List<AsteroidPlacement>()
-            {
-                new AsteroidPlacement(Vector2.One * 3f, 170f, 170f, 8f, 120)
-            },
-            0,
-            new List<float>()
-            {
-                170f
             }),
             new AsteroidWave(new List<AsteroidPlacement>()
             {
