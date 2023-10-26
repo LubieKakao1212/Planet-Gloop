@@ -19,6 +19,7 @@ namespace GlobalLoopGame
         private AutoTimeMachine despawner;
 
         private float timeAlive = 0;
+        public float sizeModifier = 1f;
 
         public ExplosionParticleObject(World world) : base(null)
         {
@@ -62,7 +63,7 @@ namespace GlobalLoopGame
 
             timeAlive += (float)time.ElapsedGameTime.TotalSeconds;
 
-            Transform.LocalScale = Vector2.One * (timeAlive / lifetime);
+            Transform.LocalScale = Vector2.One * (timeAlive / lifetime) * sizeModifier;
 
             base.Update(time);
         }
