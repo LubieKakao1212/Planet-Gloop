@@ -35,6 +35,7 @@ namespace GlobalLoopGame
         private Hierarchy hierarchyMenu;
         private Hierarchy hierarchyGame;
         private Hierarchy hierarchyUI;
+        private Hierarchy hierarchyGameOver;
         private InputManager inputManager;
         private Camera camera;
         private SpriteAtlas<Color> spriteAtlas;
@@ -90,6 +91,8 @@ namespace GlobalLoopGame
             CreateScene();
 
             CreateMenuScene();
+
+            CreateGameOverScene();
 
             CreateBindings();
 
@@ -148,11 +151,19 @@ namespace GlobalLoopGame
 
                 textRenderer.DrawAllText(hierarchyGame, GameSprites.Font, camera);
                 textRenderer.DrawAllText(hierarchyUI, GameSprites.Font, camera);
+
+                if (gameEnded)
+                {
+                    //GraphicsDevice.Clear(Color.Red);
+                    renderPipeline.RenderScene(hierarchyGameOver, camera);
+                    textRenderer.DrawAllText(hierarchyGameOver, GameSprites.Font, camera);
+                }
             }
             else
             {
                 GraphicsDevice.Clear(Color.DarkGoldenrod);
                 renderPipeline.RenderScene(hierarchyMenu, camera);
+                textRenderer.DrawAllText(hierarchyMenu, GameSprites.Font, camera);
             }
 
             base.Draw(gameTime);
@@ -301,8 +312,10 @@ namespace GlobalLoopGame
 
             var font = new Font();
             font.AddSize(12, Content.Load<SpriteFont>("Fonts/Font12"));
+            font.AddSize(24, Content.Load<SpriteFont>("Fonts/Font24"));
             font.AddSize(36, Content.Load<SpriteFont>("Fonts/Font36"));
             font.AddSize(72, Content.Load<SpriteFont>("Fonts/Font72"));
+            font.AddSize(128, Content.Load<SpriteFont>("Fonts/Font128"));
             GameSprites.Font = font;
             
             //Load Sprites Here
@@ -431,10 +444,68 @@ namespace GlobalLoopGame
         {
             hierarchyMenu = new Hierarchy();
 
-            var mBack = new DrawableObject(Color.White, 1f);
-            mBack.Sprite = GameSprites.MenuBackground;
-            mBack.Transform.LocalScale = new Vector2(128f, 128f);
-            hierarchyMenu.AddObject(mBack);
+            var background = new DrawableObject(Color.White, 1f);
+            background.Sprite = GameSprites.SpaceBackground;
+            background.Transform.LocalScale = new Vector2(136f, 136f);
+            hierarchyMenu.AddObject(background);
+
+            var gameTitle = new TextObject();
+            gameTitle.Transform.GlobalPosition = new Vector2(-25, 37);
+            gameTitle.Color = Color.White;
+            gameTitle.FontSize = 128;
+            gameTitle.Text = "Gloop \nGame";
+            hierarchyMenu.AddObject(gameTitle);
+
+            var controlsText = new TextObject();
+            controlsText.Transform.GlobalPosition = new Vector2(-8, -50);
+            controlsText.Color = Color.White;
+            controlsText.FontSize = 24;
+            controlsText.Text = "Controls:\n" +
+                "w/s - move spaceship forwards/backwards\n" +
+                "a/d - rotate spaceship left/right\n" +
+                "esc - exit game\n" +
+                "p - pause game";
+            hierarchyMenu.AddObject(controlsText);
+        }
+
+        private void CreateGameOverScene()
+        {
+            hierarchyGameOver = new Hierarchy();
+
+            var accent = new DrawableObject(Color.Red, 2f);
+            accent.Transform.LocalScale = new Vector2(136f, 136f);
+            accent.Sprite = GameSprites.NullSprite;
+            hierarchyGameOver.AddObject(accent);
+
+            var background = new DrawableObject(Color.Black, 2f);
+            background.Transform.LocalScale = new Vector2(128f, 128f);
+            background.Sprite = GameSprites.NullSprite;
+            hierarchyGameOver.AddObject(background);
+
+            var gameOverText = new TextObject();
+            gameOverText.Transform.GlobalPosition = new Vector2(0, 0);
+            gameOverText.Color = Color.White;
+            gameOverText.FontSize = 72;
+            gameOverText.Text = "Game Over";
+            hierarchyGameOver.AddObject(gameOverText);
+
+            var resetText = new TextObject();
+            resetText.Transform.GlobalPosition = new Vector2(0, -40);
+            resetText.Color = Color.White;
+            resetText.FontSize = 36;
+            resetText.Text = "Press R to reset";
+            hierarchyGameOver.AddObject(resetText);
+
+            var scoreText = new TextObject();
+            scoreText.Transform.GlobalPosition = new Vector2(0, -20);
+            scoreText.Color = Color.White;
+            scoreText.FontSize = 36;
+            //scoreText.Text = "Your score is: " + ;
+            asteroidManager.PointsUpdated += (pointCount) =>
+            {
+                scoreText.Text = "Your score is: " + $"{pointCount / 100}";
+            };
+            hierarchyGameOver.AddObject(scoreText);
         }
 
         private void CreateWorld()
