@@ -163,6 +163,7 @@ namespace GlobalLoopGame
             {
                 GraphicsDevice.Clear(Color.DarkGoldenrod);
                 renderPipeline.RenderScene(hierarchyMenu, camera);
+                textRenderer.DrawAllText(hierarchyMenu, GameSprites.Font, camera);
             }
 
             base.Draw(gameTime);
@@ -310,6 +311,7 @@ namespace GlobalLoopGame
             font.AddSize(12, Content.Load<SpriteFont>("Fonts/Font12"));
             font.AddSize(36, Content.Load<SpriteFont>("Fonts/Font36"));
             font.AddSize(72, Content.Load<SpriteFont>("Fonts/Font72"));
+            font.AddSize(128, Content.Load<SpriteFont>("Fonts/Font128"));
             GameSprites.Font = font;
             
             //Load Sprites Here
@@ -426,9 +428,16 @@ namespace GlobalLoopGame
             hierarchyMenu = new Hierarchy();
 
             var background = new DrawableObject(Color.White, 1f);
-            background.Sprite = GameSprites.MenuBackground;
-            background.Transform.LocalScale = new Vector2(128f, 128f);
+            background.Sprite = GameSprites.SpaceBackground;
+            background.Transform.LocalScale = new Vector2(136f, 136f);
             hierarchyMenu.AddObject(background);
+
+            var gameTitle = new TextObject();
+            gameTitle.Transform.GlobalPosition = new Vector2(-25, 37);
+            gameTitle.Color = Color.White;
+            gameTitle.FontSize = 128;
+            gameTitle.Text = "Gloop \nGame";
+            hierarchyMenu.AddObject(gameTitle);
         }
 
         private void CreateGameOverScene()
