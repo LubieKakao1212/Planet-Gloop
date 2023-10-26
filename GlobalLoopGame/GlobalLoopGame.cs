@@ -359,7 +359,8 @@ namespace GlobalLoopGame
 
             var turret10 = new SniperTurret(world, asteroidManager, renderPipeline);
             turret10.SetSprites(GameSprites.TurretSniper, GameSprites.TurretSniperSizes, new Vector2(-6f, 12f) / GameSprites.pixelsPerUnit);
-            turret10.SetStartingPosition(new Vector2(0f, 32f));
+            turret10.SetStartingPosition(new Vector2(-32f, 0f));
+            turret10.Transform.LocalRotation = MathHelper.ToRadians(90f); 
             Resettables.Add(turret10);
             hierarchyGame.AddObject(turret10);
             Turrets.Add(turret10);
@@ -367,8 +368,7 @@ namespace GlobalLoopGame
             var turret01 = new ShotgunTurret(world, asteroidManager, renderPipeline, 1f);
             turret01.SetSprites(GameSprites.TurretShotgun, GameSprites.TurretShotgunSizes, new Vector2(0f, 12f) / GameSprites.pixelsPerUnit);
             turret01.RangeRadius = 24f;
-            turret01.SetStartingPosition(new Vector2(-32f, 0f));
-            turret01.Transform.LocalRotation = MathHelper.ToRadians(90f);
+            turret01.SetStartingPosition(new Vector2(0f, 32f));
             Resettables.Add(turret01);
             hierarchyGame.AddObject(turret01);
             Turrets.Add(turret01);
