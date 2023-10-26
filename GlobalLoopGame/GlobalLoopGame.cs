@@ -347,8 +347,8 @@ namespace GlobalLoopGame
             GameSprites.CircleOverlay = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("circleoverlay"),
                 new Rectangle(0, 0, 726,726))[0];
 
-            GameSprites.RepairCharge = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("HealthTex"),
-                new Rectangle(0, 0, 16, 16))[0];
+            GameSprites.RepairCharge = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("ChargeTex"),
+                new Rectangle(2, 0, 12, 16))[0];
 
             var font = new Font();
             font.AddSize(12, Content.Load<SpriteFont>("Fonts/Font12"));
