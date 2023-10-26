@@ -358,8 +358,10 @@ namespace GlobalLoopGame.Spaceship
             {
                 spaceship.magnetObject.Sprite = GameSprites.SpaceshipMagnet;
                 spaceship.magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSize;
+
                 spaceship.magnetPivot.Transform.LocalRotation = MathHelper.ToRadians(180f);
-                spaceship.magnetObject.Transform.LocalPosition = Vector2.Zero;
+
+                spaceship.magnetObject.Transform.LocalPosition = new Vector2(0f, 2f);
                 spaceship.magnetObject.Color = Color.White;
             }
         }
