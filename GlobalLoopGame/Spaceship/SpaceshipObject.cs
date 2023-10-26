@@ -62,8 +62,6 @@ namespace GlobalLoopGame.Spaceship
 
                 if (asteroid != null)
                 {
-                    // GameSounds.playerHurtSound.Play();
-
                     GameSounds.PlaySound(GameSounds.playerHurtSound, 2);
                 }
 
@@ -75,8 +73,8 @@ namespace GlobalLoopGame.Spaceship
             t.X *= 12f / 32f;
             AddThruster(new(-t.X, -t.Y / 2f), 0f);
             AddThruster(new(t.X, -t.Y / 2f), 0f);
-            AddThruster(new(-t.X, t.Y / 2f), MathF.PI);
-            AddThruster(new(t.X, t.Y / 2f), MathF.PI);
+            AddThruster(new(-t.X, t.Y / 3f), MathF.PI);
+            AddThruster(new(t.X, t.Y / 3f), MathF.PI);
 
             magnetPivot = new HierarchyObject();
             magnetPivot.Parent = this;
@@ -89,7 +87,6 @@ namespace GlobalLoopGame.Spaceship
             magnetObject.Parent = magnetPivot;
             magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSize;
             magnetObject.Transform.LocalPosition = new Vector2(0f, 2f);
-            // magnetObject.Transform.LocalRotation = MathHelper.ToRadians(180f);
         }
         
         public void IncrementThruster(int idx)
@@ -115,19 +112,24 @@ namespace GlobalLoopGame.Spaceship
         public void AddThruster(Vector2 pos, float rotation)
         {
             var drawable = new DrawableObject(Color.Cyan, 0f);
+
             //No animation for now
             drawable.Sprite = GameSprites.SpaceshipThrusterFrames[0];
+
             var size = GameSprites.SpaceshipThrusterFrameSize;
             drawable.Transform.LocalScale = size;
             drawable.Transform.LocalPosition = -Vector2.UnitY * size.Y / 2f;
+
             var root = new HierarchyObject();
             drawable.Parent = root;
             root.Transform.LocalPosition = pos;
             root.Transform.LocalRotation = rotation;
             root.Parent = this;
+
             thrusters.Add(root);
             thrust.Add(0);
             boost.Add(false);
+
             UpdateThruster(thrusters.Count - 1);
         }
 
