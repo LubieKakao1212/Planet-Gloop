@@ -35,6 +35,8 @@ namespace GlobalLoopGame
         private Hierarchy hierarchyMenu;
         private Hierarchy hierarchyGame;
         private Hierarchy hierarchyUI;
+        private Hierarchy hierarchyGameOver;
+        private Hierarchy hierarchyModalBox;
         private InputManager inputManager;
         private Camera camera;
         private SpriteAtlas<Color> spriteAtlas;
@@ -45,7 +47,7 @@ namespace GlobalLoopGame
 
         private bool gameEnded = true;
         private bool menuDisplayed = true;
-
+        private bool modalBoxActive = false;
         public AsteroidManager asteroidManager { get; private set; }
         public MusicManager musicManager { get; private set; }
 
@@ -90,6 +92,8 @@ namespace GlobalLoopGame
             CreateScene();
 
             CreateMenuScene();
+            CreateGameOverScene();
+            CreateModalBox();
 
             CreateBindings();
 
@@ -148,11 +152,21 @@ namespace GlobalLoopGame
 
                 textRenderer.DrawAllText(hierarchyGame, GameSprites.Font, camera);
                 textRenderer.DrawAllText(hierarchyUI, GameSprites.Font, camera);
+
+                if (gameEnded)
+                {
+                    renderPipeline.RenderScene(hierarchyGameOver, camera);
+                }
             }
             else
             {
                 GraphicsDevice.Clear(Color.DarkGoldenrod);
                 renderPipeline.RenderScene(hierarchyMenu, camera);
+            }
+
+            if (modalBoxActive)
+            {
+                renderPipeline.RenderScene(hierarchyModalBox, camera);
             }
 
             base.Draw(gameTime);
@@ -400,10 +414,31 @@ namespace GlobalLoopGame
         {
             hierarchyMenu = new Hierarchy();
 
-            var mBack = new DrawableObject(Color.White, 1f);
-            mBack.Sprite = GameSprites.MenuBackground;
-            mBack.Transform.LocalScale = new Vector2(128f, 128f);
-            hierarchyMenu.AddObject(mBack);
+            var background = new DrawableObject(Color.White, 1f);
+            background.Sprite = GameSprites.MenuBackground;
+            background.Transform.LocalScale = new Vector2(128f, 128f);
+            hierarchyMenu.AddObject(background);
+        }
+
+        private void CreateGameOverScene()
+        {
+            hierarchyGameOver = new Hierarchy();
+
+            var background = new DrawableObject(Color.Red, 2f);
+            background.Transform.LocalScale = new Vector2(128f, 128f);
+            hierarchyGameOver.AddObject(background);
+        }
+
+        private void CreateModalBox()
+        {
+            hierarchyModalBox = new Hierarchy();
+
+            var accent = new DrawableObject(Color.White, 3f);
+            accent.Transform.LocalScale = new Vector2(120f, 60f);
+            hierarchyModalBox.AddObject(accent);
+            var background = new DrawableObject(Color.DarkOliveGreen, 2f);
+            background.Transform.LocalScale = new Vector2(110f, 55f);
+            hierarchyModalBox.AddObject(background);
         }
 
         private void CreateWorld()
@@ -425,6 +460,8 @@ namespace GlobalLoopGame
             var cancel = inputManager.CreateSimpleKeysBinding("cancel", new Keys[1] { Keys.Escape });
 
             var playGame = inputManager.CreateSimpleKeysBinding("playGame", new Keys[1] { Keys.P });
+            var exitGame = inputManager.CreateSimpleKeysBinding("exitGame", new Keys[1] { Keys.X });
+            var debugKey = inputManager.CreateSimpleKeysBinding("debugKey", new Keys[1] { Keys.N });
 
             ThrusterBinding(accelerate, 0, 1);
             ThrusterBinding(decelerate, 2, 3);
@@ -446,7 +483,17 @@ namespace GlobalLoopGame
             {
                 menuDisplayed = !menuDisplayed;
                 asteroidManager.Enabled = !menuDisplayed;
-                Console.WriteLine("menuDisplayed is: " + menuDisplayed);
+                //Console.WriteLine("menuDisplayed is: " + menuDisplayed);
+            };
+
+            exitGame.Started += (_) =>
+            {
+
+            };
+
+            debugKey.Started += (_) =>
+            {
+                modalBoxActive = !modalBoxActive;
             };
         }
 
@@ -487,6 +534,11 @@ namespace GlobalLoopGame
                 Spaceship.DisableBoost(one);
                 Spaceship.DisableBoost(two);
             };
+        }
+
+        private void DisplayModalBox()
+        {
+
         }
 
         public void StartGame()
