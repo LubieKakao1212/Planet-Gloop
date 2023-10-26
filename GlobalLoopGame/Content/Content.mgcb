@@ -166,6 +166,42 @@
 /processorParam:TextureFormat=Color
 /build:MainMenu512x512.png
 
+#begin NewShotgunTurret1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:NewShotgunTurret1.png
+
+#begin NewSniperTurret2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:NewSniperTurret2.png
+
+#begin NewTurretMount1Cannonstyle.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:NewTurretMount1Cannonstyle.png
+
 #begin Planet128x128.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -220,12 +256,6 @@
 /processorParam:Quality=Best
 /build:Sounds/AsteroidHurt.wav
 
-#begin Sounds/AsteroidHurt.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/AsteroidHurt.wav
-
 #begin Sounds/BoostCharging.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -255,18 +285,6 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/DropTurret.wav
-
-#begin Sounds/DropTurret.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/DropTurret.wav
-
-#begin Sounds/Magnet.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/Magnet.wav
 
 #begin Sounds/Magnet.wav
 /importer:WavImporter
@@ -304,29 +322,11 @@
 /processorParam:Quality=Best
 /build:Sounds/PickupTurret.wav
 
-#begin Sounds/PickupTurret.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/PickupTurret.wav
-
 #begin Sounds/PlanetHurt.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/PlanetHurt.wav
-
-#begin Sounds/PlanetHurt.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/PlanetHurt.wav
-
-#begin Sounds/PlayerHurt.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/PlayerHurt.wav
 
 #begin Sounds/PlayerHurt.wav
 /importer:WavImporter
@@ -351,12 +351,6 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/ShotgunShot.wav
-
-#begin Sounds/SideThrust.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/SideThrust.wav
 
 #begin Sounds/SideThrust.wav
 /importer:WavImporter
@@ -393,18 +387,6 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/Thruster.wav
-
-#begin Sounds/Thruster.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/Thruster.wav
-
-#begin Sounds/Warning.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/Warning.wav
 
 #begin Sounds/Warning.wav
 /importer:WavImporter

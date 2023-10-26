@@ -14,10 +14,12 @@ namespace GlobalLoopGame
         public static Sprite SpaceshipMagnet;
         public static Sprite SpaceshipMagnetActive;
         public static Sprite TurretBase;
-        //0 - active; 2 - piced up/inactive 
+
+        // 0 - active; 1 - picked up/inactive; 2 - base 
         public static Sprite[] TurretCannon;
         public static Sprite[] TurretShotgun;
         public static Sprite[] TurretSniper;
+
         public static Sprite Laser;
         public static Sprite Warning;
         public static Sprite Health;
@@ -34,6 +36,7 @@ namespace GlobalLoopGame
 
         public static Vector2 PlanetSize; 
         public static Vector2 SpaceshipBodySize;
+
         //We assume all frames have the same size
         public static Vector2 SpaceshipThrusterFrameSize; 
         public static Vector2 SpaceshipMagnetSize;

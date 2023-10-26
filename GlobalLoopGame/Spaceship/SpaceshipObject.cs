@@ -37,7 +37,7 @@ namespace GlobalLoopGame.Spaceship
         private List<int> thrust = new List<int>();
         private List<bool> boost = new List<bool>();
 
-        public DrawableObject magnetPivot;
+        public HierarchyObject magnetPivot;
 
         public SpaceshipObject(World world, float drawOrder) : base(null)
         {
@@ -81,7 +81,7 @@ namespace GlobalLoopGame.Spaceship
             AddThruster(new(-t.X, t.Y / 2f), MathF.PI);
             AddThruster(new(t.X, t.Y / 2f), MathF.PI);
 
-            magnetPivot = new DrawableObject(Color.Transparent, 0f);
+            magnetPivot = new HierarchyObject();
             magnetPivot.Parent = this;
             magnetPivot.Transform.LocalPosition = Vector2.Zero;
             magnetPivot.Transform.LocalRotation = MathHelper.ToRadians(180f);

@@ -31,8 +31,11 @@ namespace GlobalLoopGame.Spaceship
 
         protected AsteroidManager asteroids;
         protected HierarchyObject barrel;
+
         protected DrawableObject turretBaseDrawable;
+        protected DrawableObject barrelBaseDrawable;
         protected DrawableObject barrelDrawable;
+
         protected MeshObject rangeDisplay;
 
         protected float spread = 5f * MathF.PI / 180f;
@@ -81,6 +84,9 @@ namespace GlobalLoopGame.Spaceship
             fixture.CollidesWith |= Category.Cat3;
             fixture.CollidesWith |= Category.Cat5;
 
+            barrelBaseDrawable = new DrawableObject(Color.White, 0.1f);
+            barrelBaseDrawable.Sprite = GameSprites.TurretCannon[2];
+
             barrelDrawable = new DrawableObject(Color.White, 0.1f);
             barrelDrawable.Sprite = GameSprites.TurretCannon[0];
 
@@ -101,6 +107,7 @@ namespace GlobalLoopGame.Spaceship
             rangeDisplay.Parent = this;
 
             var barrelRoot = new HierarchyObject();
+            barrelBaseDrawable.Parent = barrelRoot;
             barrelDrawable.Parent = barrelRoot;
             barrelRoot.Parent = this;
             barrel = barrelRoot;
