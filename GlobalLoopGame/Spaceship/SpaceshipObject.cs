@@ -37,7 +37,7 @@ namespace GlobalLoopGame.Spaceship
         private List<int> thrust = new List<int>();
         private List<bool> boost = new List<bool>();
 
-        public DrawableObject magnetPivot;
+        public HierarchyObject magnetPivot;
 
         public SpaceshipObject(World world, float drawOrder) : base(null)
         {
@@ -78,7 +78,7 @@ namespace GlobalLoopGame.Spaceship
             AddThruster(new(-t.X, t.Y / 2f), MathF.PI);
             AddThruster(new(t.X, t.Y / 2f), MathF.PI);
 
-            magnetPivot = new DrawableObject(Color.Transparent, 0f);
+            magnetPivot = new HierarchyObject();
             magnetPivot.Parent = this;
             magnetPivot.Transform.LocalPosition = Vector2.Zero;
             magnetPivot.Transform.LocalRotation = MathHelper.ToRadians(180f);
@@ -134,11 +134,13 @@ namespace GlobalLoopGame.Spaceship
         private void UpdateThruster(int idx)
         {
             var scale = new Vector2(1f, thrust[idx]);
+
             if (thrust[idx] > 0 && boost[idx] && BoostLeft > 0)
             {
                 scale.Y += 1;
                 scale.X += 0.5f;
             }
+
             thrusters[idx].Transform.LocalScale = scale;
         }
 
@@ -238,14 +240,21 @@ namespace GlobalLoopGame.Spaceship
                 return;
             }
 
-            boost[idx] = true;
-
-            UpdateThruster(idx);
-
-            if (GameSounds.boostEmitter.State != SoundState.Playing)
+            if (thrusters[0].Transform.LocalScale.Y > 0f ||
+                thrusters[1].Transform.LocalScale.Y > 0f ||
+                thrusters[2].Transform.LocalScale.Y > 0f ||
+                thrusters[3].Transform.LocalScale.Y > 0f)
             {
-                GameSounds.boostEmitter.Play();
+                boost[idx] = true;
+
+                UpdateThruster(idx);
+
+                if (GameSounds.boostEmitter.State != SoundState.Playing)
+                {
+                    GameSounds.boostEmitter.Play();
+                }
             }
+            
         }
 
         public void DisableBoost(int idx)

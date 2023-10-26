@@ -52,7 +52,8 @@ namespace GlobalLoopGame.Asteroid
 
                     ExplosionParticleObject epo = new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(points[0]);
 
-                    epo.Transform.LocalScale = Vector2.One * 4f;
+                    //epo.Transform.LocalScale = Vector2.One * 4f;
+                    epo.sizeModifier = 4f;
 
                     CurrentScene.AddObject(epo);
 

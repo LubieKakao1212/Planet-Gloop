@@ -269,19 +269,22 @@ namespace GlobalLoopGame
                 new Rectangle(0, 0, 48, 48)
                 )[0];
 
-            GameSprites.TurretCannon = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("CannonTex"),
-                new Rectangle(3, 4, 26, 54),
-                new Rectangle(32, 20, 26, 38)
+            GameSprites.TurretCannon = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("NewTurretMount1CannonStyle"),
+                new Rectangle(52, 9, 26, 55),
+                new Rectangle(26, 9, 26, 55),
+                new Rectangle(0, 9, 26, 55)
                 );
 
-            GameSprites.TurretShotgun = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("ShotgunTex"),
-                new Rectangle(15, 1, 36, 62),
-                new Rectangle(15, 1, 36, 62)
+            GameSprites.TurretShotgun = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("NewShotgunTurret1"),
+                new Rectangle(36, 3, 36, 61),
+                new Rectangle(72, 3, 36, 61),
+                new Rectangle(0, 3, 36, 61)
                 );
 
-            GameSprites.TurretSniper = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SniperTex"),
-                new Rectangle(9, 1, 45, 60),
-                new Rectangle(9, 1, 45, 60)
+            GameSprites.TurretSniper = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("NewSniperTurret2"),
+                new Rectangle(45, 4, 45, 60),
+                new Rectangle(90, 4, 45, 60),
+                new Rectangle(0, 4, 45, 60)
                 );
 
             GameSprites.Laser = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("LaserTex"),
@@ -412,12 +415,25 @@ namespace GlobalLoopGame
             points.Transform.GlobalPosition = new Vector2(60, 60f);
             points.Color = Color.White;
             points.FontSize = 36;
-            points.Text = "0";
+            points.Text = "";
             asteroidManager.PointsUpdated += (pointCount) =>
             {
-                points.Text = $"{pointCount / 100}";
+                if (asteroidManager.WaveNumber > 1)
+                    points.Text = $"{pointCount / 100}";
             };
             hierarchyUI.AddObject(points);
+
+            var waves = new TextObject();
+            waves.Transform.GlobalPosition = new Vector2(56f, -60f);
+            waves.Color = Color.White;
+            waves.FontSize = 36;
+            waves.Text = "";
+            asteroidManager.WavesUpdated += (waveCount) =>
+            {
+                if (waveCount > 1)
+                    waves.Text = $"Wave {waveCount - 1}";
+            };
+            hierarchyUI.AddObject(waves);
 
             var health = new MultiIconDisplay(GameSprites.Health, 5, 0.5f, 4f, 1f);
             health.Transform.LocalPosition = new Vector2(-64f, 64f);

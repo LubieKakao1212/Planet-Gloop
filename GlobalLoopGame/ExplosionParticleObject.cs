@@ -19,6 +19,7 @@ namespace GlobalLoopGame
         private AutoTimeMachine despawner;
 
         private float timeAlive = 0;
+        public float sizeModifier = 1f;
 
         public ExplosionParticleObject(World world) : base(null)
         {
@@ -35,7 +36,7 @@ namespace GlobalLoopGame
         {
             Transform.GlobalPosition = spawnPos;
 
-            Transform.LocalScale = Vector2.One;
+            Transform.LocalScale = Vector2.Zero;
 
             var drawable = new DrawableObject(Color.White, 2f);
 
@@ -61,6 +62,8 @@ namespace GlobalLoopGame
             d.Color = Color.Lerp(Color.White, new Color(0f, 0f, 0f, 0f), (timeAlive / lifetime));
 
             timeAlive += (float)time.ElapsedGameTime.TotalSeconds;
+
+            Transform.LocalScale = Vector2.One * (timeAlive / lifetime) * sizeModifier;
 
             base.Update(time);
         }
