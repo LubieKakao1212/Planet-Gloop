@@ -402,7 +402,7 @@ namespace GlobalLoopGame
             var waves = new TextObject();
             waves.Transform.GlobalPosition = new Vector2(56f, -60f);
             waves.Color = Color.White;
-            waves.FontSize = 24;
+            waves.FontSize = 36;
             waves.Text = "";
             asteroidManager.WavesUpdated += (waveCount) =>
             {
