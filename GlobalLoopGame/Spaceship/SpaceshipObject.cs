@@ -37,6 +37,8 @@ namespace GlobalLoopGame.Spaceship
         private List<int> thrust = new List<int>();
         private List<bool> boost = new List<bool>();
 
+        public DrawableObject magnetPivot;
+
         public SpaceshipObject(World world, float drawOrder) : base(null)
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
@@ -77,13 +79,18 @@ namespace GlobalLoopGame.Spaceship
             AddThruster(new(-t.X, t.Y / 2f), MathF.PI);
             AddThruster(new(t.X, t.Y / 2f), MathF.PI);
 
+            magnetPivot = new DrawableObject(Color.Transparent, 0f);
+            magnetPivot.Parent = this;
+            magnetPivot.Transform.LocalPosition = Vector2.Zero;
+            magnetPivot.Transform.LocalRotation = MathHelper.ToRadians(180f);
+
             // add magnet
             magnetObject = new DrawableObject(Color.White, 1f);
             magnetObject.Sprite = GameSprites.SpaceshipMagnet;
-            magnetObject.Parent = this;
+            magnetObject.Parent = magnetPivot;
             magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSize;
             magnetObject.Transform.LocalPosition = Vector2.Zero;
-            magnetObject.Transform.LocalRotation = MathHelper.ToRadians(180f);
+            //magnetObject.Transform.LocalRotation = MathHelper.ToRadians(180f);
         }
         
         public void IncrementThruster(int idx)
@@ -205,7 +212,10 @@ namespace GlobalLoopGame.Spaceship
                 if (CurrentDrag != null)
                 {
                     var dir = CurrentDrag.BodyB.Position - magnetObject.Transform.GlobalPosition;
-                    magnetObject.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
+
+                    //magnetObject.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
+
+                    magnetPivot.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
                 }
             }
 
