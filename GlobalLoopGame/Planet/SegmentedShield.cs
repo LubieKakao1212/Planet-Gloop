@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace GlobalLoopGame.Planet
 {
-    public class SegmentedShield : PhysicsBodyObject
+    public class SegmentedShield : PhysicsBodyObject, IResettable
     {
         public const int segmentResolution = 15;
 
@@ -20,6 +20,8 @@ namespace GlobalLoopGame.Planet
 
         private int[] segmentHealth;
         private Fixture[] segments;
+
+        private int initialHealth;
 
         private static Color[] healthColors = new Color[]
         {
@@ -41,6 +43,7 @@ namespace GlobalLoopGame.Planet
             display.Transform.LocalScale = new Vector2(radius * 3f);
             display.Parent = this;
 
+            initialHealth = healthPerSegment;
             segmentHealth = Enumerable.Repeat(healthPerSegment, segments).ToArray();
             this.segments = new Fixture[segments];
             
@@ -69,6 +72,12 @@ namespace GlobalLoopGame.Planet
             var health = segmentHealth[idx];
             health = MathHelper.Max(health + amount, 0);
             segmentHealth[idx] = health;
+            UpdateSegment(idx);
+        }
+
+        private void UpdateSegment(int idx)
+        {
+            var health = segmentHealth[idx];
             if (health == 0)
             {
                 segments[idx].CollidesWith = Category.None;
@@ -80,5 +89,18 @@ namespace GlobalLoopGame.Planet
             display.SetSegmentColor(idx, healthColors[MathHelper.Min(health, healthColors.Length)]);
         }
 
+        public void OnGameEnd()
+        {
+
+        }
+
+        public void Reset()
+        {
+            for (int i = 0; i < segmentHealth.Length; i++)
+            {
+                segmentHealth[i] = initialHealth;
+                UpdateSegment(i);
+            }
+        }
     }
 }

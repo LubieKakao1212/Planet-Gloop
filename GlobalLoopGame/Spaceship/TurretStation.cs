@@ -241,7 +241,7 @@ namespace GlobalLoopGame.Spaceship
             grabTimer = MathHelper.Clamp(grabTimer, 0f, 1f);
             //rangeDisplay.Transform.LocalScale = Vector2.Lerp(Vector2.Zero, Vector2.One * RangeRadius * 2f, grabTimer);
 
-            UpdateRangeMesh(RangeRadius * 2f * grabTimer);
+            UpdateRangeMesh(RangeRadius * grabTimer);
 
             popupDescription.Transform.GlobalPosition = Transform.GlobalPosition + Vector2.UnitY * 10f;
             popupDescription.Transform.GlobalRotation = 0;

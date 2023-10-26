@@ -404,8 +404,8 @@ namespace GlobalLoopGame
             hierarchyUI = new Hierarchy();
 
             var boost = new Bar(() => Spaceship.DisplayedBoost, Color.Green, Color.Red, Color.Transparent);
-            boost.Transform.LocalPosition = new Vector2(-58f, 58f);
-            boost.Transform.LocalScale = Vector2.One * 2f;
+            boost.Transform.LocalPosition = new Vector2(-56f, 56f);
+            boost.Transform.LocalScale = Vector2.One * 3f;
             hierarchyUI.AddObject(boost);
 
             var points = new TextObject();
