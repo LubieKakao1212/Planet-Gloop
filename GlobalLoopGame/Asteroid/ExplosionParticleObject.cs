@@ -1,4 +1,4 @@
-﻿using GlobalLoopGame.Asteroid;
+﻿using GlobalLoopGame.Globals;
 using Microsoft.Xna.Framework;
 using MonoEngine.Physics;
 using MonoEngine.Scenes;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GlobalLoopGame
+namespace GlobalLoopGame.Asteroid
 {
     public class ExplosionParticleObject : PhysicsBodyObject
     {
@@ -57,9 +57,9 @@ namespace GlobalLoopGame
         {
             despawner.Forward(time.ElapsedGameTime.TotalSeconds);
 
-            var d = (Children[0] as DrawableObject);
+            var d = Children[0] as DrawableObject;
 
-            d.Color = Color.Lerp(Color.White, new Color(0f, 0f, 0f, 0f), (timeAlive / lifetime));
+            d.Color = Color.Lerp(Color.White, new Color(0f, 0f, 0f, 0f), timeAlive / lifetime);
 
             timeAlive += (float)time.ElapsedGameTime.TotalSeconds;
 

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GlobalLoopGame
+namespace GlobalLoopGame.Globals
 {
     public static class CollisionCats
     {

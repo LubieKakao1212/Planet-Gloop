@@ -1,12 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿using GlobalLoopGame.UI;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoEngine.Rendering.Sprites;
 
-namespace GlobalLoopGame
+namespace GlobalLoopGame.Globals
 {
     public static class GameSprites
     {
-        public static Sprite NullSprite; 
+        public static Sprite NullSprite;
         public static Sprite Circle;
         public static Sprite Planet;
         public static Sprite SpaceshipBody;
@@ -36,11 +37,11 @@ namespace GlobalLoopGame
         public static Sprite MenuBackground;
         public static Sprite CircleOverlay;
 
-        public static Vector2 PlanetSize; 
+        public static Vector2 PlanetSize;
         public static Vector2 SpaceshipBodySize;
 
         //We assume all frames have the same size
-        public static Vector2 SpaceshipThrusterFrameSize; 
+        public static Vector2 SpaceshipThrusterFrameSize;
         public static Vector2 SpaceshipMagnetSize;
         public static Vector2 SpaceshipMagnetSizeActive;
         public static Vector2 TurretBaseSize;

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GlobalLoopGame
+namespace GlobalLoopGame.UI
 {
     public class Font
     {

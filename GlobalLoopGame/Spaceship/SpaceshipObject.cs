@@ -1,4 +1,5 @@
 ﻿using GlobalLoopGame.Asteroid;
+using GlobalLoopGame.Globals;
 using GlobalLoopGame.Spaceship.Dragging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -237,9 +238,9 @@ namespace GlobalLoopGame.Spaceship
             ProcessSounds();
 
             // fade engine sound
-            GameSounds.thrusterEmitter.Volume = MathHelper.Clamp(GameSounds.thrusterEmitter.Volume + MathF.Sign(targetThrusterVolume - GameSounds.thrusterEmitter.Volume) * (float)time.ElapsedGameTime.TotalSeconds / 2f, 0f, 2f);
-            GameSounds.sideThrusterEmitter.Volume = MathHelper.Clamp(GameSounds.sideThrusterEmitter.Volume + MathF.Sign(targetSideThrusterVolume - GameSounds.sideThrusterEmitter.Volume) * (float)time.ElapsedGameTime.TotalSeconds / 2f, 0f, 2f);
-            GameSounds.boostEmitter.Volume = MathHelper.Clamp(GameSounds.boostEmitter.Volume + MathF.Sign(targetBoosterVolume - GameSounds.boostEmitter.Volume) * (float)time.ElapsedGameTime.TotalSeconds / 2f, 0f, 2f);
+            GameSounds.thrusterEmitter.Volume = GameSounds.thrusterEmitter.Volume + MathF.Sign(targetThrusterVolume - GameSounds.thrusterEmitter.Volume) * (float)time.ElapsedGameTime.TotalSeconds / 2f;
+            GameSounds.sideThrusterEmitter.Volume = GameSounds.sideThrusterEmitter.Volume + MathF.Sign(targetSideThrusterVolume - GameSounds.sideThrusterEmitter.Volume) * (float)time.ElapsedGameTime.TotalSeconds / 2f;
+            GameSounds.boostEmitter.Volume = GameSounds.boostEmitter.Volume + MathF.Sign(targetBoosterVolume - GameSounds.boostEmitter.Volume) * (float)time.ElapsedGameTime.TotalSeconds / 2f;
             
             base.Update(time);
         }

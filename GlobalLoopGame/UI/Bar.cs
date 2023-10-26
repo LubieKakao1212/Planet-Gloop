@@ -1,4 +1,5 @@
-﻿using GlobalLoopGame.Spaceship;
+﻿using GlobalLoopGame.Globals;
+using GlobalLoopGame.Spaceship;
 using Microsoft.Xna.Framework;
 using MonoEngine.Scenes;
 using MonoEngine.Scenes.Events;

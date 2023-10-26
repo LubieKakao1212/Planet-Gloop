@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using GlobalLoopGame.Globals;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoEngine.Math;
 using MonoEngine.Rendering.Sprites;
@@ -12,7 +13,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GlobalLoopGame
+namespace GlobalLoopGame.UI
 {
     public class MultiIconDisplay : HierarchyObject
     {
@@ -42,7 +43,7 @@ namespace GlobalLoopGame
             CreateIcons(spacing);
 
             overflowMessage = new TextObject();
-            overflowMessage.Transform.LocalPosition = new Vector2((iconSize.X + spacing) * (maxIcons) + textOffset, 0f);
+            overflowMessage.Transform.LocalPosition = new Vector2((iconSize.X + spacing) * maxIcons + textOffset, 0f);
             overflowMessage.Color = Color.White;
             overflowMessage.Text = "";
             overflowMessage.FontSize = fontSize;
@@ -66,7 +67,7 @@ namespace GlobalLoopGame
             {
                 overflowMessage.Text = "";
             }
-            if (oldCount > maxIcons && newCount > maxIcons) 
+            if (oldCount > maxIcons && newCount > maxIcons)
             {
                 return;
             }
@@ -100,7 +101,7 @@ namespace GlobalLoopGame
 
         private void SetIconsColor(Color color, int startI, int endI)
         {
-            for (int i =startI; i < endI; i++)
+            for (int i = startI; i < endI; i++)
             {
                 icons[i].Color = color;
             }

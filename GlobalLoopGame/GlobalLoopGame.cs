@@ -20,6 +20,7 @@ using GlobalLoopGame.UI;
 using Microsoft.Xna.Framework.Audio;
 using MonoEngine.Input.Binding;
 using nkast.Aether.Physics2D.Diagnostics;
+using GlobalLoopGame.Globals;
 
 namespace GlobalLoopGame
 {
@@ -33,6 +34,7 @@ namespace GlobalLoopGame
 
         private RenderPipeline renderPipeline;
         private World world;
+
         //Physics Debug
         private DebugView physicsDebug;
         private Hierarchy hierarchyMenu;
@@ -41,8 +43,12 @@ namespace GlobalLoopGame
         private Hierarchy hierarchyGameOver;
         private Hierarchy hierarchyPressEnter;
         private Hierarchy hierarchyPaused;
+
         private InputManager inputManager;
-        private Camera camera;
+
+        private Camera uiCamera; 
+        private Camera gameCamera;
+
         private SpriteAtlas<Color> spriteAtlas;
 
         private SpriteBatch textRenderer;
@@ -56,10 +62,13 @@ namespace GlobalLoopGame
 
         public AsteroidManager asteroidManager { get; private set; }
         public MusicManager musicManager { get; private set; }
+        public CameraManager cameraManager { get; private set; }
 
         public SpaceshipObject Spaceship { get; private set; }
         public PlanetObject Planet { get; private set; }
         public List<TurretStation> Turrets { get; private set; } = new List<TurretStation>();
+
+        private TextObject pointsText, wavesText;
 
         public List<IResettable> Resettables { get; private set; } = new List<IResettable>();
 
@@ -71,7 +80,7 @@ namespace GlobalLoopGame
             _graphics.PreferredBackBufferWidth = WindowSize;
             _graphics.PreferredBackBufferHeight = WindowSize;
             Content.RootDirectory = "Content";
-            IsMouseVisible = true;
+            IsMouseVisible = false;
         }
 
         protected override void Initialize()
@@ -172,34 +181,34 @@ namespace GlobalLoopGame
             if (!menuDisplayed)
             {
                 GraphicsDevice.Clear(new Color(0.1f, 0.1f, 0.1f, 1.0f));
-                renderPipeline.RenderScene(hierarchyGame, camera);
-                renderPipeline.RenderScene(hierarchyUI, camera);
+                renderPipeline.RenderScene(hierarchyGame, gameCamera);
+                renderPipeline.RenderScene(hierarchyUI, uiCamera);
 
-                textRenderer.DrawAllText(hierarchyGame, GameSprites.Font, camera);
-                textRenderer.DrawAllText(hierarchyUI, GameSprites.Font, camera);
+                textRenderer.DrawAllText(hierarchyGame, GameSprites.Font, gameCamera);
+                textRenderer.DrawAllText(hierarchyUI, GameSprites.Font, uiCamera);
 
                 //physicsDebug.RenderDebugData(camera.ProjectionMatrix.ToMatrixXNA(), Matrix.Identity);
                 if (gameEnded)
                 {
                     //GraphicsDevice.Clear(Color.Red);
-                    renderPipeline.RenderScene(hierarchyGameOver, camera);
-                    textRenderer.DrawAllText(hierarchyGameOver, GameSprites.Font, camera);
+                    renderPipeline.RenderScene(hierarchyGameOver, uiCamera);
+                    textRenderer.DrawAllText(hierarchyGameOver, GameSprites.Font, uiCamera);
                 }
             }
             else
             {
                 GraphicsDevice.Clear(Color.DarkGoldenrod);
-                renderPipeline.RenderScene(hierarchyMenu, camera);
-                textRenderer.DrawAllText(hierarchyMenu, GameSprites.Font, camera);
+                renderPipeline.RenderScene(hierarchyMenu, uiCamera);
+                textRenderer.DrawAllText(hierarchyMenu, GameSprites.Font, uiCamera);
                 if (gameEnded && enterKeyEnteredCounter == 0)
                 {
-                    renderPipeline.RenderScene(hierarchyPressEnter, camera);
-                    textRenderer.DrawAllText(hierarchyPressEnter, GameSprites.Font, camera);
+                    renderPipeline.RenderScene(hierarchyPressEnter, uiCamera);
+                    textRenderer.DrawAllText(hierarchyPressEnter, GameSprites.Font, uiCamera);
                 }
                 else
                 {
-                    renderPipeline.RenderScene(hierarchyPaused, camera);
-                    textRenderer.DrawAllText(hierarchyPaused, GameSprites.Font, camera);
+                    renderPipeline.RenderScene(hierarchyPaused, uiCamera);
+                    textRenderer.DrawAllText(hierarchyPaused, GameSprites.Font, uiCamera);
                 }
             }
 
@@ -384,8 +393,9 @@ namespace GlobalLoopGame
         private void CreateScene()
         {
             hierarchyGame = new Hierarchy();
-            camera = new Camera() { ViewSize = MapRadius + 4f };
-            hierarchyGame.AddObject(camera);
+
+            gameCamera = new Camera() { ViewSize = MapRadius + 4f };
+            hierarchyGame.AddObject(gameCamera);
 
             gameEnded = true;
 
@@ -413,10 +423,13 @@ namespace GlobalLoopGame
             musicManager = new MusicManager();
             Resettables.Add(musicManager);
 
+            cameraManager = new CameraManager(gameCamera);
+            Resettables.Add(cameraManager);
+
             var turret00 = new TurretStation(world, asteroidManager, renderPipeline);
             turret00.SetSprites(GameSprites.TurretCannon, GameSprites.TurretCannonSizes, new Vector2(0f, 17f) / GameSprites.pixelsPerUnit);
-            turret00.SetStartingPosition(new Vector2(32f, 0f));
             turret00.Transform.LocalRotation = MathHelper.ToRadians(270f);
+            turret00.SetStartingPosition(new Vector2(32f, 0f));
             Resettables.Add(turret00);
             hierarchyGame.AddObject(turret00);
             Turrets.Add(turret00);
@@ -431,47 +444,46 @@ namespace GlobalLoopGame
             var turret01 = new ShotgunTurret(world, asteroidManager, renderPipeline, 1f);
             turret01.SetSprites(GameSprites.TurretShotgun, GameSprites.TurretShotgunSizes, new Vector2(0f, 12f) / GameSprites.pixelsPerUnit);
             turret01.RangeRadius = 24f;
-            turret01.SetStartingPosition(new Vector2(-32f, 0f));
             turret01.Transform.LocalRotation = MathHelper.ToRadians(90f);
+            turret01.SetStartingPosition(new Vector2(-32f, 0f));
             Resettables.Add(turret01);
             hierarchyGame.AddObject(turret01);
             Turrets.Add(turret01);
-
-            // StartGame();
         }
 
         private void CreateUI()
         {
             hierarchyUI = new Hierarchy();
 
+            uiCamera = new Camera() { ViewSize = MapRadius + 4f };
+            hierarchyUI.AddObject(uiCamera);
+
             var boost = new Bar(() => Spaceship.DisplayedBoost, Color.Green, Color.Red, Color.Transparent);
             boost.Transform.LocalPosition = new Vector2(-56f, 56f);
             boost.Transform.LocalScale = Vector2.One * 3f;
             hierarchyUI.AddObject(boost);
 
-            var points = new TextObject();
-            points.Transform.GlobalPosition = new Vector2(60, 60f);
-            points.Color = Color.White;
-            points.FontSize = 36;
-            points.Text = "";
+            pointsText = new TextObject();
+            pointsText.Transform.GlobalPosition = new Vector2(60, 60f);
+            pointsText.Color = Color.White;
+            pointsText.FontSize = 36;
             asteroidManager.PointsUpdated += (pointCount) =>
             {
                 if (asteroidManager.WaveNumber > 1)
-                    points.Text = $"{pointCount / 100}";
+                    pointsText.Text = $"{pointCount / 100}";
             };
-            hierarchyUI.AddObject(points);
+            hierarchyUI.AddObject(pointsText);
 
-            var waves = new TextObject();
-            waves.Transform.GlobalPosition = new Vector2(56f, -60f);
-            waves.Color = Color.White;
-            waves.FontSize = 36;
-            waves.Text = "";
+            wavesText = new TextObject();
+            wavesText.Transform.GlobalPosition = new Vector2(56f, -60f);
+            wavesText.Color = Color.White;
+            wavesText.FontSize = 36;
             asteroidManager.WavesUpdated += (waveCount) =>
             {
                 if (waveCount > 1)
-                    waves.Text = $"Wave {waveCount - 1}";
+                    wavesText.Text = $"Wave {waveCount - 1}";
             };
-            hierarchyUI.AddObject(waves);
+            hierarchyUI.AddObject(wavesText);
 
             var health = new MultiIconDisplay(GameSprites.Health, 5, 0.5f, 4f, 1f);
             health.Transform.LocalPosition = new Vector2(-64f, 64f);
@@ -661,6 +673,8 @@ namespace GlobalLoopGame
             Components.Add(asteroidManager);
 
             Components.Add(musicManager);
+
+            Components.Add(cameraManager);
         }
 
         private void ThrusterBinding(IInput input, int one, int two)
@@ -699,6 +713,10 @@ namespace GlobalLoopGame
             {
                 return;
             }
+
+            pointsText.Text = "";
+
+            wavesText.Text = "";
 
             gameEnded = false;
 
