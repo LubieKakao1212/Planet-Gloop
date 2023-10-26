@@ -255,21 +255,21 @@ namespace GlobalLoopGame
                 )[0];
 
             GameSprites.TurretCannon = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("NewTurretMount1CannonStyle"),
-                new Rectangle(46, 3, 14, 33),
-                new Rectangle(3, 20, 14, 16),
-                new Rectangle(3, 25, 26, 33)
+                new Rectangle(52, 9, 26, 55),
+                new Rectangle(26, 9, 26, 55),
+                new Rectangle(0, 9, 26, 55)
                 );
 
             GameSprites.TurretShotgun = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("NewShotgunTurret1"),
-                new Rectangle(39, 3, 25, 22),
-                new Rectangle(5, 6, 25, 20),
-                new Rectangle(1, 26, 36, 38)
+                new Rectangle(36, 3, 36, 61),
+                new Rectangle(72, 3, 36, 61),
+                new Rectangle(0, 3, 36, 61)
                 );
 
             GameSprites.TurretSniper = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("NewSniperTurret2"),
-                new Rectangle(34, 1, 12, 31),
-                new Rectangle(47, 19, 12, 13),
-                new Rectangle(1, 32, 45, 31)
+                new Rectangle(45, 4, 45, 60),
+                new Rectangle(90, 4, 45, 60),
+                new Rectangle(0, 4, 45, 60)
                 );
 
             GameSprites.Laser = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("LaserTex"),

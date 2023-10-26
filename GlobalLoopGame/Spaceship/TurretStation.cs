@@ -30,7 +30,7 @@ namespace GlobalLoopGame.Spaceship
         //protected AutoTimeMachine targetSeekerMachine;
 
         protected AsteroidManager asteroids;
-        protected HierarchyObject barrel;
+        protected HierarchyObject barrelPivot;
 
         protected DrawableObject turretBaseDrawable;
         protected DrawableObject barrelBaseDrawable;
@@ -85,10 +85,11 @@ namespace GlobalLoopGame.Spaceship
             fixture.CollidesWith |= Category.Cat5;
 
             barrelBaseDrawable = new DrawableObject(Color.White, 0.1f);
-            barrelBaseDrawable.Sprite = GameSprites.TurretCannon[2];
+            //barrelBaseDrawable.Sprite = GameSprites.TurretCannon[2];
+            // barrelBaseDrawable.Transform.LocalScale = Vector2.One;
 
             barrelDrawable = new DrawableObject(Color.White, 0.1f);
-            barrelDrawable.Sprite = GameSprites.TurretCannon[0];
+            //barrelDrawable.Sprite = GameSprites.TurretCannon[0];
 
             //var ratio = 17f / GameSprites.pixelsPerUnit;
             // = GameSprites.TurretCannonSizes[0];
@@ -106,11 +107,12 @@ namespace GlobalLoopGame.Spaceship
             rangeDisplay = MeshObject.CreateNew(renderer, Vertex2DPosition.VertexDeclaration, new Vertex2DPosition[meshResolution + 1], new int[meshResolution * 3], Color.White, -10f, GameEffects.Custom, GameEffects.DSS);
             rangeDisplay.Parent = this;
 
-            var barrelRoot = new HierarchyObject();
-            barrelBaseDrawable.Parent = barrelRoot;
-            barrelDrawable.Parent = barrelRoot;
-            barrelRoot.Parent = this;
-            barrel = barrelRoot;
+            barrelPivot = new HierarchyObject();
+            barrelPivot.Transform.LocalScale = Vector2.One;
+            barrelBaseDrawable.Parent = barrelPivot;
+            barrelDrawable.Parent = barrelPivot;
+            barrelPivot.Parent = this;
+            // barrel = barrelRoot;
             
             this.asteroids = asteroids;
 
@@ -129,7 +131,7 @@ namespace GlobalLoopGame.Spaceship
         /// </summary>
         protected virtual void Shoot()
         {
-            var spawnPos = Transform.GlobalPosition + barrel.Transform.Up * barrelLength / 2f;
+            var spawnPos = Transform.GlobalPosition + barrelPivot.Transform.Up * barrelLength / 2f;
 
             // GameSounds.shotSounds[shotIndex].Play();
 
@@ -200,7 +202,7 @@ namespace GlobalLoopGame.Spaceship
             dir = PredictAim(Transform.GlobalPosition, GetBulletSpeed(), target.Transform.GlobalPosition, target.PhysicsBody.LinearVelocity, dist);
 
             predictedTargetDirection = dir;
-            barrel.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;          
+            barrelPivot.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;          
         }
 
         public override void Update(GameTime time)
@@ -282,7 +284,14 @@ namespace GlobalLoopGame.Spaceship
             //this.spriteSizes = sizes;
 
             barrelDrawable.Transform.LocalScale = sizes[0];
+            barrelBaseDrawable.Transform.LocalScale = sizes[0];
+
+            // barrelBaseDrawable.Transform.LocalScale = GameSprites.TurretBarrelSize;
+            // barrelDrawable.Transform.LocalScale = GameSprites.TurretBarrelSize;
+
+            barrelBaseDrawable.Transform.LocalPosition = pivot;
             barrelDrawable.Transform.LocalPosition = pivot;
+
             spriteScales = new Vector2[2];
             spriteScales[0] = Vector2.One;
             spriteScales[1] = sizes[1] / sizes[0];
@@ -290,6 +299,7 @@ namespace GlobalLoopGame.Spaceship
             barrelLength = sizes[0].Y - pivot.Y;
 
             UpdateSprite(0);
+
             return this;
         }
         
@@ -372,7 +382,9 @@ namespace GlobalLoopGame.Spaceship
         private void UpdateSprite(int idx)
         {
             barrelDrawable.Sprite = sprites[idx];
-            barrel.Transform.LocalScale = spriteScales[idx];
+            barrelBaseDrawable.Sprite = sprites[2];
+
+            // barrelDrawable.Transform.LocalScale = spriteScales[idx];
         }
 
         protected Vector2 PredictAim(Vector2 spawnPos, float bulletSpeed, Vector2 targetPosition, Vector2 targetVelocity, float distanceToTarget)
