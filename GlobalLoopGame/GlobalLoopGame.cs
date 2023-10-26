@@ -36,6 +36,7 @@ namespace GlobalLoopGame
         private Hierarchy hierarchyGame;
         private Hierarchy hierarchyUI;
         private Hierarchy hierarchyGameOver;
+        private Hierarchy hierarchyPressEnter;
         private InputManager inputManager;
         private Camera camera;
         private SpriteAtlas<Color> spriteAtlas;
@@ -46,6 +47,8 @@ namespace GlobalLoopGame
 
         private bool gameEnded = true;
         private bool menuDisplayed = true;
+
+        private int enterKeyEnteredCounter = 0;
 
         public AsteroidManager asteroidManager { get; private set; }
         public MusicManager musicManager { get; private set; }
@@ -103,7 +106,7 @@ namespace GlobalLoopGame
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.X))
                 Exit();
 
             GameTime = gameTime;
@@ -157,6 +160,11 @@ namespace GlobalLoopGame
                     //GraphicsDevice.Clear(Color.Red);
                     renderPipeline.RenderScene(hierarchyGameOver, camera);
                     textRenderer.DrawAllText(hierarchyGameOver, GameSprites.Font, camera);
+                    if(enterKeyEnteredCounter == 0)
+                    {
+                        renderPipeline.RenderScene(hierarchyPressEnter, camera);
+                        textRenderer.DrawAllText(hierarchyPressEnter, GameSprites.Font, camera);
+                    }
                 }
             }
             else
@@ -441,15 +449,26 @@ namespace GlobalLoopGame
             hierarchyMenu.AddObject(gameTitle);
 
             var controlsText = new TextObject();
-            controlsText.Transform.GlobalPosition = new Vector2(-8, -50);
+            controlsText.Transform.GlobalPosition = new Vector2(-8, -47);
             controlsText.Color = Color.White;
             controlsText.FontSize = 24;
             controlsText.Text = "Controls:\n" +
                 "w/s - move spaceship forwards/backwards\n" +
                 "a/d - rotate spaceship left/right\n" +
-                "esc - exit game\n" +
-                "p - pause game";
+                "shift - boost spaceship\n" +
+                "spacebar - drag turret & display turret range\n" +
+                "esc - pause game\n" +
+                "x - exit game";
             hierarchyMenu.AddObject(controlsText);
+
+            hierarchyPressEnter = new Hierarchy();
+
+            var pressEnterText = new TextObject();
+            pressEnterText.Transform.GlobalPosition = new Vector2(-25, 0);
+            pressEnterText.Color = Color.White;
+            pressEnterText.FontSize = 36;
+            pressEnterText.Text = "Press [Enter] to play";
+            hierarchyPressEnter.AddObject(pressEnterText);
         }
 
         private void CreateGameOverScene()
@@ -507,9 +526,11 @@ namespace GlobalLoopGame
             var toggleDrag = inputManager.CreateSimpleKeysBinding("toggleDrag", new Keys[1] { Keys.Space });
             var restart = inputManager.CreateSimpleKeysBinding("restart", new Keys[1] { Keys.R });
             var boost = inputManager.CreateSimpleKeysBinding("boost", new Keys[2] { Keys.LeftShift, Keys.RightShift });
-            var confirm = inputManager.CreateSimpleKeysBinding("confirm", new Keys[1] { Keys.Enter });
-            var cancel = inputManager.CreateSimpleKeysBinding("cancel", new Keys[1] { Keys.Escape });
-            var pauseGame = inputManager.CreateSimpleKeysBinding("pauseGame", new Keys[1] { Keys.P });
+            var confirm = inputManager.CreateSimpleKeysBinding("confirm", new Keys[1] { Keys.Y });
+            var cancel = inputManager.CreateSimpleKeysBinding("cancel", new Keys[1] { Keys.N });
+            var pauseGame = inputManager.CreateSimpleKeysBinding("pauseGame", new Keys[1] { Keys.Escape });
+            var exitGame = inputManager.CreateSimpleKeysBinding("exitGame", new Keys[1] { Keys.X });
+            var enterInput = inputManager.CreateSimpleKeysBinding("confirm", new Keys[1] { Keys.Enter });
 
             ThrusterBinding(accelerate, 0, 1);
             ThrusterBinding(decelerate, 2, 3);
@@ -521,7 +542,7 @@ namespace GlobalLoopGame
             {
                 if (menuDisplayed && gameEnded)
                 {
-                    StartGame();
+                    //StartGame();
                     /*
                     menuDisplayed = !menuDisplayed;
 
@@ -552,11 +573,12 @@ namespace GlobalLoopGame
                 */
             };
 
-            confirm.Started += (_) =>
+            enterInput.Started += (_) =>
             {
                 if (menuDisplayed && gameEnded)
                 {
                     StartGame();
+                    ++enterKeyEnteredCounter;
                     /*
                     menuDisplayed = !menuDisplayed;
 
