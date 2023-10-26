@@ -155,7 +155,9 @@ namespace GlobalLoopGame
 
                 if (gameEnded)
                 {
+                    GraphicsDevice.Clear(Color.DarkRed);
                     renderPipeline.RenderScene(hierarchyGameOver, camera);
+                    textRenderer.DrawAllText(hierarchyGameOver, GameSprites.Font, camera);
                 }
             }
             else
@@ -163,6 +165,7 @@ namespace GlobalLoopGame
                 GraphicsDevice.Clear(Color.DarkGoldenrod);
                 renderPipeline.RenderScene(hierarchyMenu, camera);
             }
+
 
             if (modalBoxActive)
             {
@@ -424,9 +427,16 @@ namespace GlobalLoopGame
         {
             hierarchyGameOver = new Hierarchy();
 
-            var background = new DrawableObject(Color.Red, 2f);
+            var background = new DrawableObject(Color.Red, 1f);
             background.Transform.LocalScale = new Vector2(128f, 128f);
             hierarchyGameOver.AddObject(background);
+
+            var gameOverMessage = new TextObject();
+            gameOverMessage.Transform.LocalPosition = new Vector2(0, 0);
+            gameOverMessage.Color = Color.White;
+            gameOverMessage.Text = "Game Over";
+            gameOverMessage.FontSize = 72;
+            hierarchyGameOver.AddObject(gameOverMessage);
         }
 
         private void CreateModalBox()
