@@ -1,7 +1,5 @@
 ﻿using GlobalLoopGame.Asteroid;
-using GlobalLoopGame.Planet;
 using GlobalLoopGame.Spaceship.Dragging;
-using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using MonoEngine.Physics;
@@ -10,8 +8,6 @@ using nkast.Aether.Physics2D.Dynamics;
 using nkast.Aether.Physics2D.Dynamics.Joints;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace GlobalLoopGame.Spaceship
 {
@@ -25,6 +21,7 @@ namespace GlobalLoopGame.Spaceship
 
         public PhysicsBodyObject ThisObject => this;
         public float BoostLeft { get; private set; }
+        public float DisplayedBoost { get => (BoostLeft / maxBoost); }
 
         private bool movable = false;
 
@@ -39,6 +36,8 @@ namespace GlobalLoopGame.Spaceship
 
         private List<int> thrust = new List<int>();
         private List<bool> boost = new List<bool>();
+
+        public DrawableObject magnetPivot;
 
         public SpaceshipObject(World world, float drawOrder) : base(null)
         {
@@ -66,7 +65,9 @@ namespace GlobalLoopGame.Spaceship
 
                 if (asteroid != null)
                 {
-                    GameSounds.playerHurtSound.Play();
+                    // GameSounds.playerHurtSound.Play();
+
+                    GameSounds.PlaySound(GameSounds.playerHurtSound, 2);
                 }
 
                 return true;
@@ -80,12 +81,18 @@ namespace GlobalLoopGame.Spaceship
             AddThruster(new(-t.X, t.Y / 2f), MathF.PI);
             AddThruster(new(t.X, t.Y / 2f), MathF.PI);
 
+            magnetPivot = new DrawableObject(Color.Transparent, 0f);
+            magnetPivot.Parent = this;
+            magnetPivot.Transform.LocalPosition = Vector2.Zero;
+            magnetPivot.Transform.LocalRotation = MathHelper.ToRadians(180f);
+
             // add magnet
             magnetObject = new DrawableObject(Color.White, 1f);
             magnetObject.Sprite = GameSprites.SpaceshipMagnet;
-            magnetObject.Parent = this;
+            magnetObject.Parent = magnetPivot;
             magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSize;
             magnetObject.Transform.LocalPosition = Vector2.Zero;
+            //magnetObject.Transform.LocalRotation = MathHelper.ToRadians(180f);
         }
         
         public void IncrementThruster(int idx)
@@ -143,14 +150,17 @@ namespace GlobalLoopGame.Spaceship
             if (movable)
             {
                 var boostAmount = 0;
+
                 for (int i = 0; i < thrusters.Count; i++)
                 {
                     if (thrust[i] > 0)
                     {
                         var thrustMultiplier = ThrustMultiplier;
+
                         if (boost[i])
                         {
                             boostAmount++;
+
                             if (BoostLeft > 0)
                             {
                                 thrustMultiplier *= boostThrust;
@@ -158,6 +168,13 @@ namespace GlobalLoopGame.Spaceship
                             else
                             { 
                                 UpdateThruster(i);
+
+                                if (GameSounds.boostEmitter.State == SoundState.Playing)
+                                {
+                                    GameSounds.boostEmitter.Pause();
+
+                                    GameSounds.boostOverloadSound.Play();
+                                }
                             }
                         }
 
@@ -168,23 +185,46 @@ namespace GlobalLoopGame.Spaceship
                 if (boostAmount > 0)
                 {
                     BoostLeft -= boostAmount * (float)time.ElapsedGameTime.TotalSeconds;
+
                     if (BoostLeft < 0f)
                     {
                         BoostLeft -= (float)time.ElapsedGameTime.TotalSeconds;
                     }
+
                     BoostLeft = MathF.Max(BoostLeft, -1);
+
+                    if (GameSounds.boostChargingEmitter.State == SoundState.Playing)
+                    {
+                        GameSounds.boostChargingEmitter.Pause();
+                    }
                 }
                 else
                 {
+                    // Regenerate boost here
                     BoostLeft += boostRegeneration * (float)time.ElapsedGameTime.TotalSeconds;
                     BoostLeft = MathF.Min(BoostLeft, maxBoost);
+
+                    if (GameSounds.boostChargingEmitter.State != SoundState.Playing)
+                    {
+                        GameSounds.boostChargingEmitter.Play();
+                    }
                 }
 
                 // rotate magnet towards turret if dragging
                 if (CurrentDrag != null)
                 {
                     var dir = CurrentDrag.BodyB.Position - magnetObject.Transform.GlobalPosition;
-                    magnetObject.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
+
+                    magnetPivot.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
+
+                    if (dir.Length() > 5)
+                    {
+                        magnetObject.Color = Color.White;
+                    }
+                    else
+                    {
+                        magnetObject.Color = Color.Transparent;
+                    }
                 }
             }
 
@@ -195,14 +235,32 @@ namespace GlobalLoopGame.Spaceship
 
         public void BoostThruster(int idx)
         {
+            if (BoostLeft <= 0f)
+            {
+                GameSounds.boostUnableSound.Play();
+                return;
+            }
+
             boost[idx] = true;
+
             UpdateThruster(idx);
+
+            if (GameSounds.boostEmitter.State != SoundState.Playing)
+            {
+                GameSounds.boostEmitter.Play();
+            }
         }
 
         public void DisableBoost(int idx)
         {
             boost[idx] = false;
+
             UpdateThruster(idx);
+
+            if (GameSounds.boostEmitter.State == SoundState.Playing)
+            {
+                GameSounds.boostEmitter.Pause();
+            }
         }
 
         public void OnGameEnd()
@@ -213,6 +271,11 @@ namespace GlobalLoopGame.Spaceship
             for (int i = 0; i < thrust.Count; i++)
             {
                 thrust[i] = 0;
+            }
+
+            if (CurrentDrag != null)
+            {
+                DraggingHelper.TryInitDragging(this, 10f, 15f);
             }
 
             movable = false;
@@ -233,11 +296,11 @@ namespace GlobalLoopGame.Spaceship
                 return;
             }
 
-            PlayThruserSound(0, 1, GameSounds.thrusterEmitter);
-            PlayThruserSound(2, 3, GameSounds.sideThrusterEmitter);
+            PlayThrusterSound(0, 1, GameSounds.thrusterEmitter);
+            PlayThrusterSound(2, 3, GameSounds.sideThrusterEmitter);
         }
 
-        private void PlayThruserSound(int thrusterOne, int thrusterTwo, SoundEffectInstance sound)
+        private void PlayThrusterSound(int thrusterOne, int thrusterTwo, SoundEffectInstance sound)
         {
             if (sound.State == SoundState.Playing)
             {

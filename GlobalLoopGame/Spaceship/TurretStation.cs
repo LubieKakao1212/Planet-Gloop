@@ -1,9 +1,13 @@
 ﻿using GlobalLoopGame.Asteroid;
+using GlobalLoopGame.Mesh;
 using GlobalLoopGame.Spaceship.Dragging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
 using MonoEngine.Math;
 using MonoEngine.Physics;
+using MonoEngine.Rendering;
+using MonoEngine.Rendering.Data;
 using MonoEngine.Rendering.Sprites;
 using MonoEngine.Scenes;
 using MonoEngine.Util;
@@ -17,15 +21,23 @@ namespace GlobalLoopGame.Spaceship
     {
         public float RangeRadius { get; set; } = 32f;
 
-        protected AutoTimeMachine shootingTimer;
+        private const int meshResolution = 4095;
+
+        //protected AutoTimeMachine shootingTimer;
+        //protected SequentialAutoTimeMachine shootingTimer;
+        protected TimeMachine chargeTimer = new TimeMachine();
+        protected TimeMachine cooldownTimer = new TimeMachine();
+        //protected AutoTimeMachine targetSeekerMachine;
+
         protected AsteroidManager asteroids;
         protected HierarchyObject barrel;
         protected DrawableObject barrelDrawable;
-        protected DrawableObject rangeDisplay;
+        protected MeshObject rangeDisplay;
 
         protected float spread = 5f * MathF.PI / 180f;
 
         protected int bulletCount = 1;
+        protected bool willReload = false;
 
         private bool canShoot = false;
 
@@ -35,10 +47,23 @@ namespace GlobalLoopGame.Spaceship
         private Sprite[] sprites;
         private Vector2[] spriteScales;
 
-        private float rangeDisplayTimer;
-        private bool displayRange;
+        private float grabTimer;
+        private bool grabbed;
 
-        public TurretStation(World world, AsteroidManager asteroids, float cooldown = 0.125f) : base(null)
+        private TextObject popupDescription;
+
+        protected int damage = 10;
+        protected int shotIndex = 0;
+
+        protected float chargeTime; 
+        protected float cooldown;
+        protected bool onCooldown = false;
+
+        protected AsteroidObject target;
+
+        protected Vector2 predictedTargetDirection;
+
+        public TurretStation(World world, AsteroidManager asteroids, RenderPipeline renderer, float cooldown = 0.125f, float chargeTime = 0f) : base(null)
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
             PhysicsBody.Tag = this;
@@ -59,10 +84,18 @@ namespace GlobalLoopGame.Spaceship
 
             //var ratio = 17f / GameSprites.pixelsPerUnit;
             // = GameSprites.TurretCannonSizes[0];
+            popupDescription = new TextObject();
+            popupDescription.Color = Color.White;
+            popupDescription.Parent = this;
+            popupDescription.FontSize = 12;
+            UpdateText();
 
-            rangeDisplay = new DrawableObject(Color.White * 0.5f, -10f);
+            /*rangeDisplay = new DrawableObject(Color.White * 0.125f, -10f);
             rangeDisplay.Sprite = GameSprites.Circle;
             rangeDisplay.Transform.LocalScale = Vector2.Zero;
+            rangeDisplay.Parent = this;*/
+
+            rangeDisplay = MeshObject.CreateNew(renderer, Vertex2DPosition.VertexDeclaration, new Vertex2DPosition[meshResolution + 1], new int[meshResolution * 3], Color.White, -10f, GameEffects.Custom, GameEffects.DSS);
             rangeDisplay.Parent = this;
 
             var barrelRoot = new HierarchyObject();
@@ -72,39 +105,40 @@ namespace GlobalLoopGame.Spaceship
             
             this.asteroids = asteroids;
 
-            shootingTimer = new AutoTimeMachine(TargetAndShoot, cooldown);
+            this.cooldown = cooldown;
+            this.chargeTime = chargeTime;
+
+            //shootingTimer = new AutoTimeMachine(TargetAndShoot, cooldown);
+            /*shootingTimer = new SequentialAutoTimeMachine(
+                (TargetAndShoot, cooldown),
+                (Reload, cooldown + 1)
+                );*/
         }
 
-        protected virtual void TargetAndShoot()
+        /// <summary>
+        /// Shoots, does not check if it can
+        /// </summary>
+        protected virtual void Shoot()
         {
-            if (!canShoot)
+            var spawnPos = Transform.GlobalPosition + barrel.Transform.Up * barrelLength / 2f;
+
+            // GameSounds.shotSounds[shotIndex].Play();
+
+            GameSounds.PlaySound(GameSounds.shotSounds[shotIndex], 2);
+
+            for (int i = 0; i < bulletCount; i++)
             {
-                return;
+                CurrentScene.AddObject(CreateProjectile(predictedTargetDirection, spawnPos));
             }
 
-            var target = FindTarget();
-
-            if (target != null)
-            {
-                var dir = target.Transform.GlobalPosition - Transform.GlobalPosition;
-                var dist = dir.Length();
-
-                dir = PredictAim(Transform.GlobalPosition, GetBulletSpeed(), target.Transform.GlobalPosition, target.PhysicsBody.LinearVelocity, dist);
-                
-                barrel.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
-
-                var spawnPos = Transform.GlobalPosition + barrel.Transform.Up * barrelLength / 2f;
-
-
-                // spread gets narrower the smaller the target is
-                //spread = (30f - target.size.X) * MathF.PI / 180f;
-                for (int i = 0; i < bulletCount; i++)
-                {
-                    CurrentScene.AddObject(CreateProjectile(dir, spawnPos));
-                }
-            }
+            willReload = true;
         }
 
+        protected virtual void Reload()
+        {
+            willReload = false;
+        }
+        
         protected virtual AsteroidObject FindTarget()
         {
             AsteroidObject closest = null;
@@ -117,6 +151,20 @@ namespace GlobalLoopGame.Spaceship
                 var distance = delta.Length();
                 if (distance < closestDist)
                 {
+                    bool lineOfSight = true;
+                    PhysicsBody.World.RayCast((fixture, point, normal, fraction) =>
+                    {
+                        //the planet
+                        if (fixture.CollisionCategories.HasFlag(Category.Cat5))
+                        {
+                            lineOfSight = false;
+                            return 0f;
+                        }
+                        return 1f;
+                    }, Transform.GlobalPosition, asteroid.Transform.GlobalPosition);
+                    if (!lineOfSight)
+                        continue;
+
                     closestDist = distance;
                     closest = asteroid;
                 }
@@ -132,24 +180,84 @@ namespace GlobalLoopGame.Spaceship
             return CreateBullet(dir, spawnPos, bulletSpeed);
         }
 
+        /// <summary>
+        /// Sets the target asteroid and points at it
+        /// </summary>
+        protected virtual void LockTarget()
+        {
+            var dir = target.Transform.GlobalPosition - Transform.GlobalPosition;
+            var dist = dir.Length();
+
+            dir = PredictAim(Transform.GlobalPosition, GetBulletSpeed(), target.Transform.GlobalPosition, target.PhysicsBody.LinearVelocity, dist);
+
+            predictedTargetDirection = dir;
+            barrel.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;          
+        }
+
         public override void Update(GameTime time)
         {
+            float dt = (float)time.ElapsedGameTime.TotalSeconds;
             if (canShoot)
             {
-                shootingTimer.Forward(time.ElapsedGameTime.TotalSeconds);
+                if (!onCooldown)
+                {
+                    target = FindTarget();
+                    if (target != null)
+                    {
+                        LockTarget();
+                        chargeTimer.Accumulate(dt);
+                        if (chargeTimer.TryRetrieve(chargeTime))
+                        {
+                            chargeTimer.Retrieve(float.PositiveInfinity);
+                            Shoot();
+                            onCooldown = true;
+                        }
+                    }
+                    else
+                    {
+                        chargeTimer.Retrieve(float.PositiveInfinity);
+                    }
+                }
+                else
+                {
+                    cooldownTimer.Accumulate(dt);
+                    if (cooldownTimer.TryRetrieve(cooldown))
+                    {
+                        cooldownTimer.Retrieve(float.PositiveInfinity);
+                        onCooldown = false;
+                    }
+                }
+            }else
+            {
+                chargeTimer.Retrieve(float.PositiveInfinity);
             }
 
-            if(displayRange) {
-                rangeDisplayTimer += (float)time.ElapsedGameTime.TotalSeconds;
+            if (grabbed)
+            {
+                grabTimer += dt;
             }
             else
             {
-                rangeDisplayTimer -= (float)time.ElapsedGameTime.TotalSeconds;
+                grabTimer -= dt;
             }
-            rangeDisplayTimer = MathHelper.Clamp(rangeDisplayTimer, 0f, 1f);
-            rangeDisplay.Transform.LocalScale = Vector2.Lerp(Vector2.Zero, Vector2.One * RangeRadius * 2f, rangeDisplayTimer);
+
+            grabTimer = MathHelper.Clamp(grabTimer, 0f, 1f);
+            //rangeDisplay.Transform.LocalScale = Vector2.Lerp(Vector2.Zero, Vector2.One * RangeRadius * 2f, grabTimer);
+
+            UpdateRangeMesh(RangeRadius * 2f * grabTimer);
+
+            popupDescription.Transform.GlobalPosition = Transform.GlobalPosition + Vector2.UnitY * 10f;
+            popupDescription.Transform.GlobalRotation = 0;
+            popupDescription.Color = Color.Lerp(Color.White, Color.Transparent, 1f - Math.Min(grabTimer * 3f, 1f));
 
             base.Update(time);
+        }
+
+        private void UpdateRangeMesh(float radius)
+        {
+            ViewMesh.CalculateMesh(PhysicsBody.World, Transform.GlobalPosition, radius, meshResolution, out var verts, out var inds, Category.Cat5);
+            rangeDisplay.UpdateMesh(verts, inds);
+            rangeDisplay.Transform.GlobalRotation = 0f;
         }
 
         public void SetStartingPosition(Vector2 pos)
@@ -184,13 +292,14 @@ namespace GlobalLoopGame.Spaceship
 
             pickupInstance.Volume = 0.5f;
 
+            pickupInstance.Pitch = (float)Random.Shared.Next(-10, 10) * 1f / 10f;
+
             pickupInstance.Play();
 
             GameSounds.magnetEmitter.Play();
 
             UpdateSprite(1);
-
-            displayRange = true;
+            grabbed = true;
 
             SpaceshipObject spaceship = dragger.ThisObject as SpaceshipObject;
 
@@ -198,6 +307,7 @@ namespace GlobalLoopGame.Spaceship
             {
                 spaceship.magnetObject.Sprite = GameSprites.SpaceshipMagnetActive;
                 spaceship.magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSizeActive;
+                spaceship.magnetObject.Transform.LocalPosition = new Vector2(0f, 17f) / GameSprites.pixelsPerUnit;
             }
         }
         
@@ -209,13 +319,15 @@ namespace GlobalLoopGame.Spaceship
 
             dropInstance.Volume = 0.5f;
 
+            dropInstance.Pitch = (float)Random.Shared.Next(-10, 10) * 1f / 10f;
+
             dropInstance.Play();
 
             GameSounds.magnetEmitter.Pause();
 
             UpdateSprite(0);
-
-            displayRange = false;
+            
+            grabbed = false;
 
             SpaceshipObject spaceship = dragger.ThisObject as SpaceshipObject;
 
@@ -223,7 +335,9 @@ namespace GlobalLoopGame.Spaceship
             {
                 spaceship.magnetObject.Sprite = GameSprites.SpaceshipMagnet;
                 spaceship.magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSize;
-                spaceship.magnetObject.Transform.LocalRotation = 0f;
+                spaceship.magnetPivot.Transform.LocalRotation = MathHelper.ToRadians(180f);
+                spaceship.magnetObject.Transform.LocalPosition = Vector2.Zero;
+                spaceship.magnetObject.Color = Color.White;
             }
         }
 
@@ -255,6 +369,11 @@ namespace GlobalLoopGame.Spaceship
                 return Vector2.UnitY;
             }
             return deltaPos / l;
+        }
+
+        protected void UpdateText()
+        {
+            popupDescription.Text = $"Damage: {damage}";
         }
 
         protected Vector2 RandomizeDirection(Vector2 direction, float spread)

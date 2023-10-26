@@ -10,13 +10,18 @@ namespace GlobalLoopGame.Planet
 {
     public class PlanetObject : PhysicsBodyObject, IResettable
     {
+        public event Action<int> HealthChange;
+
         public GlobalLoopGame game;
         public int health {  get; private set; }
         private int maxHealth = 5;
         public bool isDead { get; private set; }
+        public bool shouldDie { get; private set; }
 
         public PlanetObject(World world) : base(null)
         {
+            Order = 10f;
+
             PhysicsBody = world.CreateBody(bodyType: BodyType.Kinematic);
             PhysicsBody.Tag = this;
             PhysicsBody.AngularVelocity = 0.25f;
@@ -38,6 +43,8 @@ namespace GlobalLoopGame.Planet
             fixture.CollidesWith |= Category.Cat1;
             fixture.CollidesWith |= Category.Cat2;
             fixture.CollidesWith |= Category.Cat3;
+
+            health = maxHealth;
         }
 
         public void ModifyHealth(int healthModification)
@@ -46,13 +53,23 @@ namespace GlobalLoopGame.Planet
 
             Console.WriteLine("health " + health.ToString());
 
-            GameSounds.planetHurtSound.Play();
+            if (healthModification < 0)
+            {
+                //GameSounds.planetHurtSound.Play();
 
-            game.asteroidManager.ModifyDifficulty(-1);
+                GameSounds.PlaySound(GameSounds.planetHurtSound, 2);
+
+                if (game.asteroidManager.difficulty > 3)
+                {
+                    game.asteroidManager.ModifyDifficulty(-1);
+                }
+            }
+
+            HealthChange?.Invoke(health);
 
             if (!isDead && health <= 0)
             {
-                Die();
+                shouldDie = true;
             }
         }
 
@@ -64,6 +81,7 @@ namespace GlobalLoopGame.Planet
         public void Reset()
         {
             isDead = false;
+            shouldDie = false;
 
             health = maxHealth;
         }
@@ -71,6 +89,10 @@ namespace GlobalLoopGame.Planet
         public override void Update(GameTime time)
         {
             base.Update(time);
+            if(shouldDie && !isDead)
+            {
+                Die();
+            }
             //Transform.LocalRotation += (float)time.ElapsedGameTime.TotalSeconds / 3f;
         }
 

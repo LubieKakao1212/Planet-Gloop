@@ -12,10 +12,13 @@ namespace GlobalLoopGame.Spaceship.Dragging
         public static void ConnectForDragging(this IDragger dragger, PhysicsBodyObject dragged, float distance)
         {
             var obj = dragger.ThisObject;
-            var joint = new DistanceJoint(obj.PhysicsBody, dragged.PhysicsBody, Vector2.Zero, Vector2.Zero);
-            joint.DampingRatio = 0.5f;
-            joint.Frequency = 1f;
-            joint.Length = distance;
+            // var joint = new DistanceJoint(obj.PhysicsBody, dragged.PhysicsBody, Vector2.Zero, Vector2.Zero);
+            var joint = new RopeJoint(obj.PhysicsBody, dragged.PhysicsBody, Vector2.Zero, Vector2.Zero);
+            //joint.DampingRatio = 0.5f;
+            //joint.Frequency = 1f;
+            //joint.Length = distance;
+            joint.MaxLength = distance;
+            joint.CollideConnected = false;
 
             obj.PhysicsBody.World.Add(joint);
             dragger.CurrentDrag = joint;
@@ -30,6 +33,7 @@ namespace GlobalLoopGame.Spaceship.Dragging
         public static void TryInitDragging(this IDragger dragger, float distance, float interactionDistance)
         {
             var obj = dragger.ThisObject;
+
             if (dragger.CurrentDrag != null)
             {
                 IDraggable iDraggable = dragger.CurrentDrag.BodyB.Tag as IDraggable;

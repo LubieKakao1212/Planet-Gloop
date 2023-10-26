@@ -66,5 +66,11 @@ namespace MonoEngine.Scenes
             Pipeline.Graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, pCount);
             Pipeline.Graphics.DepthStencilState = dss;
         }
+
+        public void UpdateMesh<T>(T[] verticies, int[] indicies) where T : struct
+        {
+            vb.SetData(verticies);
+            ib.SetData(indicies);
+        }
     }
 }

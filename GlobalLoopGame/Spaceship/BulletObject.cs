@@ -19,10 +19,13 @@ namespace GlobalLoopGame.Spaceship
 
         public int damage = 10;
         public int pierce = 0;
+        public bool damageIsPierce;
 
         private AutoTimeMachine despawner;
 
-        private bool destroyted = false;
+        private bool destroyed = false;
+
+        List<AsteroidObject> hitAsteroids = new List<AsteroidObject>();
 
         public BulletObject(World world) : base(null)
         {
@@ -41,14 +44,22 @@ namespace GlobalLoopGame.Spaceship
 
             PhysicsBody.OnCollision += (sender, other, contact) =>
             {
-                if (destroyted)
+                if (destroyed)
                     return false;
 
                 AsteroidObject otherAsteroid = other.Body.Tag as AsteroidObject;
 
                 if (otherAsteroid != null)
                 {
-                    OnAsteroidHit(otherAsteroid);
+                    if (!hitAsteroids.Contains(otherAsteroid))
+                    {
+                        contact.GetWorldManifold(out var normal, out var points);
+                        CurrentScene.AddObject(new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(points[0]));
+
+                        OnAsteroidHit(otherAsteroid);
+
+                        hitAsteroids.Add(otherAsteroid);
+                    }
                 }
                 else
                 {
@@ -97,15 +108,28 @@ namespace GlobalLoopGame.Spaceship
 
         private void Despawn()
         {
-            destroyted = true;
+            hitAsteroids.Clear();
+            destroyed = true;
             PhysicsBody.World.RemoveAsync(PhysicsBody);
             CurrentScene.RemoveObject(this);
         }
 
         protected virtual void OnAsteroidHit(AsteroidObject asteroid)
         {
-            asteroid.ModifyHealth(-damage);
-            if (pierce-- <= 0)
+            var dmg = damage;
+
+            if (damageIsPierce)
+            {
+                damage -= (int)asteroid.health;
+            }
+            else
+            {
+                pierce -= (int)asteroid.health;
+            }
+
+            asteroid.ModifyHealth(-dmg);
+
+            if (pierce <= 0 || damage <= 0)
             {
                 Despawn();
             }
