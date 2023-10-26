@@ -391,17 +391,18 @@ namespace GlobalLoopGame
             points.Transform.GlobalPosition = new Vector2(60, 60f);
             points.Color = Color.White;
             points.FontSize = 36;
-            points.Text = "0";
+            points.Text = "";
             asteroidManager.PointsUpdated += (pointCount) =>
             {
-                points.Text = $"{pointCount / 100}";
+                if (asteroidManager.WaveNumber > 1)
+                    points.Text = $"{pointCount / 100}";
             };
             hierarchyUI.AddObject(points);
 
             var waves = new TextObject();
-            waves.Transform.GlobalPosition = new Vector2(58f, -58f);
+            waves.Transform.GlobalPosition = new Vector2(56f, -60f);
             waves.Color = Color.White;
-            waves.FontSize = 36;
+            waves.FontSize = 24;
             waves.Text = "";
             asteroidManager.WavesUpdated += (waveCount) =>
             {
