@@ -25,12 +25,12 @@ namespace MonoEngine.Rendering
         public const int MaxInstanceCount = 4096 * 4;
 
         private Vector2 quadScale = new Vector2(0.5f, 0.5f);
-        private VertexBuffer quadVerts;
-        private IndexBuffer quadInds;
+        public VertexBuffer quadVerts { get; private set; }
+        public IndexBuffer quadInds { get; private set; }
 
         private DynamicVertexBuffer instanceBuffer;
        
-        private VertexDeclaration InstanceVertexDeclaration;
+        public VertexDeclaration InstanceVertexDeclaration { get; private set; }
 
         public RenderPipeline()
         {
@@ -257,7 +257,7 @@ namespace MonoEngine.Rendering
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct InstanceData
+        public struct InstanceData
         {
             public Sprite sprite 
             { 
