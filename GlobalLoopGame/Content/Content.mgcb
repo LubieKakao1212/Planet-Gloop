@@ -43,6 +43,12 @@
 /processorParam:DebugMode=Auto
 /build:../../Shaders/DepthMarchedColor.fx;DepthMarchedColor.fx
 
+#begin ../../Shaders/ShieldSegment.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:../../Shaders/ShieldSegment.fx;Shield.fx
+
 #begin ../../Shaders/Tilemap.fx
 /importer:EffectImporter
 /processor:EffectProcessor
@@ -179,6 +185,42 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:MainMenu512x512.png
+
+#begin NewShotgunTurret1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:NewShotgunTurret1.png
+
+#begin NewSniperTurret2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:NewSniperTurret2.png
+
+#begin NewTurretMount1Cannonstyle.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:NewTurretMount1Cannonstyle.png
 
 #begin Planet128x128.png
 /importer:TextureImporter

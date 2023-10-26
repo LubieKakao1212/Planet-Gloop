@@ -18,6 +18,7 @@ namespace GlobalLoopGame.Asteroid
         private Hierarchy _hierarchy;
 
         public event Action<int> PointsUpdated;
+        public event Action<int> WavesUpdated;
 
         public int Points 
         { 
@@ -30,6 +31,18 @@ namespace GlobalLoopGame.Asteroid
         }
 
         private int points;
+
+        public int WaveNumber
+        {
+            get => waveNumber;
+            private set
+            {
+                waveNumber = value;
+                WavesUpdated?.Invoke(value);
+            }
+        }
+
+        private int waveNumber = 0;
 
         public bool Enabled
         { 
@@ -51,7 +64,6 @@ namespace GlobalLoopGame.Asteroid
         public int difficulty { get; private set; } = 0;
         private float waveInterval = 5f;
         private float waveWarningTime = 5f;
-        private int waveNumber = 0;
         private bool dirty = false;
         private bool active = false;
 
@@ -99,7 +111,7 @@ namespace GlobalLoopGame.Asteroid
 
             // Console.WriteLine("selecting wave and placing warning");
 
-            waveNumber++; 
+            WaveNumber++; 
             
             List<AsteroidWave> sortedwaves = waves.Where(wave => wave.difficultyStage == diff).ToList();
 
@@ -147,7 +159,7 @@ namespace GlobalLoopGame.Asteroid
                 CreateAsteroid(aPlacement);
             }
 
-            if (difficulty < 2 || waveNumber % (difficulty-1) == 0)
+            if (difficulty < 2 || WaveNumber % (difficulty-1) == 0)
             {
                 ModifyDifficulty(1);
             }
@@ -250,7 +262,7 @@ namespace GlobalLoopGame.Asteroid
             
             difficulty = 0;
             SetInterval(3, 3);
-            waveNumber = 0;
+            WaveNumber = 0;
             Points = 0;
 
             waveMachine = new SequentialAutoTimeMachine(

@@ -52,13 +52,18 @@ namespace GlobalLoopGame.Asteroid
 
                     ExplosionParticleObject epo = new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(points[0]);
 
-                    epo.Transform.LocalScale = Vector2.One * 4f;
+                    //epo.Transform.LocalScale = Vector2.One * 4f;
+                    epo.sizeModifier = 4f;
 
                     CurrentScene.AddObject(epo);
 
                     Die();
 
                     return false;
+                }
+                else if (other.CollisionCategories.HasFlag(CollisionCats.Shield))
+                {
+                    Die();
                 }
 
                 return true;
@@ -85,18 +90,13 @@ namespace GlobalLoopGame.Asteroid
             asteroidDrawable.Sprite = placement.size.X > 5f ? GameSprites.LargeAsteroid : GameSprites.SmallAsteroid;
 
             // Asteroids are collision Category 1, Player is collision Category 2, and Turrets are collision Category 3, bullets - 4
-            fixture.CollisionCategories = Category.Cat1;
-            fixture.CollidesWith = Category.None;
-            fixture.CollidesWith |= Category.Cat2;
-            fixture.CollidesWith |= Category.Cat4;
-            fixture.CollidesWith |= Category.Cat5;
+            fixture.CollisionCategories = CollisionCats.Asteroids;
+            fixture.CollidesWith = CollisionCats.CollisionsAsteroids;
 
             healthBar = new Bar(() => healthToDisplay, Color.Red, Color.Red, Color.White);
             healthBar.Parent = this;
             healthBar.Transform.LocalPosition = new Vector2(-size.X / 4, size.Y / 2);
             healthBar.ToggleVisibility(false);
-            //healthBar.Transform.LocalScale = Vector2.One * 0.8f;
-            //manager.game.hierarchyUI.AddObject(healthBar);
         }
 
         public override void Update(GameTime time)
