@@ -476,7 +476,7 @@ namespace GlobalLoopGame
             Planet.ModifyHealth(0);
             hierarchyUI.AddObject(health);
 
-            DrawableObject overlayObject = new DrawableObject(Color.DarkSlateGray, -1f);
+            DrawableObject overlayObject = new DrawableObject(new Color(0.3f, 0.15f, 0.15f, 1.0f), -1f);
             hierarchyUI.AddObject(overlayObject);
             overlayObject.Sprite = GameSprites.CircleOverlay;
             overlayObject.Transform.GlobalPosition = new Vector2(0, 0);
