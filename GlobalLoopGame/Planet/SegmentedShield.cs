@@ -21,7 +21,7 @@ namespace GlobalLoopGame.Planet
         private int[] segmentHealth;
         private Fixture[] segments;
 
-        private int initialHealth;
+        public int maxHealth { get; private set; }
 
         private static Color[] healthColors = new Color[]
         {
@@ -34,6 +34,7 @@ namespace GlobalLoopGame.Planet
         public SegmentedShield(World world, RenderPipeline renderer, int segments, float radius, float arcAngle, int healthPerSegment) : base(null)
         {
             var body = world.CreateBody(bodyType: BodyType.Kinematic);
+            body.Tag = this;
             PhysicsBody = body;
 
             float angle = arcAngle / segments;
@@ -43,7 +44,7 @@ namespace GlobalLoopGame.Planet
             display.Transform.LocalScale = new Vector2(radius * 3f);
             display.Parent = this;
 
-            initialHealth = healthPerSegment;
+            maxHealth = healthPerSegment;
             segmentHealth = Enumerable.Repeat(healthPerSegment, segments).ToArray();
             this.segments = new Fixture[segments];
             
@@ -55,6 +56,7 @@ namespace GlobalLoopGame.Planet
                 fixture.CollisionCategories = CollisionCats.Shield;
                 fixture.CollidesWith = CollisionCats.CollisionsShield;
                 this.segments[i] = fixture;
+                fixture.Tag = i;
                 var i1 = i;
                 fixture.OnCollision += (thisFixture, otherFixture, contact) =>
                 {
@@ -67,10 +69,15 @@ namespace GlobalLoopGame.Planet
             }
         }
 
+        public int GetSegmentHealth(int idx)
+        {
+            return segmentHealth[idx];
+        }
+
         public void ModifySegment(int idx, int amount)
         {
             var health = segmentHealth[idx];
-            health = MathHelper.Max(health + amount, 0);
+            health = MathHelper.Clamp(health + amount, 0, maxHealth);
             segmentHealth[idx] = health;
             UpdateSegment(idx);
         }
@@ -80,7 +87,7 @@ namespace GlobalLoopGame.Planet
             var health = segmentHealth[idx];
             if (health == 0)
             {
-                segments[idx].CollidesWith = Category.None;
+                segments[idx].CollidesWith = CollisionCats.CollisionsShieldDestroyed;
             }
             else
             {
@@ -98,7 +105,7 @@ namespace GlobalLoopGame.Planet
         {
             for (int i = 0; i < segmentHealth.Length; i++)
             {
-                segmentHealth[i] = initialHealth;
+                segmentHealth[i] = maxHealth;
                 UpdateSegment(i);
             }
         }

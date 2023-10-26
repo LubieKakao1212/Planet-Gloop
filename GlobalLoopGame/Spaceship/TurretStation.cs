@@ -21,6 +21,8 @@ namespace GlobalLoopGame.Spaceship
     {
         public float RangeRadius { get; set; } = 32f;
 
+        public bool IsDestroyed => false;
+
         private const int meshResolution = 4095;
 
         //protected AutoTimeMachine shootingTimer;
