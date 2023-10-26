@@ -254,7 +254,7 @@ namespace GlobalLoopGame
             GameSprites.Planet = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PlanetTex"), new Rectangle(0, 0, 128, 128))[0];
 
             var spaceshipTextures = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SpaceshipTex"),
-                new Rectangle(0, 6, 32, 20),
+                new Rectangle(0, 1, 32, 25),
                 new Rectangle(37, 36, 22, 22),
                 new Rectangle(35, 8, 6, 6),
                 new Rectangle(4, 30, 22, 34)
