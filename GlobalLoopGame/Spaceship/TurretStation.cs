@@ -21,6 +21,8 @@ namespace GlobalLoopGame.Spaceship
     {
         public float RangeRadius { get; set; } = 32f;
 
+        public bool IsDestroyed => false;
+
         private const int meshResolution = 4095;
 
         //protected AutoTimeMachine shootingTimer;
@@ -232,7 +234,7 @@ namespace GlobalLoopGame.Spaceship
 
             grabTimer = MathHelper.Clamp(grabTimer, 0f, 1f);
 
-            UpdateRangeMesh(RangeRadius * 2f * grabTimer);
+            UpdateRangeMesh(RangeRadius * grabTimer);
 
             popupDescription.Transform.GlobalPosition = Transform.GlobalPosition + Vector2.UnitY * 10f;
             popupDescription.Transform.GlobalRotation = 0;

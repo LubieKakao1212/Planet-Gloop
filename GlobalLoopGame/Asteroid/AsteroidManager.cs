@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using MonoEngine.Util;
 using GlobalLoopGame.Audio;
+using System.Runtime.Serialization.Formatters;
+using MonoEngine.Math;
+using GlobalLoopGame.Spaceship.Item;
 
 namespace GlobalLoopGame.Asteroid
 {
@@ -164,7 +167,42 @@ namespace GlobalLoopGame.Asteroid
                 ModifyDifficulty(1);
             }
 
+            SpawnPowerup();
+
             SetInterval(10, 7);
+        }
+
+        private void SpawnPowerup()
+        {
+            var rand = Random.Shared;
+            if (rand.NextSingle() < 0.5f)
+            {
+                Console.WriteLine("Spawning powerup");
+                var spawnAngle = rand.NextSingle() * MathHelper.TwoPi;
+                var spawnDir = new Vector2(MathF.Cos(spawnAngle), MathF.Sin(spawnAngle));
+
+                var spawnPos = spawnDir * GlobalLoopGame.MapRadius;
+
+                var r = rand.NextSingle() * 2f - 1f;
+                var minAngle = MathHelper.PiOver4;
+                var maxAngle = MathHelper.PiOver2;
+                var spawnVel = -spawnDir * Matrix2x2.Rotation((maxAngle - minAngle) * r + minAngle * MathF.Sign(r));
+
+                var spawnSpeed = 3f;
+                spawnVel *= spawnSpeed;
+
+                var powerup = new RepairCharge(_world);
+                powerup.Transform.LocalPosition = spawnPos;
+                powerup.PhysicsBody.LinearVelocity = spawnVel;
+
+                r = rand.NextSingle() * 2f - 1f;
+                var minAngVel = 5f;
+                var maxAngVel = 10f;
+                var angVel = (maxAngVel - minAngVel) * r + minAngle * MathF.Sign(r);
+
+                powerup.PhysicsBody.AngularVelocity = angVel;
+                _hierarchy.AddObject(powerup);
+            }
         }
 
         public void ModifyDifficulty(int difficultyModification)
