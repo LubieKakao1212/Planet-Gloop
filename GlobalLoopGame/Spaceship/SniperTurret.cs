@@ -8,7 +8,7 @@ namespace GlobalLoopGame.Spaceship
 {
     public class SniperTurret : TurretStation
     {
-        public SniperTurret(World world, AsteroidManager asteroids, RenderPipeline renderer) : base(world, asteroids, renderer, 2.5f)
+        public SniperTurret(World world, AsteroidManager asteroids, RenderPipeline renderer) : base(world, asteroids, renderer, 2.5f, 0.5f)
         {
             spread = 0;
             RangeRadius = 72f;

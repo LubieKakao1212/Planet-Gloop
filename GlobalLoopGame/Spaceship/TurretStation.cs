@@ -24,7 +24,11 @@ namespace GlobalLoopGame.Spaceship
         private const int meshResolution = 4095;
 
         //protected AutoTimeMachine shootingTimer;
-        protected SequentialAutoTimeMachine shootingTimer;
+        //protected SequentialAutoTimeMachine shootingTimer;
+        protected TimeMachine chargeTimer = new TimeMachine();
+        protected TimeMachine cooldownTimer = new TimeMachine();
+        //protected AutoTimeMachine targetSeekerMachine;
+
         protected AsteroidManager asteroids;
         protected HierarchyObject barrel;
         protected DrawableObject barrelDrawable;
@@ -51,7 +55,15 @@ namespace GlobalLoopGame.Spaceship
         protected int damage = 10;
         protected int shotIndex = 0;
 
-        public TurretStation(World world, AsteroidManager asteroids, RenderPipeline renderer, float cooldown = 0.125f) : base(null)
+        protected float chargeTime; 
+        protected float cooldown;
+        protected bool onCooldown = false;
+
+        protected AsteroidObject target;
+
+        protected Vector2 predictedTargetDirection;
+
+        public TurretStation(World world, AsteroidManager asteroids, RenderPipeline renderer, float cooldown = 0.125f, float chargeTime = 0f) : base(null)
         {
             PhysicsBody = world.CreateBody(bodyType: BodyType.Dynamic);
             PhysicsBody.Tag = this;
@@ -93,49 +105,38 @@ namespace GlobalLoopGame.Spaceship
             
             this.asteroids = asteroids;
 
+            this.cooldown = cooldown;
+            this.chargeTime = chargeTime;
+
             //shootingTimer = new AutoTimeMachine(TargetAndShoot, cooldown);
-            shootingTimer = new SequentialAutoTimeMachine(
+            /*shootingTimer = new SequentialAutoTimeMachine(
                 (TargetAndShoot, cooldown),
                 (Reload, cooldown + 1)
-                );
+                );*/
         }
 
-        protected virtual void TargetAndShoot()
+        /// <summary>
+        /// Shoots, does not check if it can
+        /// </summary>
+        protected virtual void Shoot()
         {
-            if (!canShoot)
+            var spawnPos = Transform.GlobalPosition + barrel.Transform.Up * barrelLength / 2f;
+
+            GameSounds.shotSounds[shotIndex].Play();
+
+            for (int i = 0; i < bulletCount; i++)
             {
-                return;
+                CurrentScene.AddObject(CreateProjectile(predictedTargetDirection, spawnPos));
             }
 
-            var target = FindTarget();
-
-            if (target != null)
-            {
-                var dir = target.Transform.GlobalPosition - Transform.GlobalPosition;
-                var dist = dir.Length();
-
-                dir = PredictAim(Transform.GlobalPosition, GetBulletSpeed(), target.Transform.GlobalPosition, target.PhysicsBody.LinearVelocity, dist);
-                
-                barrel.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
-
-                var spawnPos = Transform.GlobalPosition + barrel.Transform.Up * barrelLength / 2f;
-
-                GameSounds.shotSounds[shotIndex].Play();
-
-                for (int i = 0; i < bulletCount; i++)
-                {
-                    CurrentScene.AddObject(CreateProjectile(dir, spawnPos));
-                }
-
-                willReload = true;
-            }
+            willReload = true;
         }
 
         protected virtual void Reload()
         {
             willReload = false;
         }
-
+        
         protected virtual AsteroidObject FindTarget()
         {
             AsteroidObject closest = null;
@@ -177,20 +178,65 @@ namespace GlobalLoopGame.Spaceship
             return CreateBullet(dir, spawnPos, bulletSpeed);
         }
 
+        /// <summary>
+        /// Sets the target asteroid and points at it
+        /// </summary>
+        protected virtual void LockTarget()
+        {
+            var dir = target.Transform.GlobalPosition - Transform.GlobalPosition;
+            var dist = dir.Length();
+
+            dir = PredictAim(Transform.GlobalPosition, GetBulletSpeed(), target.Transform.GlobalPosition, target.PhysicsBody.LinearVelocity, dist);
+
+            predictedTargetDirection = dir;
+            barrel.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;          
+        }
+
         public override void Update(GameTime time)
         {
+            float dt = (float)time.ElapsedGameTime.TotalSeconds;
             if (canShoot)
             {
-                shootingTimer.Forward(time.ElapsedGameTime.TotalSeconds);
+                if (!onCooldown)
+                {
+                    target = FindTarget();
+                    if (target != null)
+                    {
+                        LockTarget();
+                        chargeTimer.Accumulate(dt);
+                        if (chargeTimer.TryRetrieve(chargeTime))
+                        {
+                            chargeTimer.Retrieve(float.PositiveInfinity);
+                            Shoot();
+                            onCooldown = true;
+                        }
+                    }
+                    else
+                    {
+                        chargeTimer.Retrieve(float.PositiveInfinity);
+                    }
+                }
+                else
+                {
+                    cooldownTimer.Accumulate(dt);
+                    if (cooldownTimer.TryRetrieve(cooldown))
+                    {
+                        cooldownTimer.Retrieve(float.PositiveInfinity);
+                        onCooldown = false;
+                    }
+                }
+            }else
+            {
+                chargeTimer.Retrieve(float.PositiveInfinity);
             }
 
             if (grabbed)
             {
-                grabTimer += (float)time.ElapsedGameTime.TotalSeconds;
+                grabTimer += dt;
             }
             else
             {
-                grabTimer -= (float)time.ElapsedGameTime.TotalSeconds;
+                grabTimer -= dt;
             }
 
             grabTimer = MathHelper.Clamp(grabTimer, 0f, 1f);
