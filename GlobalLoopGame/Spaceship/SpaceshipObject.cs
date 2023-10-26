@@ -215,7 +215,16 @@ namespace GlobalLoopGame.Spaceship
 
                     //magnetObject.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
 
-                    magnetPivot.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
+                    // Console.WriteLine(dir.Length().ToString());
+
+                    // magnetPivot.Transform.LocalPosition = new Vector2(0, -dir.Length()/6);
+
+                    // magnetPivot.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
+
+                    if (dir.Length() > 5)
+                    {
+                        magnetPivot.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
+                    }
                 }
             }
 
