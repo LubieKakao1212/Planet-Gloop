@@ -1,4 +1,5 @@
 ﻿using GlobalLoopGame.Asteroid;
+using GlobalLoopGame.Globals;
 using Microsoft.Xna.Framework;
 using MonoEngine.Physics;
 using MonoEngine.Scenes;

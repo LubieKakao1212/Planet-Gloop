@@ -1,6 +1,8 @@
 ﻿using GlobalLoopGame.Asteroid;
+using GlobalLoopGame.Globals;
 using GlobalLoopGame.Mesh;
 using GlobalLoopGame.Spaceship.Dragging;
+using GlobalLoopGame.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -48,6 +50,7 @@ namespace GlobalLoopGame.Spaceship
         private bool canShoot = false;
 
         private Vector2 startingPosition = Vector2.Zero;
+        private float startingRotation = 0f;
 
         private float barrelLength;
         private Sprite[] sprites;
@@ -255,7 +258,9 @@ namespace GlobalLoopGame.Spaceship
             startingPosition = pos;
 
             Transform.LocalPosition = startingPosition;
-        }
+
+            startingRotation = Transform.LocalRotation;
+    }
 
         public TurretStation SetSprites(Sprite[] sprites, Vector2[] sizes, Vector2 pivot)
         {
@@ -356,6 +361,10 @@ namespace GlobalLoopGame.Spaceship
         public void Reset()
         {
             Transform.LocalPosition = startingPosition;
+
+            Transform.LocalRotation = startingRotation;
+
+            barrelPivot.Transform.LocalRotation = 0f;
 
             canShoot = true;
         }

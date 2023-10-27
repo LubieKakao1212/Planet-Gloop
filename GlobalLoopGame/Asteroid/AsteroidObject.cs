@@ -1,3 +1,4 @@
+using GlobalLoopGame.Globals;
 using GlobalLoopGame.Planet;
 using GlobalLoopGame.UI;
 using Microsoft.VisualBasic;
@@ -52,7 +53,6 @@ namespace GlobalLoopGame.Asteroid
 
                     ExplosionParticleObject epo = new ExplosionParticleObject(PhysicsBody.World).InitializeParticle(points[0]);
 
-                    //epo.Transform.LocalScale = Vector2.One * 4f;
                     epo.sizeModifier = 4f;
 
                     CurrentScene.AddObject(epo);
@@ -63,6 +63,8 @@ namespace GlobalLoopGame.Asteroid
                 }
                 else if (other.CollisionCategories.HasFlag(CollisionCats.Shield))
                 {
+                    manager.game.cameraManager.SetCameraShake(true, 6);
+
                     Die();
                 }
 
@@ -95,8 +97,16 @@ namespace GlobalLoopGame.Asteroid
 
             healthBar = new Bar(() => healthToDisplay, Color.Red, Color.Red, Color.White);
             healthBar.Parent = this;
-            healthBar.Transform.LocalPosition = new Vector2(-size.X / 4, size.Y / 2);
             healthBar.ToggleVisibility(false);
+
+            if (health > 200)
+            {
+                damage = 2;
+            }
+            else
+            {
+                damage = 1;
+            }
         }
 
         public override void Update(GameTime time)
@@ -106,6 +116,10 @@ namespace GlobalLoopGame.Asteroid
             despawner.Forward(time.ElapsedGameTime.TotalSeconds);
 
             healthBar.Transform.LocalRotation = -Transform.LocalRotation;
+
+            Vector2 thetaVector = new Vector2(MathF.Cos(healthBar.Transform.LocalRotation), MathF.Sin(healthBar.Transform.LocalRotation));
+
+            healthBar.Transform.LocalPosition = (thetaVector);
         }
 
         public void ModifyHealth(float healthModification)
@@ -120,17 +134,6 @@ namespace GlobalLoopGame.Asteroid
                 int pointModification = (int)MathF.Round(maxHealth * (20f - speed)/2);
 
                 manager.ModifyPoints(pointModification);
-
-                if (size.X > 5f)
-                {
-                    // GameSounds.bigAsteroidDeath.Play();
-                    GameSounds.PlaySound(GameSounds.bigAsteroidDeath, 2);
-                }
-                else
-                {
-                    //GameSounds.smallAsteroidDeath.Play();
-                    GameSounds.PlaySound(GameSounds.smallAsteroidDeath, 2);
-                }
 
                 Die();
             }
@@ -147,6 +150,17 @@ namespace GlobalLoopGame.Asteroid
                 return;
 
             isDead = true;
+
+            if (size.X > 5f)
+            {
+                // GameSounds.bigAsteroidDeath.Play();
+                GameSounds.PlaySound(GameSounds.bigAsteroidDeath, 2);
+            }
+            else
+            {
+                //GameSounds.smallAsteroidDeath.Play();
+                GameSounds.PlaySound(GameSounds.smallAsteroidDeath, 2);
+            }
 
             var u = Transform.Up;
             var r = Transform.Right;

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using GlobalLoopGame.Globals;
+using Microsoft.Xna.Framework;
 using MonoEngine.Physics;
 using MonoEngine.Rendering;
 using nkast.Aether.Physics2D.Common;

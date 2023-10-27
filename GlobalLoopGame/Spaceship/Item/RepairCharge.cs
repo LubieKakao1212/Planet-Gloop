@@ -1,4 +1,5 @@
-﻿using GlobalLoopGame.Planet;
+﻿using GlobalLoopGame.Globals;
+using GlobalLoopGame.Planet;
 using GlobalLoopGame.Spaceship.Dragging;
 using Microsoft.Xna.Framework;
 using MonoEngine.Physics;

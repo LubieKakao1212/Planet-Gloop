@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GlobalLoopGame
+namespace GlobalLoopGame.Globals
 {
     public class GameSounds
     {
@@ -51,7 +51,7 @@ namespace GlobalLoopGame
         {
             SoundEffectInstance instance = soundEffect.CreateInstance();
 
-            instance.Pitch = (float)Random.Shared.Next(-variance, variance) * 1f / 10f;
+            instance.Pitch = Random.Shared.Next(-variance, variance) * 1f / 10f;
 
             instance.Play();
         }

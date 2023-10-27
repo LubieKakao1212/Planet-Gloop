@@ -9,6 +9,7 @@ using MonoEngine.Scenes.Events;
 using MonoEngine.Util;
 using MonoEngine.Physics;
 using nkast.Aether.Physics2D.Dynamics;
+using GlobalLoopGame.Globals;
 
 namespace GlobalLoopGame.Asteroid
 {

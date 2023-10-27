@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using GlobalLoopGame.Globals;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoEngine.Rendering;
 using MonoEngine.Scenes;

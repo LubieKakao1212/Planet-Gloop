@@ -1,4 +1,5 @@
 ﻿using GlobalLoopGame.Asteroid;
+using GlobalLoopGame.Globals;
 using Microsoft.Xna.Framework;
 using MonoEngine.Scenes;
 using MonoEngine.Util;
@@ -31,14 +32,12 @@ namespace GlobalLoopGame.Audio
 
         public void Initialize()
         {
-
+            
         }
 
         public void Update(GameTime gameTime)
         {
-            intensity = MathHelper.Clamp(intensity + MathF.Sign(targetIntensity - intensity) * (float)gameTime.ElapsedGameTime.TotalSeconds/10, 0f, 2f);
-
-            // Console.WriteLine(intensity.ToString());
+            intensity = MathHelper.Clamp(intensity + MathF.Sign(targetIntensity - intensity) * (float)gameTime.ElapsedGameTime.TotalSeconds / 3f, 0f, 2f);
             
             UpdateMusic();
         }
@@ -67,7 +66,7 @@ namespace GlobalLoopGame.Audio
 
         public void Reset()
         {
-            
+
         }
     }
 }
