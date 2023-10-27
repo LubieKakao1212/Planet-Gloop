@@ -118,39 +118,50 @@ namespace GlobalLoopGame.Asteroid
 
             // Console.WriteLine("selecting wave and placing warning");
 
-            WaveNumber++; 
-            
-            List<AsteroidWave> sortedwaves = waves.Where(wave => wave.difficultyStage == diff).ToList();
+            WaveNumber++;
 
-            if (sortedwaves.Count > 0)
+            if (diff < 2)
             {
-                int rand = Random.Shared.Next(0, sortedwaves.Count);
+                List<AsteroidWave> sortedwaves = waves.Where(wave => wave.difficultyStage == diff).ToList();
 
-                if (rand < sortedwaves.Count)
+                if (sortedwaves.Count > 0)
                 {
-                    selectedWave = sortedwaves[rand];
+                    int rand = Random.Shared.Next(0, sortedwaves.Count);
 
-                    GameSounds.warningSound.Play();
-
-                    foreach (float loc in selectedWave.warningPlacements)
+                    if (rand < sortedwaves.Count)
                     {
-                        AsteroidWarning warning = new AsteroidWarning(_world, this);
-
-                        _hierarchy.AddObject(warning);
-
-                        if (!asteroidWarnings.Contains(warning))
-                        {
-                            asteroidWarnings.Add(warning);
-                        }
-
-                        warning.InitializeWarning(loc, waveWarningTime);
+                        selectedWave = sortedwaves[rand];
                     }
                 }
+                // If it can't find a wave of asteroids with the given difficulty, it tries again with a lower difficulty
+                else if (diff > 0)
+                {
+                    SelectWaveAndPlaceWarning(diff - 1);
+
+                    return;
+                }
             }
-            // If it can't find a wave of asteroids with the given difficulty, it tries again with a lower difficulty
-            else if (diff > 0)
+            else
             {
-                SelectWaveAndPlaceWarning(diff - 1);
+                AsteroidWave generatedWave = GenerateWave(diff);
+
+                selectedWave = generatedWave;
+            }
+
+            GameSounds.warningSound.Play();
+
+            foreach (float loc in selectedWave.warningPlacements)
+            {
+                AsteroidWarning warning = new AsteroidWarning(_world, this);
+
+                _hierarchy.AddObject(warning);
+
+                if (!asteroidWarnings.Contains(warning))
+                {
+                    asteroidWarnings.Add(warning);
+                }
+
+                warning.InitializeWarning(loc, waveWarningTime);
             }
         }
 
@@ -173,7 +184,7 @@ namespace GlobalLoopGame.Asteroid
 
             SpawnPowerups();
 
-            SetInterval(10, 7);
+            SetInterval(3, 3);
         }
 
         private void SpawnPowerups()
@@ -346,6 +357,106 @@ namespace GlobalLoopGame.Asteroid
                 (() => SelectWaveAndPlaceWarning(Difficulty), this.waveWarningTime),
                 (() => SpawnAsteroidsInPlacement(this.selectedWave), this.waveInterval)
                 );
+        }
+
+        private BucketRandom<float> wavePlacements = new BucketRandom<float>(
+            Random.Shared,
+            0f, 15f, 30f, 45f, 60f, 75f, 90f,
+            105f, 120f, 135f, 150f, 165f, 180f,
+            195f, 210f, 225f, 240f, 255f, 270f,
+            285f, 300f, 315f, 330f, 345f
+            );
+
+        private BucketRandom<int> placementNumbers = new BucketRandom<int>(
+            Random.Shared,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            2, 2, 2, 2, 2, 2,
+            3, 3, 3
+            );
+
+        private BucketRandom<int> sizeNumbers = new BucketRandom<int>(
+            Random.Shared,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+            3, 3, 3, 3, 3, 3, 3,
+            4, 4, 4, 4,
+            5, 5
+            );
+
+        public AsteroidWave GenerateWave(int difficulty)
+        {
+            AsteroidWave waveToReturn = null;
+
+            List<AsteroidPlacement> asteroidPlacements = new List<AsteroidPlacement>();
+
+            int placementNumber = MathHelper.Clamp((int)MathF.Round(Random.Shared.NextSingle() * (difficulty / 3f)), 1, 3);
+
+            Console.WriteLine($"placing asteroids in {placementNumber} places");
+
+            // Calculate angles of attack for waves
+            List<float> placementThetas = new List<float>();
+
+            for (int i = 0; i < placementNumber; i++)
+            {
+                float randTheta = wavePlacements.GetRandom();
+
+                Console.WriteLine($"placing asteroids at {randTheta}");
+
+                placementThetas.Add(randTheta);
+            }
+
+            int asteroidNumber = Random.Shared.Next(1, difficulty - 1);
+
+            for (int i = 0; i < asteroidNumber; i++)
+            {
+                int asteroidVariable = MathHelper.Clamp(Random.Shared.Next(0, difficulty), 1, 10);
+
+                // Calculate size
+                int size = asteroidVariable * 2;
+
+                Console.WriteLine($"size {size}");
+
+                // Gaussian distribution
+                /*
+                Random rand = new Random(); //reuse this if you are generating many
+                double u1 = 1.0 - rand.NextDouble(); //uniform(0,1] random doubles
+                double u2 = 1.0 - rand.NextDouble();
+                double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2); //random normal(0,1)
+                double randNormal = mean + stdDev * randStdNormal; //random normal(mean, stdDev^2)
+                */
+
+                float randTheta = placementThetas[Random.Shared.Next(0, placementThetas.Count)];
+
+                int thetaVariance = difficulty * 10;
+
+                // Calculate starting theta
+                float startingTheta = randTheta + Random.Shared.Next(-thetaVariance, 0);
+
+                // Caculate ending theta
+                float endingTheta = randTheta + Random.Shared.Next(0, thetaVariance);
+
+                Console.WriteLine($"between {startingTheta} and {endingTheta}");
+
+                // Calculate speed - should be clamped
+                float speed = MathHelper.Clamp(16f - (asteroidVariable * 1.5f) + (float)(Random.Shared.Next(-10, 10) * 1f / 10f), 5, 11);
+
+                Console.WriteLine($"speed {speed}");
+
+                // Calculate health
+                int health = (27 * size); // + (int)MathF.Round(Random.Shared.NextSingle() * 100);
+
+                Console.WriteLine($"health {health}");
+
+                AsteroidPlacement placementToAdd = new AsteroidPlacement(Vector2.One * size, startingTheta, endingTheta, speed, health);
+
+                asteroidPlacements.Add(placementToAdd);
+            }
+
+            waveToReturn = new AsteroidWave(asteroidPlacements, Difficulty, placementThetas);
+            
+            waveToReturn.asteroidPlacements = asteroidPlacements;
+
+            return waveToReturn;
         }
 
         public List<AsteroidWave> waves = new List<AsteroidWave>()
