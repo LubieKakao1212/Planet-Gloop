@@ -10,6 +10,7 @@ namespace GlobalLoopGame.Globals
     public class GameEffects
     {
         public static Effect Custom;
+        public static Effect CustomRed;
         public static Effect Shield;
 
         public static DepthStencilState DSS;

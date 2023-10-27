@@ -383,6 +383,10 @@ namespace GlobalLoopGame
             custom.Parameters["Color"].SetValue(Color.White.ToVector4() * 0.25f);
             GameEffects.Custom = custom;
 
+            custom = custom.Clone();
+            custom.Parameters["Color"].SetValue(Color.Red.ToVector4() * 0.25f);
+            GameEffects.CustomRed = custom;
+
             var shield = Content.Load<Effect>("Shield");
             //custom.Parameters["Color"].SetValue(Color.White.ToVector4() * 0.25f);
             GameEffects.Shield = shield;
@@ -417,7 +421,7 @@ namespace GlobalLoopGame
             hierarchyGame.AddObject(Spaceship);
             Resettables.Add(Spaceship);
     
-            asteroidManager = new AsteroidManager(world, hierarchyGame);
+            asteroidManager = new AsteroidManager(world, hierarchyGame, Planet);
             asteroidManager.game = this;
             Resettables.Add(asteroidManager);
 

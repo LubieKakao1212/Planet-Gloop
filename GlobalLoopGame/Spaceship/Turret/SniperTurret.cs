@@ -16,38 +16,16 @@ namespace GlobalLoopGame.Spaceship.Turret
             RangeRadius = 72f;
             damage = 200;
             shotIndex = 2;
+            MinTargettingDistance = 24f;
             UpdateText();
         }
 
         protected override ITargettable FindTarget()
         {
             var world = PhysicsBody.World;
-            ITargettable target = null; // world.FindTargetPhysicsBased(Transform.GlobalPosition, , () => );
+            ITargettable target = null;
             target ??= asteroids.FindTargetAsteroid(world, Transform.GlobalPosition, RangeRadius, (target, distance) => target.Health);
             return target;
-            /*float maxHealth = 0f;
-            var world = PhysicsBody.World;
-            foreach (var asteroid in asteroids.asteroids)
-            {
-                if (asteroid.health > maxHealth && (asteroid.Transform.GlobalPosition - Transform.GlobalPosition).LengthSquared() < RangeRadius * RangeRadius)
-                {
-                    bool lineOfSight = true;
-                    world.RayCast((fixture, point, normal, fraction) =>
-                    {
-                        if (fixture.CollisionCategories.HasFlag(CollisionCats.Planet) || fixture.CollisionCategories.HasFlag(CollisionCats.Shield))
-                        {
-                            lineOfSight = false;
-                            return 0f;
-                        }
-                        return 1f;
-                    }, Transform.GlobalPosition, asteroid.Transform.GlobalPosition);
-                    if (!lineOfSight)
-                        continue;
-
-                    best = asteroid;
-                    maxHealth = asteroid.health;
-                }
-            }*/
         }
 
         protected override BulletObject CreateBullet(Vector2 dir, Vector2 pos, float speed)

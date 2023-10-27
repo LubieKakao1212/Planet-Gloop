@@ -23,9 +23,8 @@ namespace GlobalLoopGame.Spaceship.Turret
     {
         public float RangeRadius { get; set; } = 32f;
         public float CloseTargetRange { get; set; } = 16f;
-        
-        public float MinTargettingDistance { get; set; } = 5f
 
+        public float MinTargettingDistance { get; set; } = 5f;
 
         public bool IsDestroyed => false;
 
@@ -45,6 +44,7 @@ namespace GlobalLoopGame.Spaceship.Turret
         protected DrawableObject barrelDrawable;
 
         protected MeshObject rangeDisplay;
+        protected MeshObject innerRangeDisplay;
 
         protected float spread = 5f * MathF.PI / 180f;
 
@@ -72,7 +72,7 @@ namespace GlobalLoopGame.Spaceship.Turret
         protected float cooldown;
         protected bool onCooldown = false;
 
-        protected AsteroidObject target;
+        protected ITargettable target;
 
         protected Vector2 predictedTargetDirection;
 
@@ -99,8 +99,12 @@ namespace GlobalLoopGame.Spaceship.Turret
             popupDescription.FontSize = 12;
             UpdateText();
 
-            rangeDisplay = MeshObject.CreateNew(renderer, Vertex2DPosition.VertexDeclaration, new Vertex2DPosition[meshResolution + 1], new int[meshResolution * 3], Color.White, -10f, GameEffects.Custom, GameEffects.DSS);
+            rangeDisplay = MeshObject.CreateNew(renderer, Vertex2DPosition.VertexDeclaration, new Vertex2DPosition[meshResolution * 2], new int[meshResolution * 6], Color.White, -10f, GameEffects.Custom, GameEffects.DSS);
             rangeDisplay.Parent = this;
+
+            innerRangeDisplay = MeshObject.CreateNew(renderer, Vertex2DPosition.VertexDeclaration, new Vertex2DPosition[meshResolution * 2], new int[meshResolution * 6], Color.White, -10f, GameEffects.CustomRed, GameEffects.DSS);
+            innerRangeDisplay.Parent = this;
+
 
             barrelPivot = new HierarchyObject();
             barrelPivot.Transform.LocalScale = Vector2.One;
@@ -141,13 +145,14 @@ namespace GlobalLoopGame.Spaceship.Turret
         {
             var world = PhysicsBody.World;
 
-            /*var fitness = (target, disatnce) =>
+            //Closest
+            Func<ITargettable, float, float> fitness = (target, distance) =>
             {
-                return ;
-            }*/
+                return distance < MinTargettingDistance ? float.NegativeInfinity : -distance;
+            };
 
-            ITargettable target = world.FindTargetPhysicsBased(Transform.GlobalPosition, CloseTargetRange, );
-            target ??= asteroids.FindTargetAsteroid(world, Transform.GlobalPosition, RangeRadius, (target, distance) => target.Health);
+            ITargettable target = world.FindTargetPhysicsBased(Transform.GlobalPosition, CloseTargetRange, fitness);
+            target ??= asteroids.FindTargetAsteroid(world, Transform.GlobalPosition, RangeRadius, fitness);
             return target;
         }
 
@@ -222,7 +227,7 @@ namespace GlobalLoopGame.Spaceship.Turret
 
             grabTimer = MathHelper.Clamp(grabTimer, 0f, 1f);
 
-            UpdateRangeMesh(RangeRadius * grabTimer);
+            UpdateRangeMesh(grabTimer * RangeRadius);
 
             popupDescription.Transform.GlobalPosition = Transform.GlobalPosition + Vector2.UnitY * 10f;
             popupDescription.Transform.GlobalRotation = 0;
@@ -231,11 +236,15 @@ namespace GlobalLoopGame.Spaceship.Turret
             base.Update(time);
         }
 
-        private void UpdateRangeMesh(float radius)
+        private void UpdateRangeMesh(float factor)
         {
-            ViewMesh.CalculateMesh(PhysicsBody.World, Transform.GlobalPosition, radius, meshResolution, out var verts, out var inds, CollisionCats.Planet | CollisionCats.Shield);
+            ViewMesh.CalculateMesh(PhysicsBody.World, Transform.GlobalPosition, MinTargettingDistance, MathF.Max(factor, MinTargettingDistance), meshResolution, out var verts, out var inds, CollisionCats.Planet | CollisionCats.Shield);
             rangeDisplay.UpdateMesh(verts, inds);
             rangeDisplay.Transform.GlobalRotation = 0f;
+
+            ViewMesh.CalculateMesh(PhysicsBody.World, Transform.GlobalPosition, 0.1f, MathF.Min(factor, MinTargettingDistance), meshResolution, out verts, out inds, CollisionCats.Planet | CollisionCats.Shield);
+            innerRangeDisplay.UpdateMesh(verts, inds);
+            innerRangeDisplay.Transform.GlobalRotation = 0f;
         }
 
         public void SetStartingPosition(Vector2 pos)
