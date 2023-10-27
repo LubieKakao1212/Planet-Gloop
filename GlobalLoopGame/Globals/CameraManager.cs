@@ -55,7 +55,7 @@ namespace GlobalLoopGame.Globals
 
             shakeIntensity = shakeIntensity + MathF.Sign(-shakeIntensity) * (float)gameTime.ElapsedGameTime.TotalSeconds * (shakeIntensity + 1);
 
-            Console.WriteLine(shakeIntensity);
+            // Console.WriteLine(shakeIntensity);
         }
 
         public void SetCameraPositionVariance(Vector2 newVariance)

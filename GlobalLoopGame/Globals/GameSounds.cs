@@ -37,15 +37,24 @@ namespace GlobalLoopGame.Globals
         public static SoundEffect musicIntensityOne;
         public static SoundEffect musicIntensityTwo;
         public static SoundEffect musicIntensityThree;
+        public static SoundEffect musicIntensityFour;
+        public static SoundEffect musicIntensityFive;
+        public static SoundEffect musicIntensitySix;
+        public static SoundEffect musicIntensitySeven;
 
         public static SoundEffectInstance boostEmitter;
         public static SoundEffectInstance boostChargingEmitter;
         public static SoundEffectInstance magnetEmitter;
         public static SoundEffectInstance thrusterEmitter;
         public static SoundEffectInstance sideThrusterEmitter;
+
         public static SoundEffectInstance firstMusicInstance;
         public static SoundEffectInstance secondMusicInstance;
         public static SoundEffectInstance thirdMusicInstance;
+        public static SoundEffectInstance fourthMusicInstance;
+        public static SoundEffectInstance fifthMusicInstance;
+        public static SoundEffectInstance sixthMusicInstance;
+        public static SoundEffectInstance seventhMusicInstance;
 
         public static void PlaySound(SoundEffect soundEffect, int variance)
         {

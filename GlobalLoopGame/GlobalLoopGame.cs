@@ -243,6 +243,10 @@ namespace GlobalLoopGame
             GameSounds.musicIntensityOne = Content.Load<SoundEffect>("Sounds/Music/Song0");
             GameSounds.musicIntensityTwo = Content.Load<SoundEffect>("Sounds/Music/Song1");
             GameSounds.musicIntensityThree = Content.Load<SoundEffect>("Sounds/Music/Song2");
+            GameSounds.musicIntensityFour = Content.Load<SoundEffect>("Sounds/Music/Song3");
+            GameSounds.musicIntensityFive = Content.Load<SoundEffect>("Sounds/Music/Song4");
+            GameSounds.musicIntensitySix = Content.Load<SoundEffect>("Sounds/Music/Song5");
+            GameSounds.musicIntensitySeven = Content.Load<SoundEffect>("Sounds/Music/Song6");
 
             GameSounds.magnetEmitter = GameSounds.magnetSound.CreateInstance();
             GameSounds.magnetEmitter.IsLooped = true;
@@ -269,19 +273,29 @@ namespace GlobalLoopGame
             GameSounds.boostChargingEmitter.Pause();
 
             GameSounds.firstMusicInstance = GameSounds.musicIntensityOne.CreateInstance();
-            GameSounds.firstMusicInstance.IsLooped = true;
-            GameSounds.firstMusicInstance.Volume = 0f;
-            GameSounds.firstMusicInstance.Play();
-
             GameSounds.secondMusicInstance = GameSounds.musicIntensityTwo.CreateInstance();
-            GameSounds.secondMusicInstance.IsLooped = true;
-            GameSounds.secondMusicInstance.Volume = 0f;
-            GameSounds.secondMusicInstance.Play();
-
             GameSounds.thirdMusicInstance = GameSounds.musicIntensityThree.CreateInstance();
-            GameSounds.thirdMusicInstance.IsLooped = true;
-            GameSounds.thirdMusicInstance.Volume = 0f;
-            GameSounds.thirdMusicInstance.Play();
+            GameSounds.fourthMusicInstance = GameSounds.musicIntensityThree.CreateInstance();
+            GameSounds.fifthMusicInstance = GameSounds.musicIntensityThree.CreateInstance();
+            GameSounds.sixthMusicInstance = GameSounds.musicIntensityThree.CreateInstance();
+            GameSounds.seventhMusicInstance = GameSounds.musicIntensityThree.CreateInstance();
+            List<SoundEffectInstance> musicList = new List<SoundEffectInstance>
+            {
+                GameSounds.firstMusicInstance,
+                GameSounds.secondMusicInstance,
+                GameSounds.thirdMusicInstance,
+                GameSounds.fourthMusicInstance,
+                GameSounds.fifthMusicInstance,
+                GameSounds.sixthMusicInstance,
+                GameSounds.seventhMusicInstance,
+            };
+            
+            foreach (SoundEffectInstance song in musicList)
+            {
+                song.IsLooped = true;
+                song.Volume = 0f;
+                song.Play();
+            }
         }
 
         private void LoadSprites()
@@ -475,9 +489,9 @@ namespace GlobalLoopGame
             hierarchyUI.AddObject(pointsText);
 
             wavesText = new TextObject();
-            wavesText.Transform.GlobalPosition = new Vector2(56f, -60f);
+            wavesText.Transform.GlobalPosition = new Vector2(56f, -62f);
             wavesText.Color = Color.White;
-            wavesText.FontSize = 36;
+            wavesText.FontSize = 24;
             asteroidManager.WavesUpdated += (waveCount) =>
             {
                 if (waveCount > 1)
@@ -508,10 +522,10 @@ namespace GlobalLoopGame
             hierarchyMenu.AddObject(background);
 
             var gameTitle = new TextObject();
-            gameTitle.Transform.GlobalPosition = new Vector2(-25, 37);
+            gameTitle.Transform.GlobalPosition = new Vector2(-23, 37);
             gameTitle.Color = Color.White;
             gameTitle.FontSize = 128;
-            gameTitle.Text = "Gloop \nGame";
+            gameTitle.Text = "Planet\nGloop";
             hierarchyMenu.AddObject(gameTitle);
 
             var controlsText = new TextObject();
