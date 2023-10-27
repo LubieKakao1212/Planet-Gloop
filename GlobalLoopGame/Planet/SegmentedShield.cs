@@ -22,7 +22,11 @@ namespace GlobalLoopGame.Planet
         private int[] segmentHealth;
         private Fixture[] segments;
 
-        public int maxHealth { get; private set; }
+        public int MaxSegmentHealth { get; private set; }
+
+        public int TotalSegmentHealth => MaxSegmentHealth * segments.Length;
+
+        public int TotalHeaelthLeft => segmentHealth.Sum();
 
         private static Color[] healthColors = new Color[]
         {
@@ -45,7 +49,7 @@ namespace GlobalLoopGame.Planet
             display.Transform.LocalScale = new Vector2(radius * 3f);
             display.Parent = this;
 
-            maxHealth = healthPerSegment;
+            MaxSegmentHealth = healthPerSegment;
             segmentHealth = Enumerable.Repeat(healthPerSegment, segments).ToArray();
             this.segments = new Fixture[segments];
             
@@ -78,7 +82,7 @@ namespace GlobalLoopGame.Planet
         public void ModifySegment(int idx, int amount)
         {
             var health = segmentHealth[idx];
-            health = MathHelper.Clamp(health + amount, 0, maxHealth);
+            health = MathHelper.Clamp(health + amount, 0, MaxSegmentHealth);
             segmentHealth[idx] = health;
             UpdateSegment(idx);
         }
@@ -106,7 +110,7 @@ namespace GlobalLoopGame.Planet
         {
             for (int i = 0; i < segmentHealth.Length; i++)
             {
-                segmentHealth[i] = maxHealth;
+                segmentHealth[i] = MaxSegmentHealth;
                 UpdateSegment(i);
             }
         }

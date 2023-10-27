@@ -17,11 +17,15 @@ using nkast.Aether.Physics2D.Collision;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
 
-namespace GlobalLoopGame.Spaceship
+namespace GlobalLoopGame.Spaceship.Turret
 {
     public class TurretStation : PhysicsBodyObject, IDraggable, IResettable
     {
         public float RangeRadius { get; set; } = 32f;
+        public float CloseTargetRange { get; set; } = 16f;
+        
+        public float MinTargettingDistance { get; set; } = 5f
+
 
         public bool IsDestroyed => false;
 
@@ -64,7 +68,7 @@ namespace GlobalLoopGame.Spaceship
         protected int damage = 10;
         protected int shotIndex = 0;
 
-        protected float chargeTime; 
+        protected float chargeTime;
         protected float cooldown;
         protected bool onCooldown = false;
 
@@ -103,7 +107,7 @@ namespace GlobalLoopGame.Spaceship
             barrelBaseDrawable.Parent = barrelPivot;
             barrelDrawable.Parent = barrelPivot;
             barrelPivot.Parent = this;
-            
+
             this.asteroids = asteroids;
             this.cooldown = cooldown;
             this.chargeTime = chargeTime;
@@ -132,39 +136,19 @@ namespace GlobalLoopGame.Spaceship
         {
             willReload = false;
         }
-        
-        protected virtual AsteroidObject FindTarget()
+
+        protected virtual ITargettable FindTarget()
         {
-            AsteroidObject closest = null;
+            var world = PhysicsBody.World;
 
-            var closestDist = RangeRadius;
-
-            foreach (var asteroid in asteroids.asteroids)
+            /*var fitness = (target, disatnce) =>
             {
-                var delta = asteroid.Transform.GlobalPosition - Transform.GlobalPosition;
-                var distance = delta.Length();
-                if (distance < closestDist)
-                {
-                    bool lineOfSight = true;
-                    PhysicsBody.World.RayCast((fixture, point, normal, fraction) =>
-                    {
-                        if (fixture.CollisionCategories.HasFlag(CollisionCats.Planet) ||
-                            fixture.CollisionCategories.HasFlag(CollisionCats.Shield) )
-                        {
-                            lineOfSight = false;
-                            return 0f;
-                        }
-                        return 1f;
-                    }, Transform.GlobalPosition, asteroid.Transform.GlobalPosition);
-                    if (!lineOfSight)
-                        continue;
+                return ;
+            }*/
 
-                    closestDist = distance;
-                    closest = asteroid;
-                }
-            }
-
-            return closest;
+            ITargettable target = world.FindTargetPhysicsBased(Transform.GlobalPosition, CloseTargetRange, );
+            target ??= asteroids.FindTargetAsteroid(world, Transform.GlobalPosition, RangeRadius, (target, distance) => target.Health);
+            return target;
         }
 
         protected virtual BulletObject CreateProjectile(Vector2 dir, Vector2 spawnPos)
@@ -185,7 +169,7 @@ namespace GlobalLoopGame.Spaceship
             dir = PredictAim(Transform.GlobalPosition, GetBulletSpeed(), target.Transform.GlobalPosition, target.PhysicsBody.LinearVelocity, dist);
 
             predictedTargetDirection = dir;
-            barrelPivot.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;          
+            barrelPivot.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
         }
 
         public override void Update(GameTime time)
@@ -221,7 +205,8 @@ namespace GlobalLoopGame.Spaceship
                         onCooldown = false;
                     }
                 }
-            }else
+            }
+            else
             {
                 chargeTimer.Retrieve(float.PositiveInfinity);
             }
@@ -260,7 +245,7 @@ namespace GlobalLoopGame.Spaceship
             Transform.LocalPosition = startingPosition;
 
             startingRotation = Transform.LocalRotation;
-    }
+        }
 
         public TurretStation SetSprites(Sprite[] sprites, Vector2[] sizes, Vector2 pivot)
         {
@@ -282,7 +267,7 @@ namespace GlobalLoopGame.Spaceship
 
             return this;
         }
-        
+
         public void OnBecomeDragged(IDragger dragger)
         {
             canShoot = false;
@@ -291,7 +276,7 @@ namespace GlobalLoopGame.Spaceship
 
             pickupInstance.Volume = 0.5f;
 
-            pickupInstance.Pitch = (float)Random.Shared.Next(-10, 10) * 1f / 10f;
+            pickupInstance.Pitch = Random.Shared.Next(-10, 10) * 1f / 10f;
 
             pickupInstance.Play();
 
@@ -316,7 +301,7 @@ namespace GlobalLoopGame.Spaceship
                 spaceship.magnetObject.Transform.LocalPosition = new Vector2(0f, 17f) / GameSprites.pixelsPerUnit;
             }
         }
-        
+
         public void OnBecomeDropped(IDragger dragger)
         {
             canShoot = true;
@@ -325,14 +310,14 @@ namespace GlobalLoopGame.Spaceship
 
             dropInstance.Volume = 0.5f;
 
-            dropInstance.Pitch = (float)Random.Shared.Next(-10, 10) * 1f / 10f;
+            dropInstance.Pitch = Random.Shared.Next(-10, 10) * 1f / 10f;
 
             dropInstance.Play();
 
             GameSounds.magnetEmitter.Pause();
 
             UpdateSprite(0);
-            
+
             grabbed = false;
 
             turretBaseDrawable.Color = Color.White;

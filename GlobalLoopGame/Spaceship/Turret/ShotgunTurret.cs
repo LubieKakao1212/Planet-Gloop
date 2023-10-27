@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GlobalLoopGame.Spaceship
+namespace GlobalLoopGame.Spaceship.Turret
 {
     public class ShotgunTurret : TurretStation
     {

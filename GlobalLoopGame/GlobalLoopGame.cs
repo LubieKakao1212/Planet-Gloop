@@ -21,6 +21,7 @@ using Microsoft.Xna.Framework.Audio;
 using MonoEngine.Input.Binding;
 using nkast.Aether.Physics2D.Diagnostics;
 using GlobalLoopGame.Globals;
+using GlobalLoopGame.Spaceship.Turret;
 
 namespace GlobalLoopGame
 {

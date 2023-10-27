@@ -12,6 +12,8 @@ using System.Runtime.Serialization.Formatters;
 using MonoEngine.Math;
 using GlobalLoopGame.Spaceship.Item;
 using GlobalLoopGame.Globals;
+using Util;
+using GlobalLoopGame.Planet;
 
 namespace GlobalLoopGame.Asteroid
 {
@@ -20,6 +22,8 @@ namespace GlobalLoopGame.Asteroid
         private World _world;
 
         private Hierarchy _hierarchy;
+
+        private SegmentedShield _planetShield;
 
         public event Action<int> PointsUpdated;
         public event Action<int> WavesUpdated;
@@ -80,11 +84,12 @@ namespace GlobalLoopGame.Asteroid
 
         SequentialAutoTimeMachine waveMachine;
 
-        public AsteroidManager(World world, Hierarchy hierarchy)
+        public AsteroidManager(World world, Hierarchy hierarchy, PlanetObject planet)
         {
             _world = world;
-
+            
             _hierarchy = hierarchy;
+            this._planetShield = planet.Shield;
         }
 
         public void CreateAsteroid(AsteroidPlacement placement)
@@ -168,42 +173,64 @@ namespace GlobalLoopGame.Asteroid
                 ModifyDifficulty(1);
             }
 
-            SpawnPowerup();
+            SpawnPowerups();
 
             SetInterval(10, 7);
         }
 
-        private void SpawnPowerup()
+        private void SpawnPowerups()
         {
-            var rand = Random.Shared;
+            var shieldHpMissing = _planetShield.TotalSegmentHealth - _planetShield.TotalHeaelthLeft;
+
+            var rolls = shieldHpMissing / 2;
+            rolls = MathHelper.Min(rolls, maxRechargeRolls);
+
+            for (int i = 0; i < rolls; i++)
+            {
+                if (shieldRechargeRandom.GetRandom())
+                {
+                    Console.WriteLine($"Spawning Recharge");
+                    SpawnShieldRecharge();
+                }
+            }
+        }
+
+        /*private void SpawnPowerup()
+        {
             if (rand.NextSingle() < 0.5f)
             {
                 Console.WriteLine("Spawning powerup");
-                var spawnAngle = rand.NextSingle() * MathHelper.TwoPi;
-                var spawnDir = new Vector2(MathF.Cos(spawnAngle), MathF.Sin(spawnAngle));
-
-                var spawnPos = spawnDir * GlobalLoopGame.MapRadius;
-
-                var r = rand.NextSingle() * 2f - 1f;
-                var minAngle = MathHelper.PiOver4 / 2f;
-                var maxAngle = MathHelper.PiOver4;
-                var spawnVel = -spawnDir * Matrix2x2.Rotation((maxAngle - minAngle) * r + minAngle * MathF.Sign(r));
-
-                var spawnSpeed = 3f;
-                spawnVel *= spawnSpeed;
-
-                var powerup = new RepairCharge(_world);
-                powerup.Transform.LocalPosition = spawnPos;
-                powerup.PhysicsBody.LinearVelocity = spawnVel;
-
-                r = rand.NextSingle() * 2f - 1f;
-                var minAngVel = 5f;
-                var maxAngVel = 10f;
-                var angVel = (maxAngVel - minAngVel) * r + minAngle * MathF.Sign(r);
-
-                powerup.PhysicsBody.AngularVelocity = angVel;
-                _hierarchy.AddObject(powerup);
             }
+        }*/
+
+        public void SpawnShieldRecharge()
+        {
+            var rand = Random.Shared;
+
+            var spawnAngle = rand.NextSingle() * MathHelper.TwoPi;
+            var spawnDir = new Vector2(MathF.Cos(spawnAngle), MathF.Sin(spawnAngle));
+
+            var spawnPos = spawnDir * GlobalLoopGame.MapRadius;
+
+            var r = rand.NextSingle() * 2f - 1f;
+            var minAngle = MathHelper.PiOver4 / 2f;
+            var maxAngle = MathHelper.PiOver4;
+            var spawnVel = -spawnDir * Matrix2x2.Rotation((maxAngle - minAngle) * r + minAngle * MathF.Sign(r));
+
+            var spawnSpeed = 3f;
+            spawnVel *= spawnSpeed;
+
+            var powerup = new RepairCharge(_world);
+            powerup.Transform.LocalPosition = spawnPos;
+            powerup.PhysicsBody.LinearVelocity = spawnVel;
+
+            r = rand.NextSingle() * 2f - 1f;
+            var minAngVel = 5f;
+            var maxAngVel = 10f;
+            var angVel = (maxAngVel - minAngVel) * r + minAngle * MathF.Sign(r);
+
+            powerup.PhysicsBody.AngularVelocity = angVel;
+            _hierarchy.AddObject(powerup);
         }
 
         public void ModifyDifficulty(int difficultyModification)
@@ -809,5 +836,22 @@ namespace GlobalLoopGame.Asteroid
                 305f
             })
         };
+
+        private int maxRechargeRolls = 5;
+
+        //17 false, 3 true
+        private BucketRandom<bool> shieldRechargeRandom = new BucketRandom<bool>(Random.Shared, 
+            false, false, false, false, false,
+            false, false, false, false, false,
+            false, false, false, false, false,
+            false, false, true , true , true 
+            );
     }
+
+    /*public enum PowerupTye 
+    { 
+        None = 0,
+        ShieldCharge = 1,
+    }*/
+
 }
