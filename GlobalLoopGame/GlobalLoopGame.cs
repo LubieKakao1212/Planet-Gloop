@@ -423,11 +423,20 @@ namespace GlobalLoopGame
             gameEnded = true;
 
             //Create initial scene here
-            DrawableObject backgroundObject = new DrawableObject(new Color(0.1f, 0.1f, 0.3f, 0.25f), -2f);
+            /*DrawableObject backgroundObject = new DrawableObject(new Color(0.1f, 0.1f, 0.3f, 0.25f), -2f);
             hierarchyGame.AddObject(backgroundObject);
             backgroundObject.Sprite = GameSprites.SpaceBackground;
             backgroundObject.Transform.GlobalPosition = new Vector2(0, 0);
-            backgroundObject.Transform.LocalScale = new Vector2(150, 150);
+            backgroundObject.Transform.LocalScale = new Vector2(150, 150);*/
+
+            var background = new DrawableObject(Color.White * 0.3f, -3f); //new Color(19, 18, 51)
+            background.Sprite = GameSprites.SpaceBackgroundUpdated;
+            background.Transform.LocalScale = new Vector2(136f * 1.5f);
+            //background.Transform.LocalRotation = -1f;
+            hierarchyGame.AddObject(background);
+
+            var animatedBackground = new StarryBackground(Color.Transparent, 0.5f, GameSprites.DiamondStar, -2f, 180, 5f, 0.5f);
+            hierarchyGame.AddObject(animatedBackground);
 
             Planet = new PlanetObject(world, renderPipeline);
             hierarchyGame.AddObject(Planet);
@@ -543,7 +552,7 @@ namespace GlobalLoopGame
             //background.Transform.LocalRotation = -1f;
             hierarchyMenu.AddObject(background);
 
-            var starryBackground = new StarryBackground(Color.Transparent, 0f, 180, 5f, 1);
+            var starryBackground = new StarryBackground(Color.Transparent, 1f, GameSprites.DiamondStar, 0f, 180, 5f, 1);
             hierarchyMenu.AddObject(starryBackground);
 
             var gameTitle = new TextObject();
