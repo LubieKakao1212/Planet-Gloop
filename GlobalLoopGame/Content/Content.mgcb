@@ -476,6 +476,30 @@
 /processorParam:Quality=Best
 /build:Sounds/Music/Song2.wav
 
+#begin Sounds/Music/Song3.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Music/Song3.wav
+
+#begin Sounds/Music/Song4.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Music/Song4.wav
+
+#begin Sounds/Music/Song5.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Music/Song5.wav
+
+#begin Sounds/Music/Song6.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Music/Song6.wav
+
 #begin Sounds/Pickup.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

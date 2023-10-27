@@ -237,13 +237,25 @@ namespace GlobalLoopGame.Asteroid
 
             switch (Difficulty)
             {
+                //case 0:
+                //    MusicManager.SetIntensity(0);
+                //    break;
+                //case 5:
+                //    MusicManager.SetIntensity(1);
+                //    break;
+                //case 7:
+                //    MusicManager.SetIntensity(2);
+                //    break;
+                //default:
+                //    break;
+
                 case 0:
                     MusicManager.SetIntensity(0);
                     break;
-                case 4:
+                case 1:
                     MusicManager.SetIntensity(1);
                     break;
-                case 8:
+                case 2:
                     MusicManager.SetIntensity(2);
                     break;
                 default:
