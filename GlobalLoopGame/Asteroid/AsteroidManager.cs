@@ -211,8 +211,8 @@ namespace GlobalLoopGame.Asteroid
             var spawnPos = spawnDir * (GlobalLoopGame.MapRadius + 4f);
 
             var r = rand.NextSingle() * 2f - 1f;
-            var minAngle = MathHelper.PiOver4 / 2f;
-            var maxAngle = MathHelper.PiOver4;
+            var minAngle = 10f * MathF.PI / 180f;
+            var maxAngle = 30f * MathF.PI / 180f;
             var spawnVel = -spawnDir * Matrix2x2.Rotation((maxAngle - minAngle) * r + minAngle * MathF.Sign(r));
 
             var spawnSpeed = 3f;
