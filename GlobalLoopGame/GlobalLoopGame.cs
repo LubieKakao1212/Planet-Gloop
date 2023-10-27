@@ -304,6 +304,7 @@ namespace GlobalLoopGame
             GameSprites.Circle = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("CircleTex"), new Rectangle(0, 0, 256, 256))[0];
             GameSprites.SmoothCircle = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_5"), new Rectangle(0, 0, 32, 32))[0];
             GameSprites.DiamondStar = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Star_4"), new Rectangle(0, 0, 32, 32))[0];
+            GameSprites.StarCookie = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_4"), new Rectangle(0, 0, 32, 32))[0];
 
             GameSprites.Planet = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PlanetTex"), new Rectangle(0, 0, 128, 128))[0];
 
