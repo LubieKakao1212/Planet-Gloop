@@ -237,7 +237,7 @@ namespace GlobalLoopGame.Asteroid
 
         public static void ModifyDifficulty(int difficultyModification)
         {
-            Difficulty = MathHelper.Clamp(Difficulty + difficultyModification, 0, 10);
+            Difficulty = MathHelper.Clamp(Difficulty + difficultyModification, 0, 11);
 
             switch (Difficulty)
             {
@@ -253,14 +253,43 @@ namespace GlobalLoopGame.Asteroid
                 //default:
                 //    break;
 
-                case 0:
+                case 1:
                     MusicManager.SetIntensity(0);
                     break;
-                case 1:
+                case 2:
                     MusicManager.SetIntensity(1);
                     break;
-                case 2:
+                case 3:
                     MusicManager.SetIntensity(2);
+                    break;
+                case 4:
+                    MusicManager.SetIntensity(3);
+                    break;
+                case 5:
+                    MusicManager.SetIntensity(4);
+                    break;
+                case 6:
+                    MusicManager.SetIntensity(5);
+                    break;
+                case 7:
+                    MusicManager.SetIntensity(6);
+                    break;
+                case 8:
+                    MusicManager.SetIntensity(7);
+                    break;
+                case 9:
+                    MusicManager.SetIntensity(8);
+                    break;
+                case 10:
+                    MusicManager.SetIntensity(9);
+
+                    break;
+                case 11:
+                    MusicManager.SetIntensity(10);
+                    
+                    break;
+                case 12:
+                    MusicManager.SetIntensity(11);
                     break;
                 default:
                     break;
@@ -334,14 +363,15 @@ namespace GlobalLoopGame.Asteroid
 
         public void Reset()
         {
+            Console.WriteLine("Reset game");
             active = true;
-
+            //ModifyDifficulty(10);
             Difficulty = 0;
             WaveNumber = 0;
             Points = 0;
 
             SetInterval(3, 3);
-
+            
             waveMachine = new SequentialAutoTimeMachine(
                 (() => SelectWaveAndPlaceWarning(Difficulty), this.waveWarningTime),
                 (() => SpawnAsteroidsInPlacement(this.selectedWave), this.waveInterval)

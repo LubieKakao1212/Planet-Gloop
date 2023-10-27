@@ -477,6 +477,18 @@
 /processorParam:Quality=Best
 /build:Sounds/Music/Song1.wav
 
+#begin Sounds/Music/Song10.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Music/Song10.wav
+
+#begin Sounds/Music/Song11.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Music/Song11.wav
+
 #begin Sounds/Music/Song2.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -506,6 +518,24 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/Music/Song6.wav
+
+#begin Sounds/Music/Song7.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Music/Song7.wav
+
+#begin Sounds/Music/Song8.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Music/Song8.wav
+
+#begin Sounds/Music/Song9.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Music/Song9.wav
 
 #begin Sounds/Pickup.wav
 /importer:WavImporter

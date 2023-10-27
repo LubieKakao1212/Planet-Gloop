@@ -41,13 +41,18 @@ namespace GlobalLoopGame.Globals
         public static SoundEffect chargePickup;
         public static SoundEffect chargeAlert;
 
-        public static SoundEffect musicIntensityOne;
-        public static SoundEffect musicIntensityTwo;
-        public static SoundEffect musicIntensityThree;
-        public static SoundEffect musicIntensityFour;
-        public static SoundEffect musicIntensityFive;
-        public static SoundEffect musicIntensitySix;
-        public static SoundEffect musicIntensitySeven;
+        public static SoundEffect musicIntensity1;
+        public static SoundEffect musicIntensity2;
+        public static SoundEffect musicIntensity3;
+        public static SoundEffect musicIntensity4;
+        public static SoundEffect musicIntensity5;
+        public static SoundEffect musicIntensity6;
+        public static SoundEffect musicIntensity7;
+        public static SoundEffect musicIntensity8;
+        public static SoundEffect musicIntensity9;
+        public static SoundEffect musicIntensity10;
+        public static SoundEffect musicIntensity11;
+        public static SoundEffect musicIntensity12;
 
         public static SoundEffectInstance boostEmitter;
         public static SoundEffectInstance boostChargingEmitter;
@@ -55,13 +60,18 @@ namespace GlobalLoopGame.Globals
         public static SoundEffectInstance thrusterEmitter;
         public static SoundEffectInstance sideThrusterEmitter;
 
-        public static SoundEffectInstance firstMusicInstance;
-        public static SoundEffectInstance secondMusicInstance;
-        public static SoundEffectInstance thirdMusicInstance;
-        public static SoundEffectInstance fourthMusicInstance;
-        public static SoundEffectInstance fifthMusicInstance;
-        public static SoundEffectInstance sixthMusicInstance;
-        public static SoundEffectInstance seventhMusicInstance;
+        public static SoundEffectInstance MusicInstance1;
+        public static SoundEffectInstance MusicInstance2;
+        public static SoundEffectInstance MusicInstance3;
+        public static SoundEffectInstance MusicInstance4;
+        public static SoundEffectInstance MusicInstance5;
+        public static SoundEffectInstance MusicInstance6;
+        public static SoundEffectInstance MusicInstance7;
+        public static SoundEffectInstance MusicInstance8;
+        public static SoundEffectInstance MusicInstance9;
+        public static SoundEffectInstance MusicInstance10;
+        public static SoundEffectInstance MusicInstance11;
+        public static SoundEffectInstance MusicInstance12;
 
         public static void PlaySound(SoundEffect soundEffect, int variance)
         {
