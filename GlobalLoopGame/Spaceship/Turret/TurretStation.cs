@@ -72,7 +72,6 @@ namespace GlobalLoopGame.Spaceship.Turret
         protected ITargettable target;
 
         protected float barrelOffset;
-        /* protected AsteroidObject target;*/
 
         protected Vector2 predictedTargetDirection;
 

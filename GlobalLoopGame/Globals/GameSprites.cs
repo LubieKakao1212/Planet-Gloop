@@ -9,7 +9,14 @@ namespace GlobalLoopGame.Globals
     {
         public static Sprite NullSprite;
         public static Sprite Circle;
-        public static Sprite TestGradient;
+        public static Sprite SmoothCircle;
+        public static Sprite DiamondStar;
+        public static Sprite LightCookie_1;
+        public static Sprite LightCookie_2;
+        public static Sprite LightCookie_3;
+        public static Sprite LightCookie_4;
+        public static Sprite LightCookie_5;
+        public static Sprite LightCookie_6;
         public static Sprite Planet;
         public static Sprite SpaceshipBody;
         public static Sprite[] SpaceshipThrusterFrames;
@@ -37,6 +44,7 @@ namespace GlobalLoopGame.Globals
         public static Sprite SpaceBackground;
         public static Sprite MenuBackground;
         public static Sprite CircleOverlay;
+        public static Sprite SpaceBackgroundUpdated;
 
         public static Vector2 PlanetSize;
         public static Vector2 SpaceshipBodySize;

@@ -224,7 +224,10 @@ namespace GlobalLoopGame
             }
             else
             {
-                GraphicsDevice.Clear(Color.Gold);
+                //GraphicsDevice.Clear(new Color(19, 18, 51));
+                //GraphicsDevice.Clear(new Color(12, 11, 33));
+                GraphicsDevice.Clear(new Color(15, 15, 15));
+                //GraphicsDevice.Clear(Color.Black);
                 renderPipeline.RenderScene(hierarchyMenu, uiCamera);
                 textRenderer.DrawAllText(hierarchyMenu, GameSprites.Font, uiCamera);
                 if (gameEnded && enterKeyEnteredCounter == 0)
@@ -319,7 +322,13 @@ namespace GlobalLoopGame
             white.SetData(new Color[] { Color.White });
             GameSprites.NullSprite = spriteAtlas.AddTextureRects(white, new Rectangle(0, 0, 1, 1))[0];
             GameSprites.Circle = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("CircleTex"), new Rectangle(0, 0, 256, 256))[0];
-            GameSprites.TestGradient = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("testGradient"), new Rectangle(0, 0, 2, 2))[0];
+            GameSprites.DiamondStar = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Star_4"), new Rectangle(0, 0, 32, 32))[0];
+            GameSprites.LightCookie_1 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_0"), new Rectangle(0, 0, 32, 32))[0];
+            GameSprites.LightCookie_2 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_3"), new Rectangle(0, 0, 32, 32))[0];
+            GameSprites.LightCookie_3 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_4"), new Rectangle(0, 0, 32, 32))[0];
+            GameSprites.LightCookie_4 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_5"), new Rectangle(0, 0, 32, 32))[0];
+            GameSprites.LightCookie_5 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_15"), new Rectangle(0, 0, 32, 32))[0];
+            GameSprites.LightCookie_6 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_16"), new Rectangle(0, 0, 32, 32))[0];
 
             GameSprites.Planet = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PlanetTex"), new Rectangle(0, 0, 128, 128))[0];
 
@@ -365,6 +374,9 @@ namespace GlobalLoopGame
 
             GameSprites.SpaceBackground = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SpaceBackdrop800x800"),
                 new Rectangle(0, 0, 800, 800))[0];
+
+            GameSprites.SpaceBackgroundUpdated = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("spacebackgroundupdated"),
+                new Rectangle(0, 0, 1000, 1000))[0];
 
             GameSprites.Warning = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("IncomingWarning"),
                 new Rectangle(65, 8, 32, 32))[0];
@@ -432,11 +444,20 @@ namespace GlobalLoopGame
             gameEnded = true;
 
             //Create initial scene here
-            DrawableObject backgroundObject = new DrawableObject(new Color(0.1f, 0.1f, 0.3f, 0.25f), -2f);
+            /*DrawableObject backgroundObject = new DrawableObject(new Color(0.1f, 0.1f, 0.3f, 0.25f), -2f);
             hierarchyGame.AddObject(backgroundObject);
             backgroundObject.Sprite = GameSprites.SpaceBackground;
             backgroundObject.Transform.GlobalPosition = new Vector2(0, 0);
-            backgroundObject.Transform.LocalScale = new Vector2(150, 150);
+            backgroundObject.Transform.LocalScale = new Vector2(150, 150);*/
+
+            var background = new DrawableObject(Color.White * 0.3f, -3f); //new Color(19, 18, 51)
+            background.Sprite = GameSprites.SpaceBackgroundUpdated;
+            background.Transform.LocalScale = new Vector2(136f * 1.5f);
+            //background.Transform.LocalRotation = -1f;
+            hierarchyGame.AddObject(background);
+
+            var animatedBackground = new StarryBackground(Color.Transparent, 0.5f, GameSprites.DiamondStar, -2f, 180, 5f, 0.5f);
+            hierarchyGame.AddObject(animatedBackground);
 
             Planet = new PlanetObject(world, renderPipeline);
             hierarchyGame.AddObject(Planet);
@@ -567,13 +588,14 @@ namespace GlobalLoopGame
         {
             hierarchyMenu = new Hierarchy();
 
-            var background = new DrawableObject(new Color(19, 18, 51), -1f);
-            background.Sprite = GameSprites.NullSprite;
-            background.Transform.LocalScale = new Vector2(136f * 2);
-            background.Transform.LocalRotation = -1f;
+            //original menu
+            var background = new DrawableObject(Color.White * 0.3f, -1f); //new Color(19, 18, 51)
+            background.Sprite = GameSprites.SpaceBackgroundUpdated;
+            background.Transform.LocalScale = new Vector2(136f * 1.5f);
+            //background.Transform.LocalRotation = -1f;
             hierarchyMenu.AddObject(background);
 
-            var starryBackground = new StarryBackground(Color.Transparent, 0f, 180, 1.4f);
+            var starryBackground = new StarryBackground(Color.Transparent, 1f, GameSprites.DiamondStar, 0f, 180, 5f, 1);
             hierarchyMenu.AddObject(starryBackground);
 
             var gameTitle = new TextObject();
