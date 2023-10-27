@@ -207,7 +207,10 @@ namespace GlobalLoopGame
             }
             else
             {
-                GraphicsDevice.Clear(Color.Gold);
+                //GraphicsDevice.Clear(new Color(19, 18, 51));
+                //GraphicsDevice.Clear(new Color(12, 11, 33));
+                GraphicsDevice.Clear(new Color(15, 15, 15));
+                //GraphicsDevice.Clear(Color.Black);
                 renderPipeline.RenderScene(hierarchyMenu, uiCamera);
                 textRenderer.DrawAllText(hierarchyMenu, GameSprites.Font, uiCamera);
                 if (gameEnded && enterKeyEnteredCounter == 0)
@@ -354,6 +357,9 @@ namespace GlobalLoopGame
 
             GameSprites.SpaceBackground = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SpaceBackdrop800x800"),
                 new Rectangle(0, 0, 800, 800))[0];
+
+            GameSprites.SpaceBackgroundUpdated = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("spacebackgroundupdated"),
+                new Rectangle(0, 0, 1000, 1000))[0];
 
             GameSprites.Warning = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("IncomingWarning"),
                 new Rectangle(65, 8, 32, 32))[0];
@@ -531,10 +537,10 @@ namespace GlobalLoopGame
         {
             hierarchyMenu = new Hierarchy();
 
-            var background = new DrawableObject(new Color(19, 18, 51), -1f);
-            background.Sprite = GameSprites.NullSprite;
-            background.Transform.LocalScale = new Vector2(136f * 2);
-            background.Transform.LocalRotation = -1f;
+            var background = new DrawableObject(Color.White * 0.3f, -1f); //new Color(19, 18, 51)
+            background.Sprite = GameSprites.SpaceBackgroundUpdated;
+            background.Transform.LocalScale = new Vector2(136f * 1.5f);
+            //background.Transform.LocalRotation = -1f;
             hierarchyMenu.AddObject(background);
 
             var starryBackground = new StarryBackground(Color.Transparent, 0f, 180, 5f, 1);

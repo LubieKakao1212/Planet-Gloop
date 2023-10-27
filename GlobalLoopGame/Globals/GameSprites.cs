@@ -44,6 +44,7 @@ namespace GlobalLoopGame.Globals
         public static Sprite SpaceBackground;
         public static Sprite MenuBackground;
         public static Sprite CircleOverlay;
+        public static Sprite SpaceBackgroundUpdated;
 
         public static Vector2 PlanetSize;
         public static Vector2 SpaceshipBodySize;
