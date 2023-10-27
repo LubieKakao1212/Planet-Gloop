@@ -649,7 +649,7 @@ namespace GlobalLoopGame
             hierarchyMenu.AddObject(gameTitle);
 
             var controlsText = new TextObject();
-            controlsText.Transform.GlobalPosition = new Vector2(-8, -47);
+            controlsText.Transform.GlobalPosition = new Vector2(-8, -37);
             controlsText.Color = Color.White;
             controlsText.FontSize = 24;
             controlsText.Text = "Controls:\n" +
@@ -658,13 +658,21 @@ namespace GlobalLoopGame
                 "shift - boost spaceship\n" +
                 "spacebar - drag turret & display turret range\n" +
                 "esc - pause game\n" +
-                "x - exit game";
+                "x - exit game\n\n";
             hierarchyMenu.AddObject(controlsText);
+
+            var footnote = new TextObject();
+            footnote.Transform.GlobalPosition = new Vector2(-12, -60);
+            footnote.Color = new Color(120, 120, 120);
+            footnote.FontSize = 24;
+            footnote.Text = "Made with C# and Monogame in 5 days\n" +
+                "for Spelkollektivet Halloween Gamejam 2023";
+            hierarchyMenu.AddObject(footnote);
 
             hierarchyPressEnter = new Hierarchy();
 
             var pressEnterText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.25f);
-            pressEnterText.Transform.GlobalPosition = new Vector2(-12, 0);
+            pressEnterText.Transform.GlobalPosition = new Vector2(0, 8);
             pressEnterText.Color = Color.White;
             pressEnterText.FontSize = 48;
             pressEnterText.Text = "Press [Enter] to play";
@@ -673,7 +681,7 @@ namespace GlobalLoopGame
             hierarchyPaused = new Hierarchy();
 
             var gamePausedText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.8f);
-            gamePausedText.Transform.GlobalPosition = new Vector2(-25, 0);
+            gamePausedText.Transform.GlobalPosition = new Vector2(0, 8);
             gamePausedText.Color = Color.White;
             gamePausedText.FontSize = 48;
             gamePausedText.Text = "[Game Paused]";
