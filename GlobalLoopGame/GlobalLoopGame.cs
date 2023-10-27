@@ -477,7 +477,7 @@ namespace GlobalLoopGame
             //background.Transform.LocalRotation = -1f;
             hierarchyGame.AddObject(background);
 
-            var animatedBackground = new StarryBackground(Color.Transparent, 0.5f, GameSprites.DiamondStar, -2f, 180, 5f, 0.5f);
+            var animatedBackground = new StarryBackground(Color.Transparent, 0.5f, GameSprites.DiamondStar, -2f, 180, 6f, 0.5f);
             hierarchyGame.AddObject(animatedBackground);
 
             Planet = new PlanetObject(world, renderPipeline);
@@ -638,7 +638,7 @@ namespace GlobalLoopGame
             //background.Transform.LocalRotation = -1f;
             hierarchyMenu.AddObject(background);
 
-            var starryBackground = new StarryBackground(Color.Transparent, 1f, GameSprites.DiamondStar, 0f, 180, 5f, 1);
+            var starryBackground = new StarryBackground(Color.Transparent, 1f, GameSprites.DiamondStar, 0f, 180, 6f, 1);
             hierarchyMenu.AddObject(starryBackground);
 
             var gameTitle = new TextObject();
