@@ -333,7 +333,7 @@ namespace GlobalLoopGame
             white.SetData(new Color[] { Color.White });
             GameSprites.NullSprite = spriteAtlas.AddTextureRects(white, new Rectangle(0, 0, 1, 1))[0];
             GameSprites.Circle = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("CircleTex"), new Rectangle(0, 0, 256, 256))[0];
-            GameSprites.TestGradient = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("testGradient"), new Rectangle(0, 0, 2, 2))[0];
+            //GameSprites.TestGradient = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("testGradient"), new Rectangle(0, 0, 2, 2))[0];
 
             GameSprites.Planet = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PlanetTex"), new Rectangle(0, 0, 128, 128))[0];
 
