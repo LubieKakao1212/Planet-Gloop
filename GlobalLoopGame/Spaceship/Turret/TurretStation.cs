@@ -73,8 +73,6 @@ namespace GlobalLoopGame.Spaceship.Turret
 
         protected float barrelOffset;
 
-        protected AsteroidObject target;
-
         protected Vector2 predictedTargetDirection;
 
         public TurretStation(World world, AsteroidManager asteroids, RenderPipeline renderer, float cooldown = 0.125f, float chargeTime = 0f) : base(null)
