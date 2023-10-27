@@ -464,24 +464,36 @@ namespace GlobalLoopGame
             hierarchyUI.AddObject(boost);
 
             pointsText = new TextObject();
-            pointsText.Transform.GlobalPosition = new Vector2(60, 60f);
+            pointsText.Transform.GlobalPosition = new Vector2(60f, 60f);
             pointsText.Color = Color.White;
             pointsText.FontSize = 36;
             asteroidManager.PointsUpdated += (pointCount) =>
             {
                 if (asteroidManager.WaveNumber > 1)
                     pointsText.Text = $"{pointCount / 100}";
+
+                // Try to align text so that it doesn't overflow off screen
+                if (pointsText != null && !string.IsNullOrEmpty(pointsText.Text))
+                {
+                    pointsText.Transform.GlobalPosition = new Vector2(61f - pointsText.Text.Length, 60f);
+                }
             };
             hierarchyUI.AddObject(pointsText);
 
             wavesText = new TextObject();
-            wavesText.Transform.GlobalPosition = new Vector2(56f, -60f);
+            wavesText.Transform.GlobalPosition = new Vector2(56f, -62f);
             wavesText.Color = Color.White;
-            wavesText.FontSize = 36;
+            wavesText.FontSize = 24;
             asteroidManager.WavesUpdated += (waveCount) =>
             {
                 if (waveCount > 1)
                     wavesText.Text = $"Wave {waveCount - 1}";
+
+                // Try to align text so that it doesn't overflow off screen
+                if (wavesText != null && !string.IsNullOrEmpty(wavesText.Text))
+                {
+                    wavesText.Transform.GlobalPosition = new Vector2(62f - wavesText.Text.Length, -62f);
+                }
             };
             hierarchyUI.AddObject(wavesText);
 
@@ -508,10 +520,10 @@ namespace GlobalLoopGame
             hierarchyMenu.AddObject(background);
 
             var gameTitle = new TextObject();
-            gameTitle.Transform.GlobalPosition = new Vector2(-25, 37);
+            gameTitle.Transform.GlobalPosition = new Vector2(-23, 37);
             gameTitle.Color = Color.White;
             gameTitle.FontSize = 128;
-            gameTitle.Text = "Gloop \nGame";
+            gameTitle.Text = "Planet\nGloop";
             hierarchyMenu.AddObject(gameTitle);
 
             var controlsText = new TextObject();
