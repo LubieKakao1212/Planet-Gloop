@@ -619,10 +619,10 @@ namespace GlobalLoopGame
             hierarchyMenu.AddObject(starryBackground);
 
             var gameTitle = new TextObject();
-            gameTitle.Transform.GlobalPosition = new Vector2(-23, 37);
+            gameTitle.Transform.GlobalPosition = new Vector2(2, 37);
             gameTitle.Color = Color.White;
             gameTitle.FontSize = 128;
-            gameTitle.Text = "Planet\nGloop";
+            gameTitle.Text = "Planet Gloop";
             hierarchyMenu.AddObject(gameTitle);
 
             var controlsText = new TextObject();
