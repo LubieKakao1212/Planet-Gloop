@@ -182,7 +182,7 @@ namespace GlobalLoopGame.Asteroid
 
             var rolls = (1 + shieldHpMissing) / 2;
             rolls = MathHelper.Min(rolls, maxRechargeRolls);
-            rolls = 20;
+            //rolls = 20;
 
             for (int i = 0; i < rolls; i++)
             {
@@ -931,7 +931,7 @@ namespace GlobalLoopGame.Asteroid
             false, false, false, false, false,
             false, false, false, false, false,
             false, false, false, false, false,
-            false, false, true , true , true 
+            true, true, true , true , true 
             );
     }
 
