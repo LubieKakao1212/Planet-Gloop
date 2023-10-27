@@ -20,9 +20,18 @@ namespace GlobalLoopGame.Spaceship
 
         public DrawableObject magnetObject;
 
+        public event Action<float> BoostUpdated;
+
         public PhysicsBodyObject ThisObject => this;
         public float BoostLeft { get; private set; }
-        public float DisplayedBoost { get => (BoostLeft / maxBoost); }
+        public float DisplayedBoost
+        {
+            get
+            {
+                BoostUpdated?.Invoke(BoostLeft);
+                return (BoostLeft / maxBoost);
+            }
+        }
 
         private bool movable = false;
 
