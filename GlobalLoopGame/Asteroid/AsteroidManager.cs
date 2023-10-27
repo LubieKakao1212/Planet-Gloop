@@ -468,8 +468,6 @@ namespace GlobalLoopGame.Asteroid
 
                 // Console.WriteLine($"placing asteroids at {randTheta}");
 
-                placementThetas.Add(randTheta);
-
                 //float randTheta = placementThetas[Random.Shared.Next(0, placementThetas.Count)];
 
                 int thetaVariance = difficulty * 10;
@@ -496,9 +494,14 @@ namespace GlobalLoopGame.Asteroid
 
                     placementToAdd.size = Vector2.One * size;
 
-                    float speed = MathHelper.Clamp(16f - (size / 1.5f) + (float)(Random.Shared.Next(-10, 10) * 1f / 10f), 5, 11);
+                    float speed = MathHelper.Clamp(16f - (size / 1.5f), 5, 10);
 
                     placementToAdd.speed = speed;
+
+                    if (!placementThetas.Contains(randTheta))
+                    {
+                        placementThetas.Add(randTheta);
+                    }
 
                     asteroidPlacements.Add(placementToAdd);
 
@@ -524,12 +527,17 @@ namespace GlobalLoopGame.Asteroid
 
                     placementToAdd.size = Vector2.One * size;
 
-                    float speed = MathHelper.Clamp(16f - (size / 1.5f) + (float)(Random.Shared.Next(-10, 10) * 1f / 10f), 5, 11);
+                    float speed = MathHelper.Clamp(16f - (size / 1.5f), 5, 10);
 
                     placementToAdd.speed = speed;
 
                     // Add another asteroid to the current wave
                     asteroidPlacements.Add(placementToAdd);
+
+                    if (!placementThetas.Contains(randTheta))
+                    {
+                        placementThetas.Add(randTheta);
+                    }
 
                     Console.WriteLine($"adding asteroid with {health} health");
                 }

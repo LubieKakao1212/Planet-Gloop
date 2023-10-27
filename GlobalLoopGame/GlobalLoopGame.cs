@@ -346,7 +346,7 @@ namespace GlobalLoopGame
             {
                 song.IsLooped = true;
                 song.Volume = 0f;
-                song.Pause();
+                song.Play();
             }
         }
 
