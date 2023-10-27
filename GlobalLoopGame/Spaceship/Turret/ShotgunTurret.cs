@@ -37,7 +37,7 @@ namespace GlobalLoopGame.Spaceship.Turret
 
         protected override BulletObject CreateBullet(Vector2 dir, Vector2 pos, float speed)
         {
-            return base.CreateBullet(dir, pos, speed).SetLifetime(0.5f).SetDamage(damage).SetColor(new Color(255, 200, 20) * 0.75f);
+            return base.CreateBullet(dir, pos, speed).SetLifetime(0.5f).SetDamage(damage).SetColor(Color.Orange * 0.75f);
         }
 
         protected override float GetBulletSpeed()

@@ -24,11 +24,11 @@ namespace GlobalLoopGame.Spaceship.Turret
         public float RangeRadius { get; set; } = 32f;
         public float CloseTargetRange { get; set; } = 16f;
 
-        public float MinTargettingDistance { get; set; } = 5f;
+        public float MinTargettingDistance { get; set; } = 7.5f;
 
         public bool IsDestroyed => false;
 
-        private const int meshResolution = 4095;
+        private const int meshResolution = 1024;//4095;
 
         protected TimeMachine chargeTimer = new TimeMachine();
         protected TimeMachine cooldownTimer = new TimeMachine();
@@ -178,6 +178,7 @@ namespace GlobalLoopGame.Spaceship.Turret
 
         public override void Update(GameTime time)
         {
+            GlobalLoopGame.Profiler.Push(GetType().Name);
             float dt = (float)time.ElapsedGameTime.TotalSeconds;
             if (canShoot)
             {
@@ -226,7 +227,11 @@ namespace GlobalLoopGame.Spaceship.Turret
 
             grabTimer = MathHelper.Clamp(grabTimer, 0f, 1f);
 
-            UpdateRangeMesh(grabTimer * RangeRadius);
+            if (grabTimer > 0f)
+            {
+                UpdateRangeMesh(grabTimer * RangeRadius);
+            }
+
 
             if (barrelOffset < 0.001f)
             {
@@ -239,14 +244,14 @@ namespace GlobalLoopGame.Spaceship.Turret
 
             barrelBaseDrawable.Transform.LocalPosition = new Vector2(0, -barrelOffset);
             barrelDrawable.Transform.LocalPosition = new Vector2(0, -barrelOffset);
-
-            UpdateRangeMesh(RangeRadius * grabTimer);
-
+            
             popupDescription.Transform.GlobalPosition = Transform.GlobalPosition + Vector2.UnitY * 10f;
             popupDescription.Transform.GlobalRotation = 0;
             popupDescription.Color = Color.Lerp(Color.White, Color.Transparent, 1f - Math.Min(grabTimer * 3f, 1f));
 
             base.Update(time);
+            
+            GlobalLoopGame.Profiler.Pop(GetType().Name);
         }
 
         private void UpdateRangeMesh(float factor)

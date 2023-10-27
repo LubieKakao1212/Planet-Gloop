@@ -4,11 +4,8 @@ using nkast.Aether.Physics2D.Dynamics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MonoEngine.Util;
 using GlobalLoopGame.Audio;
-using System.Runtime.Serialization.Formatters;
 using MonoEngine.Math;
 using GlobalLoopGame.Spaceship.Item;
 using GlobalLoopGame.Globals;
@@ -183,7 +180,7 @@ namespace GlobalLoopGame.Asteroid
         {
             var shieldHpMissing = _planetShield.TotalSegmentHealth - _planetShield.TotalHeaelthLeft;
 
-            var rolls = shieldHpMissing / 2;
+            var rolls = (1 + shieldHpMissing) / 2;
             rolls = MathHelper.Min(rolls, maxRechargeRolls);
 
             for (int i = 0; i < rolls; i++)
@@ -211,7 +208,7 @@ namespace GlobalLoopGame.Asteroid
             var spawnAngle = rand.NextSingle() * MathHelper.TwoPi;
             var spawnDir = new Vector2(MathF.Cos(spawnAngle), MathF.Sin(spawnAngle));
 
-            var spawnPos = spawnDir * GlobalLoopGame.MapRadius;
+            var spawnPos = spawnDir * (GlobalLoopGame.MapRadius + 4f);
 
             var r = rand.NextSingle() * 2f - 1f;
             var minAngle = MathHelper.PiOver4 / 2f;
