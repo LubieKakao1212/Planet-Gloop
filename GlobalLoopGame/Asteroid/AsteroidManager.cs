@@ -182,7 +182,7 @@ namespace GlobalLoopGame.Asteroid
         {
             var shieldHpMissing = _planetShield.TotalSegmentHealth - _planetShield.TotalHeaelthLeft;
 
-            var rolls = shieldHpMissing / 2;
+            var rolls = (1 + shieldHpMissing) / 2;
             rolls = MathHelper.Min(rolls, maxRechargeRolls);
 
             for (int i = 0; i < rolls; i++)

@@ -36,6 +36,8 @@ namespace GlobalLoopGame.Planet
             Color.Cyan
         };
 
+        private HashSet<Body> hitBy = new HashSet<Body>();
+
         public SegmentedShield(World world, RenderPipeline renderer, int segments, float radius, float arcAngle, int healthPerSegment) : base(null)
         {
             var body = world.CreateBody(bodyType: BodyType.Kinematic);
@@ -65,8 +67,9 @@ namespace GlobalLoopGame.Planet
                 var i1 = i;
                 fixture.OnCollision += (thisFixture, otherFixture, contact) =>
                 {
-                    if (otherFixture.CollisionCategories.HasFlag(CollisionCats.Asteroids))
+                    if (otherFixture.CollisionCategories.HasFlag(CollisionCats.Asteroids) && !hitBy.Contains(otherFixture.Body))
                     {
+                        hitBy.Add(otherFixture.Body);
                         ModifySegment(i1, -1);
                     }
                     return true;
@@ -99,6 +102,11 @@ namespace GlobalLoopGame.Planet
                 segments[idx].CollidesWith = CollisionCats.CollisionsShield;
             }
             display.SetSegmentColor(idx, healthColors[MathHelper.Min(health, healthColors.Length)]);
+        }
+
+        public override void Update(GameTime time)
+        {
+            hitBy.Clear();
         }
 
         public void OnGameEnd()

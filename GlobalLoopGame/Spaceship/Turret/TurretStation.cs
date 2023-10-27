@@ -24,7 +24,7 @@ namespace GlobalLoopGame.Spaceship.Turret
         public float RangeRadius { get; set; } = 32f;
         public float CloseTargetRange { get; set; } = 16f;
 
-        public float MinTargettingDistance { get; set; } = 5f;
+        public float MinTargettingDistance { get; set; } = 7.5f;
 
         public bool IsDestroyed => false;
 
