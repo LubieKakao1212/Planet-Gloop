@@ -302,7 +302,8 @@ namespace GlobalLoopGame
             white.SetData(new Color[] { Color.White });
             GameSprites.NullSprite = spriteAtlas.AddTextureRects(white, new Rectangle(0, 0, 1, 1))[0];
             GameSprites.Circle = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("CircleTex"), new Rectangle(0, 0, 256, 256))[0];
-            GameSprites.TestGradient = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("testGradient"), new Rectangle(0, 0, 2, 2))[0];
+            GameSprites.SmoothCircle = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_5"), new Rectangle(0, 0, 32, 32))[0];
+            GameSprites.DiamondStar = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Star_4"), new Rectangle(0, 0, 32, 32))[0];
 
             GameSprites.Planet = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PlanetTex"), new Rectangle(0, 0, 128, 128))[0];
 
@@ -519,7 +520,7 @@ namespace GlobalLoopGame
             background.Transform.LocalRotation = -1f;
             hierarchyMenu.AddObject(background);
 
-            var starryBackground = new StarryBackground(Color.Transparent, 0f, 180, 1.4f);
+            var starryBackground = new StarryBackground(Color.Transparent, 0f, 180, 5f, 1);
             hierarchyMenu.AddObject(starryBackground);
 
             var gameTitle = new TextObject();
