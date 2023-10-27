@@ -36,7 +36,7 @@ namespace GlobalLoopGame.Spaceship.Item
                 {
                     var segmentIdx = (int)otherBody.Tag;
                     var shield = (SegmentedShield)otherBody.Body.Tag;
-                    if (shield.GetSegmentHealth(segmentIdx) < shield.maxHealth)
+                    if (shield.GetSegmentHealth(segmentIdx) < shield.MaxSegmentHealth)
                     {
                         shield.ModifySegment(segmentIdx, 1);
                         Despawn();
