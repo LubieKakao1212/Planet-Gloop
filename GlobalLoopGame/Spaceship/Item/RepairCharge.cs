@@ -54,9 +54,16 @@ namespace GlobalLoopGame.Spaceship.Item
 
         public void OnBecomeDropped(IDragger dragger)
         {
+            SpaceshipObject spaceship = dragger.ThisObject as SpaceshipObject;
+
+            if (spaceship != null)
+            {
+                spaceship.magnetPivot.Transform.LocalRotation = MathHelper.ToRadians(180f);
+            }
+
             this.dragger = null;
         }
-        
+
         private void Despawn()
         {
             isAlive = false;

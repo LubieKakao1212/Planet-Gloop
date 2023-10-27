@@ -68,6 +68,8 @@ namespace GlobalLoopGame.Spaceship
         protected float cooldown;
         protected bool onCooldown = false;
 
+        protected float barrelOffset;
+
         protected AsteroidObject target;
 
         protected Vector2 predictedTargetDirection;
@@ -124,6 +126,8 @@ namespace GlobalLoopGame.Spaceship
             {
                 CurrentScene.AddObject(CreateProjectile(predictedTargetDirection, spawnPos));
             }
+
+            barrelOffset = 2f;
 
             willReload = true;
         }
@@ -236,6 +240,18 @@ namespace GlobalLoopGame.Spaceship
             }
 
             grabTimer = MathHelper.Clamp(grabTimer, 0f, 1f);
+
+            if (barrelOffset < 0.001f)
+            {
+                barrelOffset = 0f;
+            }
+            else
+            {
+                barrelOffset = barrelOffset + MathF.Sign(-barrelOffset) * (float)time.ElapsedGameTime.TotalSeconds * 8;
+            }
+
+            barrelBaseDrawable.Transform.LocalPosition = new Vector2(0, -barrelOffset);
+            barrelDrawable.Transform.LocalPosition = new Vector2(0, -barrelOffset);
 
             UpdateRangeMesh(RangeRadius * grabTimer);
 
