@@ -546,6 +546,7 @@ namespace GlobalLoopGame
         {
             hierarchyMenu = new Hierarchy();
 
+            //original menu
             var background = new DrawableObject(Color.White * 0.3f, -1f); //new Color(19, 18, 51)
             background.Sprite = GameSprites.SpaceBackgroundUpdated;
             background.Transform.LocalScale = new Vector2(136f * 1.5f);
