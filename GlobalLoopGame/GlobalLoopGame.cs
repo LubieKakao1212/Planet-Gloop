@@ -314,6 +314,9 @@ namespace GlobalLoopGame
             GameSprites.LightCookie_5 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_15"), new Rectangle(0, 0, 32, 32))[0];
             GameSprites.LightCookie_6 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_16"), new Rectangle(0, 0, 32, 32))[0];
 
+            GameSprites.Noise_1 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PerlinNoise02"), new Rectangle(0, 0, 1024, 1024))[0];
+            GameSprites.Noise_2 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SmallWaves"), new Rectangle(0, 0, 128, 128))[0];
+
             GameSprites.Planet = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PlanetTex"), new Rectangle(0, 0, 128, 128))[0];
 
             var spaceshipTextures = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SpaceshipTex"),
@@ -552,10 +555,16 @@ namespace GlobalLoopGame
             hierarchyMenu = new Hierarchy();
 
             var background = new DrawableObject(new Color(19, 18, 51), -1f); //new Color(19, 18, 51)
-            //background.Sprite = GameSprites.SpaceBackgroundUpdated;
+            background.Sprite = GameSprites.NullSprite;
             background.Transform.LocalScale = new Vector2(136f * 2.5f);
             //background.Transform.LocalRotation = -1f;
             hierarchyMenu.AddObject(background);
+
+            var texture = new DrawableObject(Color.White * 0.7f, 0f);
+            texture.Sprite = GameSprites.Noise_1;
+            texture.Transform.LocalScale = new Vector2(136f * 2.5f);
+            hierarchyMenu.AddObject(texture);
+
 
             var starryBackground = new StarryBackground(Color.Transparent, 1f, GameSprites.DiamondStar, 0f, 180, 10f, 1.5f);
             hierarchyMenu.AddObject(starryBackground);
