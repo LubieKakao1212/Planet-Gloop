@@ -20,9 +20,18 @@ namespace GlobalLoopGame.Spaceship
 
         public DrawableObject magnetObject;
 
+        public event Action<float> BoostUpdated;
+
         public PhysicsBodyObject ThisObject => this;
         public float BoostLeft { get; private set; }
-        public float DisplayedBoost { get => (BoostLeft / maxBoost); }
+        public float DisplayedBoost
+        {
+            get
+            {
+                BoostUpdated?.Invoke(BoostLeft);
+                return (BoostLeft / maxBoost);
+            }
+        }
 
         private bool movable = false;
 
@@ -224,7 +233,7 @@ namespace GlobalLoopGame.Spaceship
 
                     magnetPivot.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
 
-                    if (dir.Length() > 5)
+                    if (dir.Length() > 4)
                     {
                         magnetObject.Color = Color.White;
                     }
