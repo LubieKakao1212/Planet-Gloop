@@ -25,7 +25,7 @@ namespace GlobalLoopGame.Globals
         public static readonly Category CollisionsShield = Asteroids | Bullets | RepairCharge;
         public static readonly Category CollisionsShieldDestroyed = RepairCharge;
         public static readonly Category CollisionsBullets = Asteroids | Planet | SupplyBox;
-        public static readonly Category CollisionsRepairCharge = Shield | Spaceship | RepairCharge | SupplyBox;
+        public static readonly Category CollisionsRepairCharge = Shield | Spaceship;// | RepairCharge | SupplyBox;
         public static readonly Category CollisionsSupplyBox = Spaceship | RepairCharge | SupplyBox | Bullets | Planet;
 
         public static readonly Category TurretTargets = Asteroids | SupplyBox;
