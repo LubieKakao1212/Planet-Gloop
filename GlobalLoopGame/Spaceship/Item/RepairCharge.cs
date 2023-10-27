@@ -62,6 +62,8 @@ namespace GlobalLoopGame.Spaceship.Item
         {
             this.dragger = dragger;
 
+            GameSounds.PlaySound(GameSounds.chargePickup, 2);
+
             circle.Color = new Color(0.85f, 0.25f, 0.25f, 1.0f);
         }
 

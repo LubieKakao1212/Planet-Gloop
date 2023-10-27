@@ -356,18 +356,6 @@
 /processorParam:TextureFormat=Color
 /build:NewTurretMount1Cannonstyle.png
 
-#begin PerlinNoise02.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:PerlinNoise02.png
-
 #begin Planet128x128.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -391,18 +379,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:ShotgunTurret1.png;ShotgunTex.png
-
-#begin SmallWaves.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:SmallWaves.png
 
 #begin SniperTurret1.png
 /importer:TextureImporter
@@ -463,6 +439,24 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/DropTurret.wav
+
+#begin Sounds/DropTurret.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/DropTurret.wav
+
+#begin Sounds/EnergyAlert.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/EnergyAlert.wav
+
+#begin Sounds/EnergyPickup.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/EnergyPickup.wav
 
 #begin Sounds/Magnet.wav
 /importer:WavImporter
@@ -541,6 +535,24 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/RegularShot.wav
+
+#begin Sounds/ShieldDestroy.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/ShieldDestroy.wav
+
+#begin Sounds/ShieldHeal.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/ShieldHeal.wav
+
+#begin Sounds/ShieldHurt.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/ShieldHurt.wav
 
 #begin Sounds/ShotgunReload.wav
 /importer:WavImporter
@@ -631,18 +643,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Spaceship.png;SpaceshipTex.png
-
-#begin testGradient.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:testGradient.png
 
 #begin TurretMount1Cannonstyle.png
 /importer:TextureImporter

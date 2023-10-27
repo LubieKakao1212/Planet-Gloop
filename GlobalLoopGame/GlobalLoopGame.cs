@@ -270,6 +270,13 @@ namespace GlobalLoopGame
             GameSounds.shotSounds[2] = Content.Load<SoundEffect>("Sounds/SniperShot");
             GameSounds.shotgunReloadSound = Content.Load<SoundEffect>("Sounds/ShotgunReload");
 
+            GameSounds.shieldHurt = Content.Load<SoundEffect>("Sounds/ShieldHurt"); 
+            GameSounds.shieldHeal = Content.Load<SoundEffect>("Sounds/ShieldHeal"); 
+            GameSounds.shieldDestroy = Content.Load<SoundEffect>("Sounds/ShieldDestroy");
+
+            GameSounds.chargePickup = Content.Load<SoundEffect>("Sounds/EnergyPickup");
+            GameSounds.chargeAlert = Content.Load<SoundEffect>("Sounds/EnergyAlert");
+
             GameSounds.musicIntensityOne = Content.Load<SoundEffect>("Sounds/Music/Song0");
             GameSounds.musicIntensityTwo = Content.Load<SoundEffect>("Sounds/Music/Song1");
             GameSounds.musicIntensityThree = Content.Load<SoundEffect>("Sounds/Music/Song2");
@@ -343,10 +350,6 @@ namespace GlobalLoopGame
             GameSprites.LightCookie_4 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_5"), new Rectangle(0, 0, 32, 32))[0];
             GameSprites.LightCookie_5 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_15"), new Rectangle(0, 0, 32, 32))[0];
             GameSprites.LightCookie_6 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_16"), new Rectangle(0, 0, 32, 32))[0];
-
-            //GameSprites.Noise_1 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PerlinNoise02"), new Rectangle(0, 0, 1024, 1024))[0];
-            //GameSprites.Noise_2 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SmallWaves"), new Rectangle(0, 0, 128, 128))[0];
-
             GameSprites.Planet = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PlanetTex"), new Rectangle(0, 0, 128, 128))[0];
 
             var spaceshipTextures = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SpaceshipTex"),
@@ -604,52 +607,6 @@ namespace GlobalLoopGame
         private void CreateMenuScene()
         {
             hierarchyMenu = new Hierarchy();
-
-            /*var background = new DrawableObject(new Color(19, 18, 51), -1f); //new Color(19, 18, 51)
-            background.Sprite = GameSprites.NullSprite;
-            background.Transform.LocalScale = new Vector2(136f);
-            //background.Transform.LocalRotation = -1f;
-            hierarchyMenu.AddObject(background);*/
-            
-            /*var texture = new DrawableObject(Color.White * 0.2f, 0f);
-            texture.Sprite = GameSprites.Noise_1;
-            texture.Transform.LocalScale = new Vector2(136f);
-            hierarchyMenu.AddObject(texture);*/
-
-            /*var atlas = new DrawableObject(Color.White, 1000f);
-            atlas.Sprite = new Sprite();
-            atlas.Sprite.TextureRect = new MonoEngine.Math.BoundingRect(Vector2.Zero, Vector2.One);
-            atlas.Sprite.TextureIndex = 0;
-            atlas.Transform.GlobalPosition = new Vector2(0f, 0f);
-            atlas.Transform.LocalScale = Vector2.One * 128f;
-            hierarchyMenu.AddObject(atlas);*/
-
-            /*var texture1 = new DrawableObject(Color.Purple * 0.15f, 0.1f);
-            texture1.Sprite = GameSprites.Noise_1;
-            texture1.Transform.LocalScale = new Vector2(136f);
-            texture1.Transform.LocalPosition = new Vector2(-136, -136);
-            hierarchyMenu.AddObject(texture1);
-
-            var texture2 = new DrawableObject(Color.Purple * 0.15f, 0.1f);
-            texture2.Sprite = GameSprites.Noise_1;
-            texture2.Transform.LocalScale = new Vector2(136f);
-            texture2.Transform.LocalPosition = new Vector2(136, -136);
-            hierarchyMenu.AddObject(texture2);
-
-            var texture3 = new DrawableObject(Color.Purple * 0.15f, 0.1f);
-            texture3.Sprite = GameSprites.Noise_1;
-            texture3.Transform.LocalScale = new Vector2(136f);
-            texture3.Transform.LocalPosition = new Vector2(136, 136);
-            hierarchyMenu.AddObject(texture3);
-
-            var texture4 = new DrawableObject(Color.Purple * 0.15f, 0.1f);
-            texture4.Sprite = GameSprites.Noise_1;
-            texture4.Transform.LocalScale = new Vector2(136f);
-            texture4.Transform.LocalPosition = new Vector2(-136, 136);
-            hierarchyMenu.AddObject(texture4);*/
-
-            /*var starryBackground = new StarryBackground(Color.Transparent, 1f, GameSprites.DiamondStar, 0f, 180, 10f, 1.5f);
-            hierarchyMenu.AddObject(starryBackground);*/
 
             //original menu
             var background = new DrawableObject(Color.White * 0.3f, -1f); //new Color(19, 18, 51)

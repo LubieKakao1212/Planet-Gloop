@@ -12,14 +12,10 @@ namespace MonoEngine.Util
             var targetX = destinationRect.X;
             var targetY = destinationRect.Y;
 
-            var z = targetX / arrayWidth;
-
             for (int y = 0; y < h; y++)
             {
                 var sourceIdx = y * w;
-                //TODO This is a dirty fix
-                //var destinationIdx = (targetY + y) * arrayWidth + targetX;
-                var destinationIdx = (targetY + y + (z*arrayWidth)) * arrayWidth + targetX;
+                var destinationIdx = (targetY + y) * arrayWidth + targetX;
                 var sourceSpan = new Span<T>(source, sourceIdx, w);
                 var destinationSpan = new Span<T>(destinationArray, destinationIdx, w);
 

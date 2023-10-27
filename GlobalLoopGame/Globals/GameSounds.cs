@@ -34,6 +34,13 @@ namespace GlobalLoopGame.Globals
         public static SoundEffect[] shotSounds = new SoundEffect[3];
         public static SoundEffect shotgunReloadSound;
 
+        public static SoundEffect shieldHurt;
+        public static SoundEffect shieldHeal;
+        public static SoundEffect shieldDestroy;
+
+        public static SoundEffect chargePickup;
+        public static SoundEffect chargeAlert;
+
         public static SoundEffect musicIntensityOne;
         public static SoundEffect musicIntensityTwo;
         public static SoundEffect musicIntensityThree;
