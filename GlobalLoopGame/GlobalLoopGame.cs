@@ -393,7 +393,7 @@ namespace GlobalLoopGame
             GameSprites.Health = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("HealthTex"),
                 new Rectangle(0, 0, 32, 32))[0];
 
-            GameSprites.CircleOverlay = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("circleoverlay"),
+            GameSprites.CircleOverlay = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("nebulacolor"),
                 new Rectangle(0, 0, 726,726))[0];
 
             GameSprites.RepairCharge = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("ChargeTex"),
