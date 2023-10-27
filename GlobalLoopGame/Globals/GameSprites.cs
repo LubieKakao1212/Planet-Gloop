@@ -9,6 +9,7 @@ namespace GlobalLoopGame.Globals
     {
         public static Sprite NullSprite;
         public static Sprite Circle;
+        public static Sprite TestGradient;
         public static Sprite Planet;
         public static Sprite SpaceshipBody;
         public static Sprite[] SpaceshipThrusterFrames;

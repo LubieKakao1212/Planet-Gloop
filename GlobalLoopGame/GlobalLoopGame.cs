@@ -43,6 +43,7 @@ namespace GlobalLoopGame
         private Hierarchy hierarchyGameOver;
         private Hierarchy hierarchyPressEnter;
         private Hierarchy hierarchyPaused;
+        private Hierarchy hierarchyStarrySky;
 
         private InputManager inputManager;
 
@@ -206,7 +207,7 @@ namespace GlobalLoopGame
             }
             else
             {
-                GraphicsDevice.Clear(Color.DarkGoldenrod);
+                GraphicsDevice.Clear(Color.Gold);
                 renderPipeline.RenderScene(hierarchyMenu, uiCamera);
                 textRenderer.DrawAllText(hierarchyMenu, GameSprites.Font, uiCamera);
                 if (gameEnded && enterKeyEnteredCounter == 0)
@@ -301,6 +302,7 @@ namespace GlobalLoopGame
             white.SetData(new Color[] { Color.White });
             GameSprites.NullSprite = spriteAtlas.AddTextureRects(white, new Rectangle(0, 0, 1, 1))[0];
             GameSprites.Circle = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("CircleTex"), new Rectangle(0, 0, 256, 256))[0];
+            GameSprites.TestGradient = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("testGradient"), new Rectangle(0, 0, 2, 2))[0];
 
             GameSprites.Planet = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PlanetTex"), new Rectangle(0, 0, 128, 128))[0];
 
@@ -511,10 +513,14 @@ namespace GlobalLoopGame
         {
             hierarchyMenu = new Hierarchy();
 
-            var background = new DrawableObject(Color.White, 1f);
-            background.Sprite = GameSprites.SpaceBackground;
-            background.Transform.LocalScale = new Vector2(136f, 136f);
+            var background = new DrawableObject(new Color(19, 18, 51), -1f);
+            background.Sprite = GameSprites.NullSprite;
+            background.Transform.LocalScale = new Vector2(136f * 2);
+            background.Transform.LocalRotation = -1f;
             hierarchyMenu.AddObject(background);
+
+            var starryBackground = new StarryBackground(Color.Transparent, 0f, 180, 1.4f);
+            hierarchyMenu.AddObject(starryBackground);
 
             var gameTitle = new TextObject();
             gameTitle.Transform.GlobalPosition = new Vector2(-25, 37);
