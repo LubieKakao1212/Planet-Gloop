@@ -16,7 +16,7 @@ namespace GlobalLoopGame.Spaceship.Turret
             RangeRadius = 72f;
             damage = 200;
             shotIndex = 2;
-            MinTargettingDistance = 24f;
+            MinTargettingDistance = 18f;
             UpdateText();
         }
 

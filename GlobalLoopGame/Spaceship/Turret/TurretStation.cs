@@ -23,7 +23,6 @@ namespace GlobalLoopGame.Spaceship.Turret
     {
         public float RangeRadius { get; set; } = 32f;
         public float CloseTargetRange { get; set; } = 16f;
-
         public float MinTargettingDistance { get; set; } = 7.5f;
 
         public bool IsDestroyed => false;
@@ -103,7 +102,6 @@ namespace GlobalLoopGame.Spaceship.Turret
 
             innerRangeDisplay = MeshObject.CreateNew(renderer, Vertex2DPosition.VertexDeclaration, new Vertex2DPosition[meshResolution * 2], new int[meshResolution * 6], Color.White, -10f, GameEffects.CustomRed, GameEffects.DSS);
             innerRangeDisplay.Parent = this;
-
 
             barrelPivot = new HierarchyObject();
             barrelPivot.Transform.LocalScale = Vector2.One;
