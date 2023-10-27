@@ -344,8 +344,8 @@ namespace GlobalLoopGame
             GameSprites.LightCookie_5 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_15"), new Rectangle(0, 0, 32, 32))[0];
             GameSprites.LightCookie_6 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_16"), new Rectangle(0, 0, 32, 32))[0];
 
-            GameSprites.Noise_1 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PerlinNoise02"), new Rectangle(0, 0, 1024, 1024))[0];
-            GameSprites.Noise_2 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SmallWaves"), new Rectangle(0, 0, 128, 128))[0];
+            //GameSprites.Noise_1 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PerlinNoise02"), new Rectangle(0, 0, 1024, 1024))[0];
+            //GameSprites.Noise_2 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SmallWaves"), new Rectangle(0, 0, 128, 128))[0];
 
             GameSprites.Planet = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PlanetTex"), new Rectangle(0, 0, 128, 128))[0];
 
@@ -584,24 +584,24 @@ namespace GlobalLoopGame
         {
             hierarchyMenu = new Hierarchy();
 
-            var background = new DrawableObject(new Color(19, 18, 51), -1f); //new Color(19, 18, 51)
+            /*var background = new DrawableObject(new Color(19, 18, 51), -1f); //new Color(19, 18, 51)
             background.Sprite = GameSprites.NullSprite;
             background.Transform.LocalScale = new Vector2(136f);
             //background.Transform.LocalRotation = -1f;
-            hierarchyMenu.AddObject(background);
+            hierarchyMenu.AddObject(background);*/
             
-            var texture = new DrawableObject(Color.White * 0.2f, 0f);
+            /*var texture = new DrawableObject(Color.White * 0.2f, 0f);
             texture.Sprite = GameSprites.Noise_1;
             texture.Transform.LocalScale = new Vector2(136f);
-            hierarchyMenu.AddObject(texture);
+            hierarchyMenu.AddObject(texture);*/
 
-            var atlas = new DrawableObject(Color.White, 1000f);
+            /*var atlas = new DrawableObject(Color.White, 1000f);
             atlas.Sprite = new Sprite();
             atlas.Sprite.TextureRect = new MonoEngine.Math.BoundingRect(Vector2.Zero, Vector2.One);
             atlas.Sprite.TextureIndex = 0;
             atlas.Transform.GlobalPosition = new Vector2(0f, 0f);
             atlas.Transform.LocalScale = Vector2.One * 128f;
-            hierarchyMenu.AddObject(atlas);
+            hierarchyMenu.AddObject(atlas);*/
 
             /*var texture1 = new DrawableObject(Color.Purple * 0.15f, 0.1f);
             texture1.Sprite = GameSprites.Noise_1;
@@ -627,11 +627,11 @@ namespace GlobalLoopGame
             texture4.Transform.LocalPosition = new Vector2(-136, 136);
             hierarchyMenu.AddObject(texture4);*/
 
-            var starryBackground = new StarryBackground(Color.Transparent, 1f, GameSprites.DiamondStar, 0f, 180, 10f, 1.5f);
-            hierarchyMenu.AddObject(starryBackground);
+            /*var starryBackground = new StarryBackground(Color.Transparent, 1f, GameSprites.DiamondStar, 0f, 180, 10f, 1.5f);
+            hierarchyMenu.AddObject(starryBackground);*/
 
             //original menu
-           /* var background = new DrawableObject(Color.White * 0.3f, -1f); //new Color(19, 18, 51)
+            var background = new DrawableObject(Color.White * 0.3f, -1f); //new Color(19, 18, 51)
             background.Sprite = GameSprites.SpaceBackgroundUpdated;
             background.Transform.LocalScale = new Vector2(136f * 1.5f);
             //background.Transform.LocalRotation = -1f;
@@ -658,25 +658,25 @@ namespace GlobalLoopGame
                 "spacebar - drag turret & display turret range\n" +
                 "esc - pause game\n" +
                 "x - exit game";
-            hierarchyMenu.AddObject(controlsText);*/
+            hierarchyMenu.AddObject(controlsText);
 
             hierarchyPressEnter = new Hierarchy();
 
-            /*var pressEnterText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.25f);
+            var pressEnterText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.25f);
             pressEnterText.Transform.GlobalPosition = new Vector2(-12, 0);
             pressEnterText.Color = Color.White;
             pressEnterText.FontSize = 48;
             pressEnterText.Text = "Press [Enter] to play";
-            hierarchyPressEnter.AddObject(pressEnterText);*/
+            hierarchyPressEnter.AddObject(pressEnterText);
 
             hierarchyPaused = new Hierarchy();
 
-            /*var gamePausedText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.8f);
+            var gamePausedText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.8f);
             gamePausedText.Transform.GlobalPosition = new Vector2(-25, 0);
             gamePausedText.Color = Color.White;
             gamePausedText.FontSize = 48;
             gamePausedText.Text = "[Game Paused]";
-            hierarchyPaused.AddObject(gamePausedText);*/
+            hierarchyPaused.AddObject(gamePausedText);
         }
 
         private void CreateGameOverScene()
