@@ -273,6 +273,10 @@ namespace GlobalLoopGame
             GameSounds.musicIntensityOne = Content.Load<SoundEffect>("Sounds/Music/Song0");
             GameSounds.musicIntensityTwo = Content.Load<SoundEffect>("Sounds/Music/Song1");
             GameSounds.musicIntensityThree = Content.Load<SoundEffect>("Sounds/Music/Song2");
+            GameSounds.musicIntensityFour = Content.Load<SoundEffect>("Sounds/Music/Song3");
+            GameSounds.musicIntensityFive = Content.Load<SoundEffect>("Sounds/Music/Song4");
+            GameSounds.musicIntensitySix = Content.Load<SoundEffect>("Sounds/Music/Song5");
+            GameSounds.musicIntensitySeven = Content.Load<SoundEffect>("Sounds/Music/Song6");
 
             GameSounds.magnetEmitter = GameSounds.magnetSound.CreateInstance();
             GameSounds.magnetEmitter.IsLooped = true;
@@ -299,19 +303,29 @@ namespace GlobalLoopGame
             GameSounds.boostChargingEmitter.Pause();
 
             GameSounds.firstMusicInstance = GameSounds.musicIntensityOne.CreateInstance();
-            GameSounds.firstMusicInstance.IsLooped = true;
-            GameSounds.firstMusicInstance.Volume = 0f;
-            GameSounds.firstMusicInstance.Play();
-
             GameSounds.secondMusicInstance = GameSounds.musicIntensityTwo.CreateInstance();
-            GameSounds.secondMusicInstance.IsLooped = true;
-            GameSounds.secondMusicInstance.Volume = 0f;
-            GameSounds.secondMusicInstance.Play();
-
             GameSounds.thirdMusicInstance = GameSounds.musicIntensityThree.CreateInstance();
-            GameSounds.thirdMusicInstance.IsLooped = true;
-            GameSounds.thirdMusicInstance.Volume = 0f;
-            GameSounds.thirdMusicInstance.Play();
+            GameSounds.fourthMusicInstance = GameSounds.musicIntensityThree.CreateInstance();
+            GameSounds.fifthMusicInstance = GameSounds.musicIntensityThree.CreateInstance();
+            GameSounds.sixthMusicInstance = GameSounds.musicIntensityThree.CreateInstance();
+            GameSounds.seventhMusicInstance = GameSounds.musicIntensityThree.CreateInstance();
+            List<SoundEffectInstance> musicList = new List<SoundEffectInstance>
+            {
+                GameSounds.firstMusicInstance,
+                GameSounds.secondMusicInstance,
+                GameSounds.thirdMusicInstance,
+                GameSounds.fourthMusicInstance,
+                GameSounds.fifthMusicInstance,
+                GameSounds.sixthMusicInstance,
+                GameSounds.seventhMusicInstance,
+            };
+            
+            foreach (SoundEffectInstance song in musicList)
+            {
+                song.IsLooped = true;
+                song.Volume = 0f;
+                song.Play();
+            }
         }
 
         private void LoadSprites()

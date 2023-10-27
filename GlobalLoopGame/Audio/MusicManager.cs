@@ -54,9 +54,24 @@ namespace GlobalLoopGame.Audio
 
         public void UpdateMusic()
         {
-            GameSounds.firstMusicInstance.Volume = MathF.Sqrt(MathHelper.Clamp(1f - intensity, 0f, 1f));
-            GameSounds.secondMusicInstance.Volume = MathF.Sqrt(1f - MathF.Abs(1f - intensity));
-            GameSounds.thirdMusicInstance.Volume = MathF.Sqrt(MathHelper.Clamp(intensity - 1f, 0f, 1f));
+            
+            GameSounds.firstMusicInstance.Volume   = MathF.Sqrt(MathHelper.Clamp(1f - intensity, 0f, 1f));
+            GameSounds.secondMusicInstance.Volume  = MathF.Sqrt(1f - MathF.Abs(1f - intensity));
+            GameSounds.thirdMusicInstance.Volume   = MathF.Sqrt(1f - MathF.Abs(1f - intensity));
+            GameSounds.fourthMusicInstance.Volume  = MathF.Sqrt(1f - MathF.Abs(1f - intensity));
+            GameSounds.fifthMusicInstance.Volume   = MathF.Sqrt(1f - MathF.Abs(1f - intensity));
+            GameSounds.sixthMusicInstance.Volume   = MathF.Sqrt(1f - MathF.Abs(1f - intensity));
+            GameSounds.seventhMusicInstance.Volume = MathF.Sqrt(1f - MathF.Abs(1f - intensity));
+
+            //GameSounds.thirdMusicInstance.Volume = MathF.Sqrt(MathHelper.Clamp(intensity - 1f, 0f, 1f));
+            //Console.WriteLine("music intensity mwahaha..:" + Math.Round(intensity));
+            //Console.WriteLine("1: " + (Math.Round( 0f - MathF.Abs(1f - intensity) ) ));
+            //Console.WriteLine("2: " + (Math.Round( 1f - MathF.Abs(1f - intensity) ) ));
+            //Console.WriteLine("3: " + (Math.Round( 2f - MathF.Abs(1f - intensity) ) ));
+            //Console.WriteLine("4: " + (Math.Round( 3f - MathF.Abs(1f - intensity) ) ));
+
+            //Console.WriteLine("second:" + Math.Round(GameSounds.secondMusicInstance.Volume));
+            //Console.WriteLine("third:" + Math.Round(GameSounds.thirdMusicInstance.Volume));
         }
 
         public void OnGameEnd()
