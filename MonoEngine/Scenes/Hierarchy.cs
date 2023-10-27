@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace MonoEngine.Scenes
 {
+    using GameUtils.Profiling;
     using MonoEngine.Scenes.Events;
     using Util;
 
@@ -112,6 +113,7 @@ namespace MonoEngine.Scenes
         public IReadOnlyCollection<T> OrderedInstancesOf<T>() where T : IOrdered
         {
             //TODO use Ordered<T>
+            TimeLogger.Instance.Push("OrderedInstancesOf");
             IDictionary<float, List<T>> orderedDrawables = new SortedDictionary<float, List<T>>();
 
             int count = 0;
@@ -135,6 +137,8 @@ namespace MonoEngine.Scenes
             {
                 listOut.AddRange(order.Value);
             }
+
+            TimeLogger.Instance.Pop("OrderedInstancesOf");
 
             return listOut;
         }

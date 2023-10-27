@@ -22,6 +22,7 @@ using MonoEngine.Input.Binding;
 using nkast.Aether.Physics2D.Diagnostics;
 using GlobalLoopGame.Globals;
 using GlobalLoopGame.Spaceship.Turret;
+using GameUtils.Profiling;
 
 namespace GlobalLoopGame
 {
@@ -68,6 +69,9 @@ namespace GlobalLoopGame
 
         public SpaceshipObject Spaceship { get; private set; }
         public PlanetObject Planet { get; private set; }
+
+        public static TimeLogger Profiler { get; set; } = TimeLogger.Instance;
+
         public List<TurretStation> Turrets { get; private set; } = new List<TurretStation>();
 
         private TextObject pointsText, wavesText;
@@ -87,6 +91,8 @@ namespace GlobalLoopGame
 
         protected override void Initialize()
         {
+            Profiler.unitScale = 1f / 60f;
+            Profiler.enabled = true;
             base.Initialize();
         }
 
@@ -124,27 +130,35 @@ namespace GlobalLoopGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.X))
                 Exit();
 
+            Profiler.Push("Update");
+
             GameTime = gameTime;
 
             inputManager.UpdateState();
 
             if (!menuDisplayed)
             {
+                Profiler.Push("Physics");
                 world.Step(gameTime.ElapsedGameTime);
+                Profiler.Pop("Physics");
+
+                Profiler.Push("Game");
                 hierarchyGame.BeginUpdate();
                 foreach (var updatable in hierarchyGame.OrderedInstancesOf<IUpdatable>())
                 {
                     updatable.Update(gameTime);
                 }
                 hierarchyGame.EndUpdate();
-
+                Profiler.Pop("Game");
+                
+                Profiler.Push("UI");
                 hierarchyUI.BeginUpdate();
                 foreach (var updatable in hierarchyUI.OrderedInstancesOf<IUpdatable>())
                 {
                     updatable.Update(gameTime);
                 }
                 hierarchyUI.EndUpdate();
-
+                Profiler.Pop("UI");
             }
             else
             {
@@ -183,6 +197,8 @@ namespace GlobalLoopGame
                     hierarchyPaused.EndUpdate();
                 }
             }
+
+            Profiler.Pop("Update");
 
             base.Update(gameTime);
         }
