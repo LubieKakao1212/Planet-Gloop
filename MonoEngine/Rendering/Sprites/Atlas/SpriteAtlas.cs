@@ -138,28 +138,34 @@ namespace MonoEngine.Rendering.Sprites.Atlas
                                 rect.X = space[k].X;
                                 rect.Y = space[k].Y;
                                 sourceRect = rect;
-                                if (perfectH && space[k].Width == sourceRect.Width) // remove
+                                var spaceK = space[k];
+                                spaces.RemoveNested(spaceHeight, spaceK);
+                                if (perfectH && spaceK.Width == sourceRect.Width) // remove
                                 {
-                                    spaces.RemoveNested(spaceHeight, space[k]);
+
                                 }
                                 else if (perfectH) //shrink horizontally
                                 {
                                     //Don't have to add and remove, height doesn't change
-                                    space[k] = new Rectangle(space[k].X + sourceRect.Width, space[k].Y, space[k].Width - sourceRect.Width, space[k].Height);
+                                    var newSpace = new Rectangle(spaceK.X + sourceRect.Width, spaceK.Y, spaceK.Width - sourceRect.Width, spaceK.Height);
+                                    spaces.AddNested(newSpace.Height, newSpace);
                                 }
-                                else if (space[k].Width == sourceRect.Width) //shrink vertically
+                                else if (spaceK.Width == sourceRect.Width) //shrink vertically
                                 {
-                                    Rectangle newSpace = new Rectangle(space[k].X, space[k].Y + sourceRect.Height, space[k].Width, spaceHeight - sourceRect.Height);
-                                    spaces.RemoveNested(spaceHeight, space[k]);
+                                    Rectangle newSpace = new Rectangle(spaceK.X, spaceK.Y + sourceRect.Height, spaceK.Width, spaceK.Height - sourceRect.Height);
+                                    //spaces.RemoveNested(spaceHeight, spaceK);
                                     spaces.AddNested(newSpace.Height, newSpace);
                                 }
                                 else
                                 {
                                     //Top
-                                    var topHeight = spaceHeight - sourceRect.Height;
-                                    spaces.AddNested(topHeight, new Rectangle(space[k].X, space[k].Y + sourceRect.Height, sourceRect.Width, topHeight));
+                                    var topHeight = spaceK.Height - sourceRect.Height;
+                                    spaces.AddNested(topHeight, new Rectangle(spaceK.X, spaceK.Y + sourceRect.Height, sourceRect.Width, topHeight));
                                     //Right
-                                    space[k] = new Rectangle(space[k].X + sourceRect.Height, space[k].Y, space[k].Width - sourceRect.Width, spaceHeight);
+                                    var newSpace = new Rectangle(spaceK.X + sourceRect.Width, spaceK.Y, spaceK.Width - sourceRect.Width, spaceHeight);
+
+                                    //spaces.RemoveNested(spaceHeight, spaceK);
+                                    spaces.AddNested(newSpace.Height, newSpace);
                                 }
 
                                 flag = false;
@@ -259,7 +265,7 @@ namespace MonoEngine.Rendering.Sprites.Atlas
 
         private void IncrementTextureCount(ref Rectangle sourceRect, SortedDictionary<int, List<Rectangle>> spaces)
         {
-            textureCount++;
+            var textureCount = this.textureCount++;
             sourceRect.X = textureCount * size;
             sourceRect.Y = 0;
             Rectangle right = new Rectangle(textureCount * size + sourceRect.Width, 0, size - sourceRect.Width, size),
