@@ -11,6 +11,8 @@ using GlobalLoopGame.Spaceship.Item;
 using GlobalLoopGame.Globals;
 using Util;
 using GlobalLoopGame.Planet;
+using System.Drawing;
+using nkast.Aether.Physics2D.Common;
 
 namespace GlobalLoopGame.Asteroid
 {
@@ -177,14 +179,14 @@ namespace GlobalLoopGame.Asteroid
                 CreateAsteroid(aPlacement);
             }
 
-            if (Difficulty < 2 || WaveNumber % (Difficulty - 1) == 0) 
+            if (Difficulty < 2 || (WaveNumber + 3) % (Difficulty - 1) == 0) 
             {
                 ModifyDifficulty(1);
             }
 
             SpawnPowerups();
 
-            SetInterval(3, 3);
+            SetInterval(10, 7);
         }
 
         private void SpawnPowerups()
@@ -249,6 +251,8 @@ namespace GlobalLoopGame.Asteroid
         public static void ModifyDifficulty(int difficultyModification)
         {
             Difficulty = MathHelper.Clamp(Difficulty + difficultyModification, 0, 10);
+
+            Console.WriteLine("new difficulty " + Difficulty);
 
             switch (Difficulty)
             {
@@ -387,6 +391,149 @@ namespace GlobalLoopGame.Asteroid
         {
             AsteroidWave waveToReturn = null;
 
+            int totalPredictedHealth = Random.Shared.Next(difficulty * 30, difficulty * 60);
+
+            int totalActualHealth = 0;
+
+            Console.WriteLine($"{difficulty}, total predicted health {totalPredictedHealth}");
+
+            int placementNumber = MathHelper.Clamp((int)MathF.Round(Random.Shared.NextSingle() * (difficulty / 3f)), 1, 3);
+
+            // Console.WriteLine($"placing asteroids in {placementNumber} places");
+
+            // Calculate angles of attack for waves
+            List<float> placementThetas = new List<float>();
+
+            //for (int i = 0; i < placementNumber; i++)
+            //{
+            //    float randTheta = wavePlacements.GetRandom();
+
+            //    // Console.WriteLine($"placing asteroids at {randTheta}");
+
+            //    placementThetas.Add(randTheta);
+            //}
+
+            int asteroidNumber = Random.Shared.Next(1, difficulty - 1);
+
+            List<AsteroidPlacement> asteroidPlacements = new List<AsteroidPlacement>();
+
+            // Add initial asteroid
+
+            //for (int i = 0; totalActualHealth < totalPredictedHealth; i++)
+            while (totalActualHealth < totalPredictedHealth)
+            {
+                // As long as total health of asteroids in wave is less than the total predicted health,
+                // choose one:
+                // Increase the health of an asteroid in the current wave
+                // Add another asteroid to the current wave (but restrict the total number of asteroids to difficulty - 1)
+                //if (totalActualHealth < totalPredictedHealth)
+                //{
+                float rand = Random.Shared.Next();
+
+                Console.WriteLine($"rand {rand} placements {asteroidPlacements.Count}");
+
+                int healthLeft = totalPredictedHealth - totalActualHealth;
+
+                float randTheta = wavePlacements.GetRandom();
+
+                // Console.WriteLine($"placing asteroids at {randTheta}");
+
+                placementThetas.Add(randTheta);
+
+                //float randTheta = placementThetas[Random.Shared.Next(0, placementThetas.Count)];
+
+                int thetaVariance = difficulty * 10;
+
+                // Calculate starting theta
+                float startingTheta = randTheta + Random.Shared.Next(-thetaVariance, 0);
+
+                // Caculate ending theta
+                float endingTheta = randTheta + Random.Shared.Next(0, thetaVariance);
+
+                Console.WriteLine($"between {startingTheta} and {endingTheta}");
+
+                AsteroidPlacement placementToAdd = new AsteroidPlacement(Vector2.One, startingTheta, endingTheta, 8f, 100);
+
+                if (asteroidPlacements.Count == 0)
+                {
+                    int health = healthLeft / asteroidNumber;
+
+                    totalActualHealth += health;
+
+                    int size =  MathHelper.Clamp(health / 30, 3, 20);
+
+                    placementToAdd.maxHealth = health;
+
+                    placementToAdd.size = Vector2.One * size;
+
+                    float speed = MathHelper.Clamp(16f - (size / 1.5f) + (float)(Random.Shared.Next(-10, 10) * 1f / 10f), 5, 11);
+
+                    placementToAdd.speed = speed;
+
+                    asteroidPlacements.Add(placementToAdd);
+
+                    Console.WriteLine($"adding asteroid with {health} health");
+                }
+                else if (rand % 2 == 0 && asteroidPlacements.Count <= asteroidNumber)
+                {
+                    //int asteroidVariable = MathHelper.Clamp(Random.Shared.Next(0, difficulty), 1, 10);
+
+                    // Calculate size
+                    //int size = asteroidVariable * 2;
+
+                    // Calculate health
+                    int health = 0;
+
+                    health = healthLeft / asteroidNumber;
+
+                    int size =  MathHelper.Clamp(health / 30, 3, 20);
+
+                    totalActualHealth += health;
+
+                    placementToAdd.maxHealth = health;
+
+                    placementToAdd.size = Vector2.One * size;
+
+                    float speed = MathHelper.Clamp(16f - (size / 1.5f) + (float)(Random.Shared.Next(-10, 10) * 1f / 10f), 5, 11);
+
+                    placementToAdd.speed = speed;
+
+                    // Add another asteroid to the current wave
+                    asteroidPlacements.Add(placementToAdd);
+
+                    Console.WriteLine($"adding asteroid with {health} health");
+                }
+                else
+                {
+                    // Increase the health of a random asteroid in the current wave
+                    AsteroidPlacement randPlacement = asteroidPlacements[Random.Shared.Next(0, asteroidPlacements.Count)];
+                        
+                    int healthToAdd = Random.Shared.Next(1, healthLeft);
+
+                    randPlacement.maxHealth += healthToAdd;
+
+                    randPlacement.size += Vector2.One * healthToAdd / 30;
+
+                    totalActualHealth += healthToAdd;
+
+                    Console.WriteLine($"increasing random asteroid health by {healthToAdd}");
+                }
+                //}
+
+                // totalActualHealth += totalPredictedHealth;
+            }
+
+            Console.WriteLine($"total actual health {totalActualHealth}");
+
+            waveToReturn = new AsteroidWave(asteroidPlacements, Difficulty, placementThetas);
+
+            waveToReturn.asteroidPlacements = asteroidPlacements;
+
+            return waveToReturn;
+
+            /*
+            AsteroidWave waveToReturn = null;
+
             List<AsteroidPlacement> asteroidPlacements = new List<AsteroidPlacement>();
 
             int placementNumber = MathHelper.Clamp((int)MathF.Round(Random.Shared.NextSingle() * (difficulty / 3f)), 1, 3);
@@ -417,14 +564,13 @@ namespace GlobalLoopGame.Asteroid
                 Console.WriteLine($"size {size}");
 
                 // Gaussian distribution
-                /*
+                
                 Random rand = new Random(); //reuse this if you are generating many
                 double u1 = 1.0 - rand.NextDouble(); //uniform(0,1] random doubles
                 double u2 = 1.0 - rand.NextDouble();
                 double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2); //random normal(0,1)
                 double randNormal = mean + stdDev * randStdNormal; //random normal(mean, stdDev^2)
-                */
-
+                
                 float randTheta = placementThetas[Random.Shared.Next(0, placementThetas.Count)];
 
                 int thetaVariance = difficulty * 10;
@@ -457,6 +603,7 @@ namespace GlobalLoopGame.Asteroid
             waveToReturn.asteroidPlacements = asteroidPlacements;
 
             return waveToReturn;
+            */
         }
 
         public List<AsteroidWave> waves = new List<AsteroidWave>()

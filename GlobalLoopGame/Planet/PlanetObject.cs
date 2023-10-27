@@ -16,7 +16,7 @@ namespace GlobalLoopGame.Planet
 
         public GlobalLoopGame game;
         public int health {  get; private set; }
-        private int maxHealth = 99999;
+        private int maxHealth = 1;
         public bool isDead { get; private set; }
         public bool shouldDie { get; private set; }
 
