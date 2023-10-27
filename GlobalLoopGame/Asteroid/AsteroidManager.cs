@@ -335,7 +335,7 @@ namespace GlobalLoopGame.Asteroid
         {
             active = true;
 
-            Difficulty = 10;
+            Difficulty = 0;
             WaveNumber = 0;
             Points = 0;
 
