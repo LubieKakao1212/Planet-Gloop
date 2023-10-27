@@ -37,8 +37,8 @@ namespace GlobalLoopGame.Audio
 
         public void Update(GameTime gameTime)
         {
-            intensity = MathHelper.Clamp(intensity + MathF.Sign(targetIntensity - intensity) * (float)gameTime.ElapsedGameTime.TotalSeconds / 3f, 0f, 2f);
-            
+            intensity = intensity + MathF.Sign(targetIntensity - intensity) * (float)gameTime.ElapsedGameTime.TotalSeconds / 3f;
+
             UpdateMusic();
         }
 
@@ -49,26 +49,32 @@ namespace GlobalLoopGame.Audio
 
         public static void SetIntensity(float newIntensity)
         {
-            targetIntensity = MathHelper.Clamp(newIntensity, 0f, 2f);
+            targetIntensity = MathHelper.Clamp(newIntensity, 0f, 11f);
         }
-
+        public void UpdateMusicVolume()
+        {
+            //GameSounds.firstMusicInstance.Volume = MathF.Sqrt(MathHelper.Clamp(1f - intensity, 0f, 1f));
+            //GameSounds.MusicInstance7.Volume = MathF.Sqrt(1f - MathF.Abs(1f - intensity));
+            //GameSounds.thirdMusicInstance.Volume = MathF.Sqrt(MathHelper.Clamp(intensity - 1f, 0f, 1f));
+        }
         public void UpdateMusic()
         {
-            
-            GameSounds.firstMusicInstance.Volume   = MathF.Sqrt(MathHelper.Clamp(1f - intensity, 0f, 1f));
-            GameSounds.secondMusicInstance.Volume  = MathF.Sqrt(1f - MathF.Abs(1f - intensity));
-            GameSounds.thirdMusicInstance.Volume   = MathF.Sqrt(1f - MathF.Abs(1f - intensity));
-            GameSounds.fourthMusicInstance.Volume  = MathF.Sqrt(1f - MathF.Abs(1f - intensity));
-            GameSounds.fifthMusicInstance.Volume   = MathF.Sqrt(1f - MathF.Abs(1f - intensity));
-            GameSounds.sixthMusicInstance.Volume   = MathF.Sqrt(1f - MathF.Abs(1f - intensity));
-            GameSounds.seventhMusicInstance.Volume = MathF.Sqrt(1f - MathF.Abs(1f - intensity));
-
-            //GameSounds.thirdMusicInstance.Volume = MathF.Sqrt(MathHelper.Clamp(intensity - 1f, 0f, 1f));
-            //Console.WriteLine("music intensity mwahaha..:" + Math.Round(intensity));
-            //Console.WriteLine("1: " + (Math.Round( 0f - MathF.Abs(1f - intensity) ) ));
-            //Console.WriteLine("2: " + (Math.Round( 1f - MathF.Abs(1f - intensity) ) ));
-            //Console.WriteLine("3: " + (Math.Round( 2f - MathF.Abs(1f - intensity) ) ));
-            //Console.WriteLine("4: " + (Math.Round( 3f - MathF.Abs(1f - intensity) ) ));
+            //GameSounds.firstMusicInstance.Volume   = MathF.Sqrt(MathHelper.Clamp(1f - intensity, 0f, 1f));
+            GameSounds.MusicInstance1.Volume  = MathF.Sqrt( MathHelper.Clamp(1f - MathF.Abs(0f - intensity), 0, 1) ); 
+            GameSounds.MusicInstance2.Volume  = MathF.Sqrt( MathHelper.Clamp(1f - MathF.Abs(1f - intensity), 0, 1) );
+            GameSounds.MusicInstance3.Volume  = MathF.Sqrt( MathHelper.Clamp(1f - MathF.Abs(2f - intensity), 0, 1) );
+            GameSounds.MusicInstance4.Volume  = MathF.Sqrt( MathHelper.Clamp(1f - MathF.Abs(3f - intensity), 0, 1) );
+            GameSounds.MusicInstance5.Volume  = MathF.Sqrt( MathHelper.Clamp(1f - MathF.Abs(4f - intensity), 0, 1) );
+            GameSounds.MusicInstance6.Volume  = MathF.Sqrt( MathHelper.Clamp(1f - MathF.Abs(5f - intensity), 0, 1) );
+            GameSounds.MusicInstance7.Volume  = MathF.Sqrt( MathHelper.Clamp(1f - MathF.Abs(6f - intensity), 0, 1) );
+            GameSounds.MusicInstance8.Volume  = MathF.Sqrt( MathHelper.Clamp(1f - MathF.Abs(7f - intensity), 0, 1) );
+            GameSounds.MusicInstance9.Volume  = MathF.Sqrt( MathHelper.Clamp(1f - MathF.Abs(8f - intensity), 0, 1) );
+            GameSounds.MusicInstance10.Volume = MathF.Sqrt( MathHelper.Clamp(1f - MathF.Abs(9f - intensity), 0, 1) );
+            GameSounds.MusicInstance11.Volume = MathF.Sqrt( MathHelper.Clamp(1f - MathF.Abs(10f - intensity), 0, 1) );
+            GameSounds.MusicInstance12.Volume = MathF.Sqrt( MathHelper.Clamp(1f - MathF.Abs(11f - intensity), 0, 1) );
+            //Console.WriteLine(targetIntensity);
+            //Console.WriteLine(GameSounds.MusicInstance1.Volume);
+            //Console.WriteLine(GameSounds.MusicInstance5.Volume);
 
             //Console.WriteLine("second:" + Math.Round(GameSounds.secondMusicInstance.Volume));
             //Console.WriteLine("third:" + Math.Round(GameSounds.thirdMusicInstance.Volume));
