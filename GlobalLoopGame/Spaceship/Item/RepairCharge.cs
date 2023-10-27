@@ -4,6 +4,7 @@ using GlobalLoopGame.Spaceship.Dragging;
 using Microsoft.Xna.Framework;
 using MonoEngine.Physics;
 using nkast.Aether.Physics2D.Dynamics;
+using MonoEngine.Scenes;
 
 namespace GlobalLoopGame.Spaceship.Item
 {
@@ -14,6 +15,8 @@ namespace GlobalLoopGame.Spaceship.Item
         private bool isAlive = true;
 
         private IDragger dragger;
+
+        public DrawableObject circle;
 
         public RepairCharge(World world) : base(null)
         {
@@ -45,11 +48,19 @@ namespace GlobalLoopGame.Spaceship.Item
                 }
                 return true;
             };
+
+            circle = new DrawableObject(Color.Transparent, -1f);
+            circle.Sprite = GameSprites.Circle;
+            circle.Parent = this;
+            circle.Transform.LocalPosition = Vector2.Zero;
+            circle.Transform.LocalScale = Vector2.One * 6f;
         }
         
         public void OnBecomeDragged(IDragger dragger)
         {
             this.dragger = dragger;
+
+            circle.Color = new Color(0.85f, 0.25f, 0.25f, 1.0f);
         }
 
         public void OnBecomeDropped(IDragger dragger)
@@ -60,6 +71,8 @@ namespace GlobalLoopGame.Spaceship.Item
             {
                 spaceship.magnetPivot.Transform.LocalRotation = MathHelper.ToRadians(180f);
             }
+
+            circle.Color = Color.Transparent;
 
             this.dragger = null;
         }

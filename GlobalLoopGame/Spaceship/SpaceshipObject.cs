@@ -224,7 +224,7 @@ namespace GlobalLoopGame.Spaceship
 
                     magnetPivot.Transform.GlobalRotation = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2f;
 
-                    if (dir.Length() > 5)
+                    if (dir.Length() > 4)
                     {
                         magnetObject.Color = Color.White;
                     }
