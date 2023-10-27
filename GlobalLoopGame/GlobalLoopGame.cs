@@ -615,15 +615,22 @@ namespace GlobalLoopGame
             //background.Transform.LocalRotation = -1f;
             hierarchyMenu.AddObject(background);
 
-            var starryBackground = new StarryBackground(Color.Transparent, 1f, GameSprites.DiamondStar, 0f, 40, 20f, 1);
+            var starryBackground = new StarryBackground(Color.Transparent, 1f, GameSprites.DiamondStar, 0f, 40, 25f, 1.5f);
             hierarchyMenu.AddObject(starryBackground);
 
             var gameTitle = new TextObject();
-            gameTitle.Transform.GlobalPosition = new Vector2(2, 0);
+            gameTitle.Transform.GlobalPosition = new Vector2(0, 12);
             gameTitle.Color = Color.LightBlue;
             gameTitle.FontSize = 80;
-            gameTitle.Text = "Planet Gloop";
+            gameTitle.Text = "Planet";
             hierarchyMenu.AddObject(gameTitle);
+
+            var word2 = new TextObject();
+            word2.Transform.GlobalPosition = new Vector2(0, -12);
+            word2.Color = Color.LightBlue;
+            word2.FontSize = 80;
+            word2.Text = "Gloop";
+            hierarchyMenu.AddObject(word2);
 
             hierarchyPressEnter = new Hierarchy();
             hierarchyPaused = new Hierarchy();
