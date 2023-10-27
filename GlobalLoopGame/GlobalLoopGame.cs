@@ -30,7 +30,7 @@ namespace GlobalLoopGame
     {
         public const float MapRadius = 64f;
         public const float PlanetRadius = 12f;
-        public const int WindowSize = 1000;
+        public const int WindowSize = 500;
 
         private GraphicsDeviceManager _graphics;
 
@@ -427,6 +427,7 @@ namespace GlobalLoopGame
             font.AddSize(56, Content.Load<SpriteFont>("Fonts/Font56"));
             font.AddSize(72, Content.Load<SpriteFont>("Fonts/Font72"));
             font.AddSize(128, Content.Load<SpriteFont>("Fonts/Font128"));
+            font.AddSize(80, Content.Load<SpriteFont>("Fonts/ChakraTitle"));
             GameSprites.Font = font;
             
             //Load Sprites Here
@@ -608,6 +609,25 @@ namespace GlobalLoopGame
         {
             hierarchyMenu = new Hierarchy();
 
+            var background = new DrawableObject(Color.White * 0.3f, -1f); //new Color(19, 18, 51)
+            background.Sprite = GameSprites.SpaceBackground;
+            background.Transform.LocalScale = new Vector2(136f * 1f);
+            //background.Transform.LocalRotation = -1f;
+            hierarchyMenu.AddObject(background);
+
+            var starryBackground = new StarryBackground(Color.Transparent, 1f, GameSprites.DiamondStar, 0f, 40, 20f, 1);
+            hierarchyMenu.AddObject(starryBackground);
+
+            var gameTitle = new TextObject();
+            gameTitle.Transform.GlobalPosition = new Vector2(2, 0);
+            gameTitle.Color = Color.LightBlue;
+            gameTitle.FontSize = 80;
+            gameTitle.Text = "Planet Gloop";
+            hierarchyMenu.AddObject(gameTitle);
+
+            hierarchyPressEnter = new Hierarchy();
+            hierarchyPaused = new Hierarchy();
+            /*
             //original menu
             var background = new DrawableObject(Color.White * 0.3f, -1f); //new Color(19, 18, 51)
             background.Sprite = GameSprites.SpaceBackgroundUpdated;
@@ -654,7 +674,7 @@ namespace GlobalLoopGame
             gamePausedText.Color = Color.White;
             gamePausedText.FontSize = 48;
             gamePausedText.Text = "[Game Paused]";
-            hierarchyPaused.AddObject(gamePausedText);
+            hierarchyPaused.AddObject(gamePausedText);*/
         }
 
         private void CreateGameOverScene()

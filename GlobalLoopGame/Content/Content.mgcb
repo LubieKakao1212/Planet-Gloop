@@ -235,6 +235,13 @@
 /processorParam:TextureFormat=Color
 /build:explosion2.png
 
+#begin Fonts/ChakraTitle.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/ChakraTitle.spritefont
+
 #begin Fonts/Font12.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -433,12 +440,6 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/BoostUnable.wav
-
-#begin Sounds/DropTurret.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sounds/DropTurret.wav
 
 #begin Sounds/DropTurret.wav
 /importer:WavImporter
