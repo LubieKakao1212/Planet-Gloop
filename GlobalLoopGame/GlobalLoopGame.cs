@@ -30,7 +30,7 @@ namespace GlobalLoopGame
     {
         public const float MapRadius = 64f;
         public const float PlanetRadius = 12f;
-        public const int WindowSize = 500;
+        public const int WindowSize = 1000;
 
         private GraphicsDeviceManager _graphics;
 
@@ -598,7 +598,8 @@ namespace GlobalLoopGame
             hierarchyUI.AddObject(health);
             */
 
-            DrawableObject overlayObject = new DrawableObject(new Color(0.3f, 0.15f, 0.15f, 1.0f), -1f);
+            //DrawableObject overlayObject = new DrawableObject(new Color(0.3f, 0.15f, 0.15f, 1.0f), -1f);
+            DrawableObject overlayObject = new DrawableObject(new Color(100, 50, 50) * 0.95f, -1f);
             hierarchyUI.AddObject(overlayObject);
             overlayObject.Sprite = GameSprites.CircleOverlay;
             overlayObject.Transform.GlobalPosition = new Vector2(0, 0);
@@ -609,6 +610,8 @@ namespace GlobalLoopGame
         {
             hierarchyMenu = new Hierarchy();
 
+            /*
+            //obs recording menu
             var background = new DrawableObject(Color.White * 0.3f, -1f); //new Color(19, 18, 51)
             background.Sprite = GameSprites.SpaceBackground;
             background.Transform.LocalScale = new Vector2(136f * 1f);
@@ -626,8 +629,8 @@ namespace GlobalLoopGame
             hierarchyMenu.AddObject(gameTitle);
 
             hierarchyPressEnter = new Hierarchy();
-            hierarchyPaused = new Hierarchy();
-            /*
+            hierarchyPaused = new Hierarchy();*/
+            
             //original menu
             var background = new DrawableObject(Color.White * 0.3f, -1f); //new Color(19, 18, 51)
             background.Sprite = GameSprites.SpaceBackgroundUpdated;
@@ -640,8 +643,8 @@ namespace GlobalLoopGame
 
             var gameTitle = new TextObject();
             gameTitle.Transform.GlobalPosition = new Vector2(2, 37);
-            gameTitle.Color = Color.White;
-            gameTitle.FontSize = 128;
+            gameTitle.Color = Color.LightBlue;
+            gameTitle.FontSize = 80;
             gameTitle.Text = "Planet Gloop";
             hierarchyMenu.AddObject(gameTitle);
 
@@ -674,7 +677,7 @@ namespace GlobalLoopGame
             gamePausedText.Color = Color.White;
             gamePausedText.FontSize = 48;
             gamePausedText.Text = "[Game Paused]";
-            hierarchyPaused.AddObject(gamePausedText);*/
+            hierarchyPaused.AddObject(gamePausedText);
         }
 
         private void CreateGameOverScene()
