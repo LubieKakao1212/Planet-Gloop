@@ -23,7 +23,7 @@ namespace GlobalLoopGame.Spaceship.Item
             var body = world.CreateBody(bodyType: BodyType.Dynamic);
             body.Tag = this;
             body.AngularDamping = 0f;
-            body.LinearDamping = 5f;
+            body.LinearDamping = 0f;
             PhysicsBody = body;
 
             AddDrawableRectFixture(GameSprites.RepairChargeSize, Vector2.Zero, 0, out var fixture, 0.01f).Sprite = GameSprites.RepairCharge;

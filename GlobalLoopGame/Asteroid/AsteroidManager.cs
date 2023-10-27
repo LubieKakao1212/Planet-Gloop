@@ -182,7 +182,7 @@ namespace GlobalLoopGame.Asteroid
 
             var rolls = (1 + shieldHpMissing) / 2;
             rolls = MathHelper.Min(rolls, maxRechargeRolls);
-
+            rolls = 20;
             for (int i = 0; i < rolls; i++)
             {
                 if (shieldRechargeRandom.GetRandom())
@@ -209,12 +209,12 @@ namespace GlobalLoopGame.Asteroid
             var spawnAngle = rand.NextSingle() * MathHelper.TwoPi;
             var spawnDir = new Vector2(MathF.Cos(spawnAngle), MathF.Sin(spawnAngle));
 
-            var spawnPos = spawnDir * (GlobalLoopGame.MapRadius + 4f);
+            var spawnPos = spawnDir * (GlobalLoopGame.MapRadius - 4f);
 
             var r = rand.NextSingle() * 2f - 1f;
             var minAngle = 10f * MathF.PI / 180f;
             var maxAngle = 30f * MathF.PI / 180f;
-            var spawnVel = -spawnDir * Matrix2x2.Rotation((maxAngle - minAngle) * r + minAngle * MathF.Sign(r));
+            var spawnVel = (-spawnDir) * Matrix2x2.Rotation(((maxAngle - minAngle) * r + minAngle * MathF.Sign(r)).LogThis("Velocity Angle"));
 
             var spawnSpeed = 3f;
             spawnVel *= spawnSpeed;
