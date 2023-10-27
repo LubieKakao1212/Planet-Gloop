@@ -179,7 +179,7 @@ namespace GlobalLoopGame.Asteroid
                 CreateAsteroid(aPlacement);
             }
 
-            if (Difficulty < 2 || (WaveNumber + 3) % (Difficulty - 1) == 0) 
+            if (Difficulty < 2 || (WaveNumber + 3) % Difficulty == 0) 
             {
                 ModifyDifficulty(1);
             }
@@ -252,7 +252,7 @@ namespace GlobalLoopGame.Asteroid
         {
             Difficulty = MathHelper.Clamp(Difficulty + difficultyModification, 0, 11);
 
-            Console.WriteLine("new difficulty " + Difficulty);
+            // Console.WriteLine("new difficulty " + Difficulty);
 
             switch (Difficulty)
             {
@@ -320,7 +320,7 @@ namespace GlobalLoopGame.Asteroid
                 Points = 0;
             }
 
-            Console.WriteLine("points " + Points.ToString());
+            // Console.WriteLine("points " + Points.ToString());
         }
 
         public void SetInterval(float interval, float warningTime)
@@ -378,7 +378,7 @@ namespace GlobalLoopGame.Asteroid
 
         public void Reset()
         {
-            Console.WriteLine("Reset game");
+            // Console.WriteLine("Reset game");
             active = true;
             //ModifyDifficulty(10);
             Difficulty = 0;
@@ -478,7 +478,7 @@ namespace GlobalLoopGame.Asteroid
                 // Caculate ending theta
                 float endingTheta = randTheta + Random.Shared.Next(0, thetaVariance);
 
-                Console.WriteLine($"between {startingTheta} and {endingTheta}");
+                // Console.WriteLine($"between {startingTheta} and {endingTheta}");
 
                 AsteroidPlacement placementToAdd = new AsteroidPlacement(Vector2.One, startingTheta, endingTheta, 8f, 100);
 
@@ -505,9 +505,9 @@ namespace GlobalLoopGame.Asteroid
 
                     asteroidPlacements.Add(placementToAdd);
 
-                    Console.WriteLine($"adding asteroid with {health} health");
+                    // Console.WriteLine($"adding asteroid with {health} health");
                 }
-                else if (rand % 2 == 0 && asteroidPlacements.Count <= asteroidNumber)
+                else if (rand % 2 == 0 && asteroidPlacements.Count <= asteroidNumber && placementThetas.Count < placementNumber)
                 {
                     //int asteroidVariable = MathHelper.Clamp(Random.Shared.Next(0, difficulty), 1, 10);
 
@@ -539,7 +539,7 @@ namespace GlobalLoopGame.Asteroid
                         placementThetas.Add(randTheta);
                     }
 
-                    Console.WriteLine($"adding asteroid with {health} health");
+                    // Console.WriteLine($"adding asteroid with {health} health");
                 }
                 else
                 {
@@ -554,7 +554,7 @@ namespace GlobalLoopGame.Asteroid
 
                     totalActualHealth += healthToAdd;
 
-                    Console.WriteLine($"increasing random asteroid health by {healthToAdd}");
+                    // Console.WriteLine($"increasing random asteroid health by {healthToAdd}");
                 }
                 //}
 
