@@ -23,7 +23,7 @@ namespace GlobalLoopGame.UI
                 Vector2 scale = new Vector2(Random.Shared.NextSingle() / localScale);
                 star.Transform.LocalScale = scale * scaleMult;
                 Vector2 position = new Vector2(Random.Shared.NextSingle() - 0.5f, Random.Shared.NextSingle() - 0.5f) / localScale;
-                star.Transform.LocalPosition = position * 136;
+                star.Transform.LocalPosition = position * 133;
 
                 star.Parent = this;
             }

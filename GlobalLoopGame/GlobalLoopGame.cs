@@ -559,12 +559,17 @@ namespace GlobalLoopGame
             background.Transform.LocalScale = new Vector2(136f * 2.5f);
             //background.Transform.LocalRotation = -1f;
             hierarchyMenu.AddObject(background);
-
-            var texture = new DrawableObject(Color.White * 0.7f, 0f);
+            
+            var texture = new DrawableObject(Color.White * 0.2f, 0f);
             texture.Sprite = GameSprites.Noise_1;
             texture.Transform.LocalScale = new Vector2(136f * 2.5f);
             hierarchyMenu.AddObject(texture);
 
+            var texture1 = new DrawableObject(Color.Purple * 0.15f, 0.1f);
+            texture1.Sprite = GameSprites.Noise_1;
+            texture1.Transform.LocalScale = new Vector2(136f * 2.5f);
+            texture1.Transform.LocalRotation = MathF.PI/2;
+            hierarchyMenu.AddObject(texture1);
 
             var starryBackground = new StarryBackground(Color.Transparent, 1f, GameSprites.DiamondStar, 0f, 180, 10f, 1.5f);
             hierarchyMenu.AddObject(starryBackground);
