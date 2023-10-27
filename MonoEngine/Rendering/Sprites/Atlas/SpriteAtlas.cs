@@ -259,8 +259,7 @@ namespace MonoEngine.Rendering.Sprites.Atlas
 
         private void IncrementTextureCount(ref Rectangle sourceRect, SortedDictionary<int, List<Rectangle>> spaces)
         {
-            textureCount++;
-            sourceRect.X = textureCount * size;
+            sourceRect.X = textureCount++ * size;
             sourceRect.Y = 0;
             Rectangle right = new Rectangle(textureCount * size + sourceRect.Width, 0, size - sourceRect.Width, size),
                 top = new Rectangle(textureCount * size, sourceRect.Height, sourceRect.Width, size - sourceRect.Height);
