@@ -12,6 +12,8 @@ using System.Runtime.Serialization.Formatters;
 using MonoEngine.Math;
 using GlobalLoopGame.Spaceship.Item;
 using GlobalLoopGame.Globals;
+using Util;
+using GlobalLoopGame.Planet;
 
 namespace GlobalLoopGame.Asteroid
 {
@@ -20,6 +22,8 @@ namespace GlobalLoopGame.Asteroid
         private World _world;
 
         private Hierarchy _hierarchy;
+
+        private SegmentedShield _planetShield;
 
         public event Action<int> PointsUpdated;
         public event Action<int> WavesUpdated;
@@ -65,7 +69,8 @@ namespace GlobalLoopGame.Asteroid
 
         public event EventHandler<EventArgs> UpdateOrderChanged;
         
-        public int difficulty { get; private set; } = 0;
+        public static int Difficulty = 0;
+
         private float waveInterval = 5f;
         private float waveWarningTime = 5f;
         private bool dirty = false;
@@ -80,11 +85,12 @@ namespace GlobalLoopGame.Asteroid
 
         SequentialAutoTimeMachine waveMachine;
 
-        public AsteroidManager(World world, Hierarchy hierarchy)
+        public AsteroidManager(World world, Hierarchy hierarchy, PlanetObject planet)
         {
             _world = world;
-
+            
             _hierarchy = hierarchy;
+            this._planetShield = planet.Shield;
         }
 
         public void CreateAsteroid(AsteroidPlacement placement)
@@ -163,54 +169,76 @@ namespace GlobalLoopGame.Asteroid
                 CreateAsteroid(aPlacement);
             }
 
-            if (difficulty < 2 || WaveNumber % (difficulty - 1) == 0) 
+            if (Difficulty < 2 || WaveNumber % (Difficulty - 1) == 0) 
             {
                 ModifyDifficulty(1);
             }
 
-            SpawnPowerup();
+            SpawnPowerups();
 
             SetInterval(10, 7);
         }
 
-        private void SpawnPowerup()
+        private void SpawnPowerups()
         {
-            var rand = Random.Shared;
-            if (rand.NextSingle() < 0.5f)
+            var shieldHpMissing = _planetShield.TotalSegmentHealth - _planetShield.TotalHeaelthLeft;
+
+            var rolls = shieldHpMissing / 2;
+            rolls = MathHelper.Min(rolls, maxRechargeRolls);
+
+            for (int i = 0; i < rolls; i++)
             {
-                Console.WriteLine("Spawning powerup");
-                var spawnAngle = rand.NextSingle() * MathHelper.TwoPi;
-                var spawnDir = new Vector2(MathF.Cos(spawnAngle), MathF.Sin(spawnAngle));
-
-                var spawnPos = spawnDir * GlobalLoopGame.MapRadius;
-
-                var r = rand.NextSingle() * 2f - 1f;
-                var minAngle = MathHelper.PiOver4 / 2f;
-                var maxAngle = MathHelper.PiOver4;
-                var spawnVel = -spawnDir * Matrix2x2.Rotation((maxAngle - minAngle) * r + minAngle * MathF.Sign(r));
-
-                var spawnSpeed = 3f;
-                spawnVel *= spawnSpeed;
-
-                var powerup = new RepairCharge(_world);
-                powerup.Transform.LocalPosition = spawnPos;
-                powerup.PhysicsBody.LinearVelocity = spawnVel;
-
-                r = rand.NextSingle() * 2f - 1f;
-                var minAngVel = 5f;
-                var maxAngVel = 10f;
-                var angVel = (maxAngVel - minAngVel) * r + minAngle * MathF.Sign(r);
-
-                powerup.PhysicsBody.AngularVelocity = angVel;
-                _hierarchy.AddObject(powerup);
+                if (shieldRechargeRandom.GetRandom())
+                {
+                    Console.WriteLine($"Spawning Recharge");
+                    SpawnShieldRecharge();
+                }
             }
         }
 
-        public void ModifyDifficulty(int difficultyModification)
+        /*private void SpawnPowerup()
         {
-            difficulty = MathHelper.Clamp(difficulty + difficultyModification, 0, 10);
+            if (rand.NextSingle() < 0.5f)
+            {
+                Console.WriteLine("Spawning powerup");
+            }
+        }*/
 
-            switch (difficulty)
+        public void SpawnShieldRecharge()
+        {
+            var rand = Random.Shared;
+
+            var spawnAngle = rand.NextSingle() * MathHelper.TwoPi;
+            var spawnDir = new Vector2(MathF.Cos(spawnAngle), MathF.Sin(spawnAngle));
+
+            var spawnPos = spawnDir * GlobalLoopGame.MapRadius;
+
+            var r = rand.NextSingle() * 2f - 1f;
+            var minAngle = MathHelper.PiOver4 / 2f;
+            var maxAngle = MathHelper.PiOver4;
+            var spawnVel = -spawnDir * Matrix2x2.Rotation((maxAngle - minAngle) * r + minAngle * MathF.Sign(r));
+
+            var spawnSpeed = 3f;
+            spawnVel *= spawnSpeed;
+
+            var powerup = new RepairCharge(_world);
+            powerup.Transform.LocalPosition = spawnPos;
+            powerup.PhysicsBody.LinearVelocity = spawnVel;
+
+            r = rand.NextSingle() * 2f - 1f;
+            var minAngVel = 5f;
+            var maxAngVel = 10f;
+            var angVel = (maxAngVel - minAngVel) * r + minAngle * MathF.Sign(r);
+
+            powerup.PhysicsBody.AngularVelocity = angVel;
+            _hierarchy.AddObject(powerup);
+        }
+
+        public static void ModifyDifficulty(int difficultyModification)
+        {
+            Difficulty = MathHelper.Clamp(Difficulty + difficultyModification, 0, 10);
+
+            switch (Difficulty)
             {
                 case 0:
                     MusicManager.SetIntensity(0);
@@ -293,16 +321,16 @@ namespace GlobalLoopGame.Asteroid
 
         public void Reset()
         {
-            active = true; 
-            
-            difficulty = 0;
+            active = true;
+
+            Difficulty = 0;
             WaveNumber = 0;
             Points = 0;
 
             SetInterval(3, 3);
 
             waveMachine = new SequentialAutoTimeMachine(
-                (() => SelectWaveAndPlaceWarning(this.difficulty), this.waveWarningTime),
+                (() => SelectWaveAndPlaceWarning(Difficulty), this.waveWarningTime),
                 (() => SpawnAsteroidsInPlacement(this.selectedWave), this.waveInterval)
                 );
         }
@@ -809,5 +837,22 @@ namespace GlobalLoopGame.Asteroid
                 305f
             })
         };
+
+        private int maxRechargeRolls = 5;
+
+        //17 false, 3 true
+        private BucketRandom<bool> shieldRechargeRandom = new BucketRandom<bool>(Random.Shared, 
+            false, false, false, false, false,
+            false, false, false, false, false,
+            false, false, false, false, false,
+            false, false, true , true , true 
+            );
     }
+
+    /*public enum PowerupTye 
+    { 
+        None = 0,
+        ShieldCharge = 1,
+    }*/
+
 }

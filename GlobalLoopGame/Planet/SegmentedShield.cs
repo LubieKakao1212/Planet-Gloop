@@ -1,4 +1,5 @@
 ﻿using GlobalLoopGame.Globals;
+using GlobalLoopGame.Asteroid;
 using Microsoft.Xna.Framework;
 using MonoEngine.Physics;
 using MonoEngine.Rendering;
@@ -20,9 +21,14 @@ namespace GlobalLoopGame.Planet
         private ShieldDisplay display;
 
         private int[] segmentHealth;
+
         private Fixture[] segments;
 
-        public int maxHealth { get; private set; }
+        public int MaxSegmentHealth { get; private set; }
+
+        public int TotalSegmentHealth => MaxSegmentHealth * segments.Length;
+
+        public int TotalHeaelthLeft => segmentHealth.Sum();
 
         private static Color[] healthColors = new Color[]
         {
@@ -45,7 +51,7 @@ namespace GlobalLoopGame.Planet
             display.Transform.LocalScale = new Vector2(radius * 3f);
             display.Parent = this;
 
-            maxHealth = healthPerSegment;
+            MaxSegmentHealth = healthPerSegment;
             segmentHealth = Enumerable.Repeat(healthPerSegment, segments).ToArray();
             this.segments = new Fixture[segments];
             
@@ -78,14 +84,18 @@ namespace GlobalLoopGame.Planet
         public void ModifySegment(int idx, int amount)
         {
             var health = segmentHealth[idx];
-            health = MathHelper.Clamp(health + amount, 0, maxHealth);
+
+            health = MathHelper.Clamp(health + amount, 0, MaxSegmentHealth);
+
             segmentHealth[idx] = health;
+
             UpdateSegment(idx);
         }
 
         private void UpdateSegment(int idx)
         {
             var health = segmentHealth[idx];
+
             if (health == 0)
             {
                 segments[idx].CollidesWith = CollisionCats.CollisionsShieldDestroyed;
@@ -94,6 +104,7 @@ namespace GlobalLoopGame.Planet
             {
                 segments[idx].CollidesWith = CollisionCats.CollisionsShield;
             }
+
             display.SetSegmentColor(idx, healthColors[MathHelper.Min(health, healthColors.Length)]);
         }
 
@@ -106,7 +117,7 @@ namespace GlobalLoopGame.Planet
         {
             for (int i = 0; i < segmentHealth.Length; i++)
             {
-                segmentHealth[i] = maxHealth;
+                segmentHealth[i] = MaxSegmentHealth;
                 UpdateSegment(i);
             }
         }

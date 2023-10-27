@@ -1,5 +1,6 @@
 using GlobalLoopGame.Globals;
 using GlobalLoopGame.Planet;
+using GlobalLoopGame.Spaceship.Turret;
 using GlobalLoopGame.UI;
 using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
@@ -15,7 +16,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace GlobalLoopGame.Asteroid
 {
-    public class AsteroidObject : PhysicsBodyObject
+    public class AsteroidObject : PhysicsBodyObject, ITargettable
     {
         private AsteroidManager manager;
         public Vector2 velocity { get; private set; }
@@ -24,6 +25,9 @@ namespace GlobalLoopGame.Asteroid
         public float healthToDisplay { get => (health / maxHealth); }
         public Vector2 size { get; private set; }
         public DrawableObject asteroidDrawable { get; private set; }
+
+        float ITargettable.Health => health;
+
         private bool isDead = false;
 
         private float maxHealth = 100f;
