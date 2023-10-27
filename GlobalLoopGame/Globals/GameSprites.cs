@@ -11,7 +11,12 @@ namespace GlobalLoopGame.Globals
         public static Sprite Circle;
         public static Sprite SmoothCircle;
         public static Sprite DiamondStar;
-        public static Sprite StarCookie;
+        public static Sprite LightCookie_1;
+        public static Sprite LightCookie_2;
+        public static Sprite LightCookie_3;
+        public static Sprite LightCookie_4;
+        public static Sprite LightCookie_5;
+        public static Sprite LightCookie_6;
         public static Sprite Planet;
         public static Sprite SpaceshipBody;
         public static Sprite[] SpaceshipThrusterFrames;
