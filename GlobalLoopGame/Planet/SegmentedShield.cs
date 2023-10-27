@@ -1,4 +1,5 @@
 ﻿using GlobalLoopGame.Globals;
+using GlobalLoopGame.Asteroid;
 using Microsoft.Xna.Framework;
 using MonoEngine.Physics;
 using MonoEngine.Rendering;
@@ -20,6 +21,7 @@ namespace GlobalLoopGame.Planet
         private ShieldDisplay display;
 
         private int[] segmentHealth;
+
         private Fixture[] segments;
 
         public int maxHealth { get; private set; }
@@ -78,14 +80,18 @@ namespace GlobalLoopGame.Planet
         public void ModifySegment(int idx, int amount)
         {
             var health = segmentHealth[idx];
+
             health = MathHelper.Clamp(health + amount, 0, maxHealth);
+
             segmentHealth[idx] = health;
+
             UpdateSegment(idx);
         }
 
         private void UpdateSegment(int idx)
         {
             var health = segmentHealth[idx];
+
             if (health == 0)
             {
                 segments[idx].CollidesWith = CollisionCats.CollisionsShieldDestroyed;
@@ -94,6 +100,7 @@ namespace GlobalLoopGame.Planet
             {
                 segments[idx].CollidesWith = CollisionCats.CollisionsShield;
             }
+
             display.SetSegmentColor(idx, healthColors[MathHelper.Min(health, healthColors.Length)]);
         }
 

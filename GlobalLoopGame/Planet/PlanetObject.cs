@@ -61,9 +61,9 @@ namespace GlobalLoopGame.Planet
 
                 GameSounds.PlaySound(GameSounds.planetHurtSound, 2);
 
-                if (game.asteroidManager.difficulty > 3)
+                if (AsteroidManager.Difficulty > 3)
                 {
-                    game.asteroidManager.ModifyDifficulty(-1);
+                    AsteroidManager.ModifyDifficulty(-1);
                 }
             }
 
