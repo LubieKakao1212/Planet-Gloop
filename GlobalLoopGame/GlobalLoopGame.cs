@@ -581,6 +581,14 @@ namespace GlobalLoopGame
             texture.Transform.LocalScale = new Vector2(136f);
             hierarchyMenu.AddObject(texture);
 
+            var atlas = new DrawableObject(Color.White, 1000f);
+            atlas.Sprite = new Sprite();
+            atlas.Sprite.TextureRect = new MonoEngine.Math.BoundingRect(Vector2.Zero, Vector2.One);
+            atlas.Sprite.TextureIndex = 0;
+            atlas.Transform.GlobalPosition = new Vector2(0f, 0f);
+            atlas.Transform.LocalScale = Vector2.One * 128f;
+            hierarchyMenu.AddObject(atlas);
+
             /*var texture1 = new DrawableObject(Color.Purple * 0.15f, 0.1f);
             texture1.Sprite = GameSprites.Noise_1;
             texture1.Transform.LocalScale = new Vector2(136f);
