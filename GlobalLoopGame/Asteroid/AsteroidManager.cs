@@ -69,7 +69,8 @@ namespace GlobalLoopGame.Asteroid
 
         public event EventHandler<EventArgs> UpdateOrderChanged;
         
-        public int difficulty { get; private set; } = 0;
+        public static int Difficulty = 0;
+
         private float waveInterval = 5f;
         private float waveWarningTime = 5f;
         private bool dirty = false;
@@ -168,7 +169,7 @@ namespace GlobalLoopGame.Asteroid
                 CreateAsteroid(aPlacement);
             }
 
-            if (difficulty < 2 || WaveNumber % (difficulty - 1) == 0) 
+            if (Difficulty < 2 || WaveNumber % (Difficulty - 1) == 0) 
             {
                 ModifyDifficulty(1);
             }
@@ -233,11 +234,11 @@ namespace GlobalLoopGame.Asteroid
             _hierarchy.AddObject(powerup);
         }
 
-        public void ModifyDifficulty(int difficultyModification)
+        public static void ModifyDifficulty(int difficultyModification)
         {
-            difficulty = MathHelper.Clamp(difficulty + difficultyModification, 0, 10);
+            Difficulty = MathHelper.Clamp(Difficulty + difficultyModification, 0, 10);
 
-            switch (difficulty)
+            switch (Difficulty)
             {
                 case 0:
                     MusicManager.SetIntensity(0);
@@ -320,16 +321,16 @@ namespace GlobalLoopGame.Asteroid
 
         public void Reset()
         {
-            active = true; 
-            
-            difficulty = 0;
+            active = true;
+
+            Difficulty = 0;
             WaveNumber = 0;
             Points = 0;
 
             SetInterval(3, 3);
 
             waveMachine = new SequentialAutoTimeMachine(
-                (() => SelectWaveAndPlaceWarning(this.difficulty), this.waveWarningTime),
+                (() => SelectWaveAndPlaceWarning(Difficulty), this.waveWarningTime),
                 (() => SpawnAsteroidsInPlacement(this.selectedWave), this.waveInterval)
                 );
         }

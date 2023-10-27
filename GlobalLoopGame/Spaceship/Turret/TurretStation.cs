@@ -30,11 +30,8 @@ namespace GlobalLoopGame.Spaceship.Turret
 
         private const int meshResolution = 4095;
 
-        //protected AutoTimeMachine shootingTimer;
-        //protected SequentialAutoTimeMachine shootingTimer;
         protected TimeMachine chargeTimer = new TimeMachine();
         protected TimeMachine cooldownTimer = new TimeMachine();
-        //protected AutoTimeMachine targetSeekerMachine;
 
         protected AsteroidManager asteroids;
         protected HierarchyObject barrelPivot;
@@ -73,6 +70,10 @@ namespace GlobalLoopGame.Spaceship.Turret
         protected bool onCooldown = false;
 
         protected ITargettable target;
+
+        protected float barrelOffset;
+
+        protected AsteroidObject target;
 
         protected Vector2 predictedTargetDirection;
 
@@ -124,14 +125,14 @@ namespace GlobalLoopGame.Spaceship.Turret
         {
             var spawnPos = Transform.GlobalPosition + barrelPivot.Transform.Up * barrelLength / 2f;
 
-            // GameSounds.shotSounds[shotIndex].Play();
-
             GameSounds.PlaySound(GameSounds.shotSounds[shotIndex], 2);
 
             for (int i = 0; i < bulletCount; i++)
             {
                 CurrentScene.AddObject(CreateProjectile(predictedTargetDirection, spawnPos));
             }
+
+            barrelOffset = 2f;
 
             willReload = true;
         }
@@ -228,6 +229,20 @@ namespace GlobalLoopGame.Spaceship.Turret
             grabTimer = MathHelper.Clamp(grabTimer, 0f, 1f);
 
             UpdateRangeMesh(grabTimer * RangeRadius);
+
+            if (barrelOffset < 0.001f)
+            {
+                barrelOffset = 0f;
+            }
+            else
+            {
+                barrelOffset = barrelOffset + MathF.Sign(-barrelOffset) * (float)time.ElapsedGameTime.TotalSeconds * 8;
+            }
+
+            barrelBaseDrawable.Transform.LocalPosition = new Vector2(0, -barrelOffset);
+            barrelDrawable.Transform.LocalPosition = new Vector2(0, -barrelOffset);
+
+            UpdateRangeMesh(RangeRadius * grabTimer);
 
             popupDescription.Transform.GlobalPosition = Transform.GlobalPosition + Vector2.UnitY * 10f;
             popupDescription.Transform.GlobalRotation = 0;
