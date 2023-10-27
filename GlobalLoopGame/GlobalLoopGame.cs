@@ -410,7 +410,7 @@ namespace GlobalLoopGame
             GameSprites.Health = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("HealthTex"),
                 new Rectangle(0, 0, 32, 32))[0];
 
-            GameSprites.CircleOverlay = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("circleoverlay"),
+            GameSprites.CircleOverlay = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("nebulacolor"),
                 new Rectangle(0, 0, 726,726))[0];
 
             GameSprites.RepairCharge = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("ChargeTex"),
@@ -529,9 +529,29 @@ namespace GlobalLoopGame
             hierarchyUI.AddObject(uiCamera);
 
             var boost = new Bar(() => Spaceship.DisplayedBoost, Color.Green, Color.Red, Color.Transparent);
-            boost.Transform.LocalPosition = new Vector2(-56f, 56f);
-            boost.Transform.LocalScale = Vector2.One * 3f;
+            boost.Transform.LocalPosition = new Vector2(-50f, 63f);
+            boost.Transform.LocalScale = Vector2.One * 5f;
             hierarchyUI.AddObject(boost);
+
+            var boostText = new TextObject();
+            boostText.Transform.GlobalPosition = new Vector2(-51f, 58f);
+            boostText.Color = Color.White;
+            boostText.FontSize = 12;
+            boostText.Text = "boost";
+            Spaceship.BoostUpdated += (boostLeft) =>
+            {
+                if (boostLeft > 0)
+                {
+                    boostText.Transform.GlobalPosition = new Vector2(-51f, 58f);
+                    boostText.Text = "boost";
+                }
+                else
+                {
+                    boostText.Transform.GlobalPosition = new Vector2(-48f, 58f);
+                    boostText.Text = "overloaded!";
+                }
+            };
+            hierarchyUI.AddObject(boostText);
 
             pointsText = new TextObject();
             pointsText.Transform.GlobalPosition = new Vector2(60f, 60f);
@@ -567,11 +587,12 @@ namespace GlobalLoopGame
             };
             hierarchyUI.AddObject(wavesText);
 
-            var health = new MultiIconDisplay(GameSprites.Health, 5, 0.5f, 4f, 1f);
+            /*var health = new MultiIconDisplay(GameSprites.Health, 5, 0.5f, 4f, 1f);
             health.Transform.LocalPosition = new Vector2(-64f, 64f);
             Planet.HealthChange += health.UpdateCount;
             Planet.ModifyHealth(0);
             hierarchyUI.AddObject(health);
+            */
 
             DrawableObject overlayObject = new DrawableObject(new Color(0.3f, 0.15f, 0.15f, 1.0f), -1f);
             hierarchyUI.AddObject(overlayObject);
