@@ -277,13 +277,18 @@ namespace GlobalLoopGame
             GameSounds.chargePickup = Content.Load<SoundEffect>("Sounds/EnergyPickup");
             GameSounds.chargeAlert = Content.Load<SoundEffect>("Sounds/EnergyAlert");
 
-            GameSounds.musicIntensityOne = Content.Load<SoundEffect>("Sounds/Music/Song0");
-            GameSounds.musicIntensityTwo = Content.Load<SoundEffect>("Sounds/Music/Song1");
-            GameSounds.musicIntensityThree = Content.Load<SoundEffect>("Sounds/Music/Song2");
-            GameSounds.musicIntensityFour = Content.Load<SoundEffect>("Sounds/Music/Song3");
-            GameSounds.musicIntensityFive = Content.Load<SoundEffect>("Sounds/Music/Song4");
-            GameSounds.musicIntensitySix = Content.Load<SoundEffect>("Sounds/Music/Song5");
-            GameSounds.musicIntensitySeven = Content.Load<SoundEffect>("Sounds/Music/Song6");
+            GameSounds.musicIntensity1 = Content.Load<SoundEffect>("Sounds/Music/Song0");
+            GameSounds.musicIntensity2 = Content.Load<SoundEffect>("Sounds/Music/Song1");
+            GameSounds.musicIntensity3 = Content.Load<SoundEffect>("Sounds/Music/Song2");
+            GameSounds.musicIntensity4 = Content.Load<SoundEffect>("Sounds/Music/Song3");
+            GameSounds.musicIntensity5 = Content.Load<SoundEffect>("Sounds/Music/Song4");
+            GameSounds.musicIntensity6 = Content.Load<SoundEffect>("Sounds/Music/Song5");
+            GameSounds.musicIntensity7 = Content.Load<SoundEffect>("Sounds/Music/Song6");
+            GameSounds.musicIntensity8 = Content.Load<SoundEffect>("Sounds/Music/Song7");
+            GameSounds.musicIntensity9 = Content.Load<SoundEffect>("Sounds/Music/Song8");
+            GameSounds.musicIntensity10 = Content.Load<SoundEffect>("Sounds/Music/Song9");
+            GameSounds.musicIntensity11 = Content.Load<SoundEffect>("Sounds/Music/Song10");
+            GameSounds.musicIntensity12 = Content.Load<SoundEffect>("Sounds/Music/Song11");
 
             GameSounds.magnetEmitter = GameSounds.magnetSound.CreateInstance();
             GameSounds.magnetEmitter.IsLooped = true;
@@ -309,22 +314,32 @@ namespace GlobalLoopGame
             GameSounds.boostChargingEmitter.Volume = 1.0f;
             GameSounds.boostChargingEmitter.Pause();
 
-            GameSounds.firstMusicInstance = GameSounds.musicIntensityOne.CreateInstance();
-            GameSounds.secondMusicInstance = GameSounds.musicIntensityTwo.CreateInstance();
-            GameSounds.thirdMusicInstance = GameSounds.musicIntensityThree.CreateInstance();
-            GameSounds.fourthMusicInstance = GameSounds.musicIntensityThree.CreateInstance();
-            GameSounds.fifthMusicInstance = GameSounds.musicIntensityThree.CreateInstance();
-            GameSounds.sixthMusicInstance = GameSounds.musicIntensityThree.CreateInstance();
-            GameSounds.seventhMusicInstance = GameSounds.musicIntensityThree.CreateInstance();
+            GameSounds.MusicInstance1 = GameSounds.musicIntensity1.CreateInstance();
+            GameSounds.MusicInstance2 = GameSounds.musicIntensity2.CreateInstance();
+            GameSounds.MusicInstance3 = GameSounds.musicIntensity3.CreateInstance();
+            GameSounds.MusicInstance4 = GameSounds.musicIntensity4.CreateInstance();
+            GameSounds.MusicInstance5 = GameSounds.musicIntensity5.CreateInstance();
+            GameSounds.MusicInstance6 = GameSounds.musicIntensity6.CreateInstance();
+            GameSounds.MusicInstance7 = GameSounds.musicIntensity7.CreateInstance();
+            GameSounds.MusicInstance8 = GameSounds.musicIntensity8.CreateInstance();
+            GameSounds.MusicInstance9 = GameSounds.musicIntensity9.CreateInstance();
+            GameSounds.MusicInstance10 = GameSounds.musicIntensity10.CreateInstance();
+            GameSounds.MusicInstance11 = GameSounds.musicIntensity11.CreateInstance();
+            GameSounds.MusicInstance12 = GameSounds.musicIntensity12.CreateInstance();
             List<SoundEffectInstance> musicList = new List<SoundEffectInstance>
             {
-                GameSounds.firstMusicInstance,
-                GameSounds.secondMusicInstance,
-                GameSounds.thirdMusicInstance,
-                GameSounds.fourthMusicInstance,
-                GameSounds.fifthMusicInstance,
-                GameSounds.sixthMusicInstance,
-                GameSounds.seventhMusicInstance,
+                GameSounds.MusicInstance1,
+                GameSounds.MusicInstance2,
+                GameSounds.MusicInstance3,
+                GameSounds.MusicInstance4,
+                GameSounds.MusicInstance5,
+                GameSounds.MusicInstance6,
+                GameSounds.MusicInstance7,
+                GameSounds.MusicInstance8,
+                GameSounds.MusicInstance9,
+                GameSounds.MusicInstance10,
+                GameSounds.MusicInstance11,
+                GameSounds.MusicInstance12,
             };
             
             foreach (SoundEffectInstance song in musicList)
