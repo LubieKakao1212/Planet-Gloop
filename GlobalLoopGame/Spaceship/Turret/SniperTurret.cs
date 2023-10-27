@@ -24,7 +24,7 @@ namespace GlobalLoopGame.Spaceship.Turret
         {
             var world = PhysicsBody.World;
             ITargettable target = null;
-            target ??= asteroids.FindTargetAsteroid(world, Transform.GlobalPosition, RangeRadius, (target, distance) => target.Health);
+            target ??= asteroids.FindTargetAsteroid(world, Transform.GlobalPosition, RangeRadius, (target, distance) => distance < MinTargettingDistance ? float.NegativeInfinity : target.Health);
             return target;
         }
 

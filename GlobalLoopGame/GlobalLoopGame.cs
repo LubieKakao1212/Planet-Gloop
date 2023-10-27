@@ -22,6 +22,7 @@ using MonoEngine.Input.Binding;
 using nkast.Aether.Physics2D.Diagnostics;
 using GlobalLoopGame.Globals;
 using GlobalLoopGame.Spaceship.Turret;
+using GameUtils.Profiling;
 
 namespace GlobalLoopGame
 {
@@ -68,11 +69,14 @@ namespace GlobalLoopGame
 
         public SpaceshipObject Spaceship { get; private set; }
         public PlanetObject Planet { get; private set; }
+
+        public static TimeLogger Profiler { get; set; } = TimeLogger.Instance;
+
         public List<TurretStation> Turrets { get; private set; } = new List<TurretStation>();
 
         private TextObject pointsText, wavesText;
 
-        public List<IResettable> Resettables { get; private set; } = new List<IResettable>();
+        public List<IResettable> AdditionalResettables { get; private set; } = new List<IResettable>();
 
         CompoundAxixBindingInput accelerate, decelerate, rotLeft, rotRight;
 
@@ -87,6 +91,8 @@ namespace GlobalLoopGame
 
         protected override void Initialize()
         {
+            Profiler.unitScale = 1f / 60f;
+            Profiler.enabled = true;
             base.Initialize();
         }
 
@@ -124,27 +130,35 @@ namespace GlobalLoopGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.X))
                 Exit();
 
+            Profiler.Push("Update");
+
             GameTime = gameTime;
 
             inputManager.UpdateState();
 
             if (!menuDisplayed)
             {
+                Profiler.Push("Physics");
                 world.Step(gameTime.ElapsedGameTime);
+                Profiler.Pop("Physics");
+
+                Profiler.Push("Game");
                 hierarchyGame.BeginUpdate();
                 foreach (var updatable in hierarchyGame.OrderedInstancesOf<IUpdatable>())
                 {
                     updatable.Update(gameTime);
                 }
                 hierarchyGame.EndUpdate();
-
+                Profiler.Pop("Game");
+                
+                Profiler.Push("UI");
                 hierarchyUI.BeginUpdate();
                 foreach (var updatable in hierarchyUI.OrderedInstancesOf<IUpdatable>())
                 {
                     updatable.Update(gameTime);
                 }
                 hierarchyUI.EndUpdate();
-
+                Profiler.Pop("UI");
             }
             else
             {
@@ -183,6 +197,8 @@ namespace GlobalLoopGame
                     hierarchyPaused.EndUpdate();
                 }
             }
+
+            Profiler.Pop("Update");
 
             base.Update(gameTime);
         }
@@ -446,35 +462,35 @@ namespace GlobalLoopGame
             Planet = new PlanetObject(world, renderPipeline);
             hierarchyGame.AddObject(Planet);
             Planet.game = this;
-            Resettables.Add(Planet);
+            //AdditionalResettables.Add(Planet);
 
             Spaceship = new SpaceshipObject(world, 0f);
             Spaceship.ThrustMultiplier = 84f;
             hierarchyGame.AddObject(Spaceship);
-            Resettables.Add(Spaceship);
+            //AdditionalResettables.Add(Spaceship);
     
             asteroidManager = new AsteroidManager(world, hierarchyGame, Planet);
             asteroidManager.game = this;
-            Resettables.Add(asteroidManager);
+            AdditionalResettables.Add(asteroidManager);
 
             musicManager = new MusicManager();
-            Resettables.Add(musicManager);
+            AdditionalResettables.Add(musicManager);
 
             cameraManager = new CameraManager(gameCamera);
-            Resettables.Add(cameraManager);
+            AdditionalResettables.Add(cameraManager);
 
             var turret00 = new TurretStation(world, asteroidManager, renderPipeline);
             turret00.SetSprites(GameSprites.TurretCannon, GameSprites.TurretCannonSizes, new Vector2(0f, 17f) / GameSprites.pixelsPerUnit);
             turret00.Transform.LocalRotation = MathHelper.ToRadians(270f);
             turret00.SetStartingPosition(new Vector2(32f, 0f));
-            Resettables.Add(turret00);
+            //AdditionalResettables.Add(turret00);
             hierarchyGame.AddObject(turret00);
             Turrets.Add(turret00);
 
             var turret10 = new SniperTurret(world, asteroidManager, renderPipeline);
             turret10.SetSprites(GameSprites.TurretSniper, GameSprites.TurretSniperSizes, new Vector2(-6f, 12f) / GameSprites.pixelsPerUnit);
             turret10.SetStartingPosition(new Vector2(0f, 32f));
-            Resettables.Add(turret10);
+            //AdditionalResettables.Add(turret10);
             hierarchyGame.AddObject(turret10);
             Turrets.Add(turret10);
 
@@ -483,7 +499,7 @@ namespace GlobalLoopGame
             turret01.RangeRadius = 24f;
             turret01.Transform.LocalRotation = MathHelper.ToRadians(90f);
             turret01.SetStartingPosition(new Vector2(-32f, 0f));
-            Resettables.Add(turret01);
+            //AdditionalResettables.Add(turret01);
             hierarchyGame.AddObject(turret01);
             Turrets.Add(turret01);
         }
@@ -780,7 +796,12 @@ namespace GlobalLoopGame
 
             Console.WriteLine("Game started!");
 
-            foreach (IResettable resettable in Resettables)
+            foreach (var resettable in hierarchyGame.AllInstancesOf<IResettable>())
+            {
+                resettable.Reset();
+            }
+
+            foreach (IResettable resettable in AdditionalResettables)
             {
                 resettable.Reset();
             }
@@ -795,7 +816,13 @@ namespace GlobalLoopGame
 
             Console.WriteLine("Game ended!");
 
-            foreach (IResettable resettable in Resettables)
+            foreach (var resettable in hierarchyGame.AllInstancesOf<IResettable>())
+            {
+                resettable.OnGameEnd();
+            }
+
+
+            foreach (IResettable resettable in AdditionalResettables)
             {
                 resettable.OnGameEnd();
             }
