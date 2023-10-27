@@ -270,6 +270,13 @@ namespace GlobalLoopGame
             GameSounds.shotSounds[2] = Content.Load<SoundEffect>("Sounds/SniperShot");
             GameSounds.shotgunReloadSound = Content.Load<SoundEffect>("Sounds/ShotgunReload");
 
+            GameSounds.shieldHurt = Content.Load<SoundEffect>("Sounds/ShieldHurt"); 
+            GameSounds.shieldHeal = Content.Load<SoundEffect>("Sounds/ShieldHeal"); 
+            GameSounds.shieldDestroy = Content.Load<SoundEffect>("Sounds/ShieldDestroy");
+
+            GameSounds.chargePickup = Content.Load<SoundEffect>("Sounds/EnergyPickup");
+            GameSounds.chargeAlert = Content.Load<SoundEffect>("Sounds/EnergyAlert");
+
             GameSounds.musicIntensityOne = Content.Load<SoundEffect>("Sounds/Music/Song0");
             GameSounds.musicIntensityTwo = Content.Load<SoundEffect>("Sounds/Music/Song1");
             GameSounds.musicIntensityThree = Content.Load<SoundEffect>("Sounds/Music/Song2");
@@ -343,10 +350,6 @@ namespace GlobalLoopGame
             GameSprites.LightCookie_4 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_5"), new Rectangle(0, 0, 32, 32))[0];
             GameSprites.LightCookie_5 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_15"), new Rectangle(0, 0, 32, 32))[0];
             GameSprites.LightCookie_6 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("32x32_Arcane_16"), new Rectangle(0, 0, 32, 32))[0];
-
-            //GameSprites.Noise_1 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PerlinNoise02"), new Rectangle(0, 0, 1024, 1024))[0];
-            //GameSprites.Noise_2 = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SmallWaves"), new Rectangle(0, 0, 128, 128))[0];
-
             GameSprites.Planet = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PlanetTex"), new Rectangle(0, 0, 128, 128))[0];
 
             var spaceshipTextures = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("SpaceshipTex"),
@@ -424,6 +427,7 @@ namespace GlobalLoopGame
             font.AddSize(56, Content.Load<SpriteFont>("Fonts/Font56"));
             font.AddSize(72, Content.Load<SpriteFont>("Fonts/Font72"));
             font.AddSize(128, Content.Load<SpriteFont>("Fonts/Font128"));
+            font.AddSize(80, Content.Load<SpriteFont>("Fonts/ChakraTitle"));
             GameSprites.Font = font;
             
             //Load Sprites Here
@@ -473,7 +477,7 @@ namespace GlobalLoopGame
             //background.Transform.LocalRotation = -1f;
             hierarchyGame.AddObject(background);
 
-            var animatedBackground = new StarryBackground(Color.Transparent, 0.5f, GameSprites.DiamondStar, -2f, 180, 5f, 0.5f);
+            var animatedBackground = new StarryBackground(Color.Transparent, 0.5f, GameSprites.DiamondStar, -2f, 180, 6f, 0.5f);
             hierarchyGame.AddObject(animatedBackground);
 
             Planet = new PlanetObject(world, renderPipeline);
@@ -594,7 +598,8 @@ namespace GlobalLoopGame
             hierarchyUI.AddObject(health);
             */
 
-            DrawableObject overlayObject = new DrawableObject(new Color(0.3f, 0.15f, 0.15f, 1.0f), -1f);
+            //DrawableObject overlayObject = new DrawableObject(new Color(0.3f, 0.15f, 0.15f, 1.0f), -1f);
+            DrawableObject overlayObject = new DrawableObject(new Color(100, 50, 50) * 0.95f, -1f);
             hierarchyUI.AddObject(overlayObject);
             overlayObject.Sprite = GameSprites.CircleOverlay;
             overlayObject.Transform.GlobalPosition = new Vector2(0, 0);
@@ -605,52 +610,27 @@ namespace GlobalLoopGame
         {
             hierarchyMenu = new Hierarchy();
 
-            /*var background = new DrawableObject(new Color(19, 18, 51), -1f); //new Color(19, 18, 51)
-            background.Sprite = GameSprites.NullSprite;
-            background.Transform.LocalScale = new Vector2(136f);
+            /*
+            //obs recording menu
+            var background = new DrawableObject(Color.White * 0.3f, -1f); //new Color(19, 18, 51)
+            background.Sprite = GameSprites.SpaceBackground;
+            background.Transform.LocalScale = new Vector2(136f * 1f);
             //background.Transform.LocalRotation = -1f;
-            hierarchyMenu.AddObject(background);*/
+            hierarchyMenu.AddObject(background);
+
+            var starryBackground = new StarryBackground(Color.Transparent, 1f, GameSprites.DiamondStar, 0f, 40, 20f, 1);
+            hierarchyMenu.AddObject(starryBackground);
+
+            var gameTitle = new TextObject();
+            gameTitle.Transform.GlobalPosition = new Vector2(2, 0);
+            gameTitle.Color = Color.LightBlue;
+            gameTitle.FontSize = 80;
+            gameTitle.Text = "Planet Gloop";
+            hierarchyMenu.AddObject(gameTitle);
+
+            hierarchyPressEnter = new Hierarchy();
+            hierarchyPaused = new Hierarchy();*/
             
-            /*var texture = new DrawableObject(Color.White * 0.2f, 0f);
-            texture.Sprite = GameSprites.Noise_1;
-            texture.Transform.LocalScale = new Vector2(136f);
-            hierarchyMenu.AddObject(texture);*/
-
-            /*var atlas = new DrawableObject(Color.White, 1000f);
-            atlas.Sprite = new Sprite();
-            atlas.Sprite.TextureRect = new MonoEngine.Math.BoundingRect(Vector2.Zero, Vector2.One);
-            atlas.Sprite.TextureIndex = 0;
-            atlas.Transform.GlobalPosition = new Vector2(0f, 0f);
-            atlas.Transform.LocalScale = Vector2.One * 128f;
-            hierarchyMenu.AddObject(atlas);*/
-
-            /*var texture1 = new DrawableObject(Color.Purple * 0.15f, 0.1f);
-            texture1.Sprite = GameSprites.Noise_1;
-            texture1.Transform.LocalScale = new Vector2(136f);
-            texture1.Transform.LocalPosition = new Vector2(-136, -136);
-            hierarchyMenu.AddObject(texture1);
-
-            var texture2 = new DrawableObject(Color.Purple * 0.15f, 0.1f);
-            texture2.Sprite = GameSprites.Noise_1;
-            texture2.Transform.LocalScale = new Vector2(136f);
-            texture2.Transform.LocalPosition = new Vector2(136, -136);
-            hierarchyMenu.AddObject(texture2);
-
-            var texture3 = new DrawableObject(Color.Purple * 0.15f, 0.1f);
-            texture3.Sprite = GameSprites.Noise_1;
-            texture3.Transform.LocalScale = new Vector2(136f);
-            texture3.Transform.LocalPosition = new Vector2(136, 136);
-            hierarchyMenu.AddObject(texture3);
-
-            var texture4 = new DrawableObject(Color.Purple * 0.15f, 0.1f);
-            texture4.Sprite = GameSprites.Noise_1;
-            texture4.Transform.LocalScale = new Vector2(136f);
-            texture4.Transform.LocalPosition = new Vector2(-136, 136);
-            hierarchyMenu.AddObject(texture4);*/
-
-            /*var starryBackground = new StarryBackground(Color.Transparent, 1f, GameSprites.DiamondStar, 0f, 180, 10f, 1.5f);
-            hierarchyMenu.AddObject(starryBackground);*/
-
             //original menu
             var background = new DrawableObject(Color.White * 0.3f, -1f); //new Color(19, 18, 51)
             background.Sprite = GameSprites.SpaceBackgroundUpdated;
@@ -658,18 +638,18 @@ namespace GlobalLoopGame
             //background.Transform.LocalRotation = -1f;
             hierarchyMenu.AddObject(background);
 
-            var starryBackground = new StarryBackground(Color.Transparent, 1f, GameSprites.DiamondStar, 0f, 180, 5f, 1);
+            var starryBackground = new StarryBackground(Color.Transparent, 1f, GameSprites.DiamondStar, 0f, 180, 6f, 1);
             hierarchyMenu.AddObject(starryBackground);
 
             var gameTitle = new TextObject();
-            gameTitle.Transform.GlobalPosition = new Vector2(-23, 37);
-            gameTitle.Color = Color.White;
-            gameTitle.FontSize = 128;
-            gameTitle.Text = "Planet\nGloop";
+            gameTitle.Transform.GlobalPosition = new Vector2(2, 37);
+            gameTitle.Color = Color.LightBlue;
+            gameTitle.FontSize = 80;
+            gameTitle.Text = "Planet Gloop";
             hierarchyMenu.AddObject(gameTitle);
 
             var controlsText = new TextObject();
-            controlsText.Transform.GlobalPosition = new Vector2(-8, -47);
+            controlsText.Transform.GlobalPosition = new Vector2(-8, -37);
             controlsText.Color = Color.White;
             controlsText.FontSize = 24;
             controlsText.Text = "Controls:\n" +
@@ -678,13 +658,21 @@ namespace GlobalLoopGame
                 "shift - boost spaceship\n" +
                 "spacebar - drag turret & display turret range\n" +
                 "esc - pause game\n" +
-                "x - exit game";
+                "x - exit game\n\n";
             hierarchyMenu.AddObject(controlsText);
+
+            var footnote = new TextObject();
+            footnote.Transform.GlobalPosition = new Vector2(-12, -60);
+            footnote.Color = new Color(120, 120, 120);
+            footnote.FontSize = 24;
+            footnote.Text = "Made with C# and Monogame in 5 days\n" +
+                "for Spelkollektivet Halloween Gamejam 2023";
+            hierarchyMenu.AddObject(footnote);
 
             hierarchyPressEnter = new Hierarchy();
 
             var pressEnterText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.25f);
-            pressEnterText.Transform.GlobalPosition = new Vector2(-12, 0);
+            pressEnterText.Transform.GlobalPosition = new Vector2(0, 8);
             pressEnterText.Color = Color.White;
             pressEnterText.FontSize = 48;
             pressEnterText.Text = "Press [Enter] to play";
@@ -693,7 +681,7 @@ namespace GlobalLoopGame
             hierarchyPaused = new Hierarchy();
 
             var gamePausedText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.8f);
-            gamePausedText.Transform.GlobalPosition = new Vector2(-25, 0);
+            gamePausedText.Transform.GlobalPosition = new Vector2(0, 8);
             gamePausedText.Color = Color.White;
             gamePausedText.FontSize = 48;
             gamePausedText.Text = "[Game Paused]";

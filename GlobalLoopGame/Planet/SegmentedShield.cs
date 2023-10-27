@@ -28,7 +28,7 @@ namespace GlobalLoopGame.Planet
 
         public int TotalSegmentHealth => MaxSegmentHealth * segments.Length;
 
-        public int TotalHeaelthLeft => segmentHealth.Sum();
+        public int TotalHealthLeft => segmentHealth.Sum();
 
         private static Color[] healthColors = new Color[]
         {
@@ -91,6 +91,19 @@ namespace GlobalLoopGame.Planet
             health = MathHelper.Clamp(health + amount, 0, MaxSegmentHealth);
 
             segmentHealth[idx] = health;
+
+            if (health <= 0)
+            {
+                GameSounds.PlaySound(GameSounds.shieldDestroy, 2);
+            }
+            else if (amount < 0)
+            {
+                GameSounds.PlaySound(GameSounds.shieldHurt, 2);
+            }
+            else if (amount > 0)
+            {
+                GameSounds.PlaySound(GameSounds.shieldHeal, 2);
+            }
 
             UpdateSegment(idx);
         }
