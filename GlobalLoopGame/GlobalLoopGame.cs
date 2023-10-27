@@ -551,8 +551,17 @@ namespace GlobalLoopGame
         {
             hierarchyMenu = new Hierarchy();
 
+            var background = new DrawableObject(new Color(19, 18, 51), -1f); //new Color(19, 18, 51)
+            //background.Sprite = GameSprites.SpaceBackgroundUpdated;
+            background.Transform.LocalScale = new Vector2(136f * 2.5f);
+            //background.Transform.LocalRotation = -1f;
+            hierarchyMenu.AddObject(background);
+
+            var starryBackground = new StarryBackground(Color.Transparent, 1f, GameSprites.DiamondStar, 0f, 180, 10f, 1.5f);
+            hierarchyMenu.AddObject(starryBackground);
+
             //original menu
-            var background = new DrawableObject(Color.White * 0.3f, -1f); //new Color(19, 18, 51)
+           /* var background = new DrawableObject(Color.White * 0.3f, -1f); //new Color(19, 18, 51)
             background.Sprite = GameSprites.SpaceBackgroundUpdated;
             background.Transform.LocalScale = new Vector2(136f * 1.5f);
             //background.Transform.LocalRotation = -1f;
@@ -579,25 +588,25 @@ namespace GlobalLoopGame
                 "spacebar - drag turret & display turret range\n" +
                 "esc - pause game\n" +
                 "x - exit game";
-            hierarchyMenu.AddObject(controlsText);
+            hierarchyMenu.AddObject(controlsText);*/
 
             hierarchyPressEnter = new Hierarchy();
 
-            var pressEnterText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.25f);
+            /*var pressEnterText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.25f);
             pressEnterText.Transform.GlobalPosition = new Vector2(-12, 0);
             pressEnterText.Color = Color.White;
             pressEnterText.FontSize = 48;
             pressEnterText.Text = "Press [Enter] to play";
-            hierarchyPressEnter.AddObject(pressEnterText);
+            hierarchyPressEnter.AddObject(pressEnterText);*/
 
             hierarchyPaused = new Hierarchy();
 
-            var gamePausedText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.8f);
+            /*var gamePausedText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.8f);
             gamePausedText.Transform.GlobalPosition = new Vector2(-25, 0);
             gamePausedText.Color = Color.White;
             gamePausedText.FontSize = 48;
             gamePausedText.Text = "[Game Paused]";
-            hierarchyPaused.AddObject(gamePausedText);
+            hierarchyPaused.AddObject(gamePausedText);*/
         }
 
         private void CreateGameOverScene()
