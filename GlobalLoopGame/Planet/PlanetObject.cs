@@ -20,6 +20,8 @@ namespace GlobalLoopGame.Planet
         public bool isDead { get; private set; }
         public bool shouldDie { get; private set; }
 
+        public SegmentedShield Shield { get; private set; }
+
         public PlanetObject(World world, RenderPipeline renderer) : base(null)
         {
             Order = 10f;
@@ -28,8 +30,8 @@ namespace GlobalLoopGame.Planet
             PhysicsBody.Tag = this;
             PhysicsBody.AngularVelocity = 0.25f;
 
-            var shield = new SegmentedShield(world, renderer, 6, 20f, MathHelper.TwoPi, 3);
-            shield.Parent = this;
+            Shield = new SegmentedShield(world, renderer, 6, 20f, MathHelper.TwoPi, 3);
+            Shield.Parent = this;
 
             var fixture = PhysicsBody.CreateCircle(12f, 0f);
             var drawable = new DrawableObject(Color.White, -1f);
@@ -61,9 +63,9 @@ namespace GlobalLoopGame.Planet
 
                 GameSounds.PlaySound(GameSounds.planetHurtSound, 2);
 
-                if (game.asteroidManager.difficulty > 3)
+                if (AsteroidManager.Difficulty > 3)
                 {
-                    game.asteroidManager.ModifyDifficulty(-1);
+                    AsteroidManager.ModifyDifficulty(-1);
                 }
             }
 

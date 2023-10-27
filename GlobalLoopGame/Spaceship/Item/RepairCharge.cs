@@ -7,7 +7,7 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace GlobalLoopGame.Spaceship.Item
 {
-    public class RepairCharge : PhysicsBodyObject, IDraggable
+    public class RepairCharge : PhysicsBodyObject, IDraggable, IResettable
     {
         public bool IsDestroyed => !isAlive;
        
@@ -19,9 +19,11 @@ namespace GlobalLoopGame.Spaceship.Item
         {
             var body = world.CreateBody(bodyType: BodyType.Dynamic);
             body.Tag = this;
+            body.AngularDamping = 0f;
+            body.LinearDamping = 5f;
             PhysicsBody = body;
 
-            AddDrawableRectFixture(GameSprites.RepairChargeSize, Vector2.Zero, 0, out var fixture).Sprite = GameSprites.RepairCharge;
+            AddDrawableRectFixture(GameSprites.RepairChargeSize, Vector2.Zero, 0, out var fixture, 0.01f).Sprite = GameSprites.RepairCharge;
 
             fixture.CollisionCategories = CollisionCats.RepairCharge;
             fixture.CollidesWith = CollisionCats.CollisionsRepairCharge;
@@ -36,7 +38,7 @@ namespace GlobalLoopGame.Spaceship.Item
                 {
                     var segmentIdx = (int)otherBody.Tag;
                     var shield = (SegmentedShield)otherBody.Body.Tag;
-                    if (shield.GetSegmentHealth(segmentIdx) < shield.maxHealth)
+                    if (shield.GetSegmentHealth(segmentIdx) < shield.MaxSegmentHealth)
                     {
                         shield.ModifySegment(segmentIdx, 1);
                         Despawn();
@@ -54,9 +56,16 @@ namespace GlobalLoopGame.Spaceship.Item
 
         public void OnBecomeDropped(IDragger dragger)
         {
+            SpaceshipObject spaceship = dragger.ThisObject as SpaceshipObject;
+
+            if (spaceship != null)
+            {
+                spaceship.magnetPivot.Transform.LocalRotation = MathHelper.ToRadians(180f);
+            }
+
             this.dragger = null;
         }
-        
+
         private void Despawn()
         {
             isAlive = false;
@@ -67,6 +76,16 @@ namespace GlobalLoopGame.Spaceship.Item
             {
                 dragger.TryInitDragging(0,0);
             }
+        }
+
+        public void OnGameEnd()
+        {
+            Despawn();
+        }
+
+        public void Reset()
+        {
+
         }
     }
 }

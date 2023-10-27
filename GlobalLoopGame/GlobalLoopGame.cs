@@ -21,6 +21,8 @@ using Microsoft.Xna.Framework.Audio;
 using MonoEngine.Input.Binding;
 using nkast.Aether.Physics2D.Diagnostics;
 using GlobalLoopGame.Globals;
+using GlobalLoopGame.Spaceship.Turret;
+using GameUtils.Profiling;
 
 namespace GlobalLoopGame
 {
@@ -43,6 +45,7 @@ namespace GlobalLoopGame
         private Hierarchy hierarchyGameOver;
         private Hierarchy hierarchyPressEnter;
         private Hierarchy hierarchyPaused;
+        private Hierarchy hierarchyStarrySky;
 
         private InputManager inputManager;
 
@@ -66,11 +69,14 @@ namespace GlobalLoopGame
 
         public SpaceshipObject Spaceship { get; private set; }
         public PlanetObject Planet { get; private set; }
+
+        public static TimeLogger Profiler { get; set; } = TimeLogger.Instance;
+
         public List<TurretStation> Turrets { get; private set; } = new List<TurretStation>();
 
         private TextObject pointsText, wavesText;
 
-        public List<IResettable> Resettables { get; private set; } = new List<IResettable>();
+        public List<IResettable> AdditionalResettables { get; private set; } = new List<IResettable>();
 
         CompoundAxixBindingInput accelerate, decelerate, rotLeft, rotRight;
 
@@ -85,6 +91,8 @@ namespace GlobalLoopGame
 
         protected override void Initialize()
         {
+            Profiler.unitScale = 1f / 60f;
+            Profiler.enabled = true;
             base.Initialize();
         }
 
@@ -122,27 +130,35 @@ namespace GlobalLoopGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.X))
                 Exit();
 
+            Profiler.Push("Update");
+
             GameTime = gameTime;
 
             inputManager.UpdateState();
 
             if (!menuDisplayed)
             {
+                Profiler.Push("Physics");
                 world.Step(gameTime.ElapsedGameTime);
+                Profiler.Pop("Physics");
+
+                Profiler.Push("Game");
                 hierarchyGame.BeginUpdate();
                 foreach (var updatable in hierarchyGame.OrderedInstancesOf<IUpdatable>())
                 {
                     updatable.Update(gameTime);
                 }
                 hierarchyGame.EndUpdate();
-
+                Profiler.Pop("Game");
+                
+                Profiler.Push("UI");
                 hierarchyUI.BeginUpdate();
                 foreach (var updatable in hierarchyUI.OrderedInstancesOf<IUpdatable>())
                 {
                     updatable.Update(gameTime);
                 }
                 hierarchyUI.EndUpdate();
-
+                Profiler.Pop("UI");
             }
             else
             {
@@ -161,7 +177,16 @@ namespace GlobalLoopGame
                         updatable.Update(gameTime);
                     }
                     hierarchyPressEnter.EndUpdate();
-                }
+                } 
+                else if (gameEnded)
+                {
+                    hierarchyGameOver.BeginUpdate();
+                    foreach (var updatable in hierarchyGameOver.OrderedInstancesOf<IUpdatable>())
+                    {
+                        updatable.Update(gameTime);
+                    }
+                    hierarchyGameOver.EndUpdate();
+                } 
                 else
                 {
                     hierarchyPaused.BeginUpdate();
@@ -172,6 +197,8 @@ namespace GlobalLoopGame
                     hierarchyPaused.EndUpdate();
                 }
             }
+
+            Profiler.Pop("Update");
 
             base.Update(gameTime);
         }
@@ -197,7 +224,7 @@ namespace GlobalLoopGame
             }
             else
             {
-                GraphicsDevice.Clear(Color.DarkGoldenrod);
+                GraphicsDevice.Clear(Color.Gold);
                 renderPipeline.RenderScene(hierarchyMenu, uiCamera);
                 textRenderer.DrawAllText(hierarchyMenu, GameSprites.Font, uiCamera);
                 if (gameEnded && enterKeyEnteredCounter == 0)
@@ -306,6 +333,7 @@ namespace GlobalLoopGame
             white.SetData(new Color[] { Color.White });
             GameSprites.NullSprite = spriteAtlas.AddTextureRects(white, new Rectangle(0, 0, 1, 1))[0];
             GameSprites.Circle = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("CircleTex"), new Rectangle(0, 0, 256, 256))[0];
+            GameSprites.TestGradient = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("testGradient"), new Rectangle(0, 0, 2, 2))[0];
 
             GameSprites.Planet = spriteAtlas.AddTextureRects(Content.Load<Texture2D>("PlanetTex"), new Rectangle(0, 0, 128, 128))[0];
 
@@ -396,6 +424,10 @@ namespace GlobalLoopGame
             custom.Parameters["Color"].SetValue(Color.White.ToVector4() * 0.25f);
             GameEffects.Custom = custom;
 
+            custom = custom.Clone();
+            custom.Parameters["Color"].SetValue(Color.Red.ToVector4() * 0.25f);
+            GameEffects.CustomRed = custom;
+
             var shield = Content.Load<Effect>("Shield");
             //custom.Parameters["Color"].SetValue(Color.White.ToVector4() * 0.25f);
             GameEffects.Shield = shield;
@@ -423,35 +455,35 @@ namespace GlobalLoopGame
             Planet = new PlanetObject(world, renderPipeline);
             hierarchyGame.AddObject(Planet);
             Planet.game = this;
-            Resettables.Add(Planet);
+            //AdditionalResettables.Add(Planet);
 
             Spaceship = new SpaceshipObject(world, 0f);
             Spaceship.ThrustMultiplier = 84f;
             hierarchyGame.AddObject(Spaceship);
-            Resettables.Add(Spaceship);
+            //AdditionalResettables.Add(Spaceship);
     
-            asteroidManager = new AsteroidManager(world, hierarchyGame);
+            asteroidManager = new AsteroidManager(world, hierarchyGame, Planet);
             asteroidManager.game = this;
-            Resettables.Add(asteroidManager);
+            AdditionalResettables.Add(asteroidManager);
 
             musicManager = new MusicManager();
-            Resettables.Add(musicManager);
+            AdditionalResettables.Add(musicManager);
 
             cameraManager = new CameraManager(gameCamera);
-            Resettables.Add(cameraManager);
+            AdditionalResettables.Add(cameraManager);
 
             var turret00 = new TurretStation(world, asteroidManager, renderPipeline);
             turret00.SetSprites(GameSprites.TurretCannon, GameSprites.TurretCannonSizes, new Vector2(0f, 17f) / GameSprites.pixelsPerUnit);
             turret00.Transform.LocalRotation = MathHelper.ToRadians(270f);
             turret00.SetStartingPosition(new Vector2(32f, 0f));
-            Resettables.Add(turret00);
+            //AdditionalResettables.Add(turret00);
             hierarchyGame.AddObject(turret00);
             Turrets.Add(turret00);
 
             var turret10 = new SniperTurret(world, asteroidManager, renderPipeline);
             turret10.SetSprites(GameSprites.TurretSniper, GameSprites.TurretSniperSizes, new Vector2(-6f, 12f) / GameSprites.pixelsPerUnit);
             turret10.SetStartingPosition(new Vector2(0f, 32f));
-            Resettables.Add(turret10);
+            //AdditionalResettables.Add(turret10);
             hierarchyGame.AddObject(turret10);
             Turrets.Add(turret10);
 
@@ -460,7 +492,7 @@ namespace GlobalLoopGame
             turret01.RangeRadius = 24f;
             turret01.Transform.LocalRotation = MathHelper.ToRadians(90f);
             turret01.SetStartingPosition(new Vector2(-32f, 0f));
-            Resettables.Add(turret01);
+            //AdditionalResettables.Add(turret01);
             hierarchyGame.AddObject(turret01);
             Turrets.Add(turret01);
         }
@@ -478,13 +510,19 @@ namespace GlobalLoopGame
             hierarchyUI.AddObject(boost);
 
             pointsText = new TextObject();
-            pointsText.Transform.GlobalPosition = new Vector2(60, 60f);
+            pointsText.Transform.GlobalPosition = new Vector2(60f, 60f);
             pointsText.Color = Color.White;
             pointsText.FontSize = 36;
             asteroidManager.PointsUpdated += (pointCount) =>
             {
                 if (asteroidManager.WaveNumber > 1)
                     pointsText.Text = $"{pointCount / 100}";
+
+                // Try to align text so that it doesn't overflow off screen
+                if (pointsText != null && !string.IsNullOrEmpty(pointsText.Text))
+                {
+                    pointsText.Transform.GlobalPosition = new Vector2(61f - pointsText.Text.Length, 60f);
+                }
             };
             hierarchyUI.AddObject(pointsText);
 
@@ -496,6 +534,12 @@ namespace GlobalLoopGame
             {
                 if (waveCount > 1)
                     wavesText.Text = $"Wave {waveCount - 1}";
+
+                // Try to align text so that it doesn't overflow off screen
+                if (wavesText != null && !string.IsNullOrEmpty(wavesText.Text))
+                {
+                    wavesText.Transform.GlobalPosition = new Vector2(62f - wavesText.Text.Length, -62f);
+                }
             };
             hierarchyUI.AddObject(wavesText);
 
@@ -516,10 +560,14 @@ namespace GlobalLoopGame
         {
             hierarchyMenu = new Hierarchy();
 
-            var background = new DrawableObject(Color.White, 1f);
-            background.Sprite = GameSprites.SpaceBackground;
-            background.Transform.LocalScale = new Vector2(136f, 136f);
+            var background = new DrawableObject(new Color(19, 18, 51), -1f);
+            background.Sprite = GameSprites.NullSprite;
+            background.Transform.LocalScale = new Vector2(136f * 2);
+            background.Transform.LocalRotation = -1f;
             hierarchyMenu.AddObject(background);
+
+            var starryBackground = new StarryBackground(Color.Transparent, 0f, 180, 1.4f);
+            hierarchyMenu.AddObject(starryBackground);
 
             var gameTitle = new TextObject();
             gameTitle.Transform.GlobalPosition = new Vector2(-23, 37);
@@ -581,7 +629,7 @@ namespace GlobalLoopGame
             gameOverText.Text = "Game Over";
             hierarchyGameOver.AddObject(gameOverText);
 
-            var resetText = new TextObject();
+            var resetText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.25f);
             resetText.Transform.GlobalPosition = new Vector2(0, -40);
             resetText.Color = Color.White;
             resetText.FontSize = 36;
@@ -740,7 +788,12 @@ namespace GlobalLoopGame
 
             Console.WriteLine("Game started!");
 
-            foreach (IResettable resettable in Resettables)
+            foreach (var resettable in hierarchyGame.AllInstancesOf<IResettable>())
+            {
+                resettable.Reset();
+            }
+
+            foreach (IResettable resettable in AdditionalResettables)
             {
                 resettable.Reset();
             }
@@ -755,7 +808,13 @@ namespace GlobalLoopGame
 
             Console.WriteLine("Game ended!");
 
-            foreach (IResettable resettable in Resettables)
+            foreach (var resettable in hierarchyGame.AllInstancesOf<IResettable>())
+            {
+                resettable.OnGameEnd();
+            }
+
+
+            foreach (IResettable resettable in AdditionalResettables)
             {
                 resettable.OnGameEnd();
             }
