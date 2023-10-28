@@ -129,6 +129,7 @@ namespace GlobalLoopGame
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.X))
                 Exit();
+               
 
             Profiler.Push("Update");
 
@@ -920,8 +921,11 @@ namespace GlobalLoopGame
         public void Restart()
         {
             // Don't restart unless the game has ended or is paused
-            if (!gameEnded)
-                return;
+            /*if (!gameEnded)
+                return;*/
+            //gameEnded = true;
+
+            EndGame();
 
             StartGame();
         }
