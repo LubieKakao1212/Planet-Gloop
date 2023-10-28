@@ -180,14 +180,14 @@ namespace GlobalLoopGame.Asteroid
                 CreateAsteroid(aPlacement);
             }
 
-            if (Difficulty < 2 || WaveNumber % 4 == 0)
+            if (Difficulty < 2 || WaveNumber % 2 == 0)
             {
                 ModifyDifficulty(1);
             }
 
             SpawnPowerups();
 
-            SetInterval(10, 7);
+            SetInterval(MathHelper.Clamp(Difficulty, 6, 10), 7);
         }
 
         private void SpawnPowerups()
