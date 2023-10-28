@@ -89,6 +89,7 @@ namespace GlobalLoopGame.Asteroid
             _world = world;
             
             _hierarchy = hierarchy;
+
             this._planetShield = planet.Shield;
         }
 
@@ -179,7 +180,7 @@ namespace GlobalLoopGame.Asteroid
                 CreateAsteroid(aPlacement);
             }
 
-            if (Difficulty < 2 || (WaveNumber + 3) % Difficulty == 0) 
+            if (Difficulty < 2 || WaveNumber % 4 == 0)
             {
                 ModifyDifficulty(1);
             }
@@ -250,7 +251,7 @@ namespace GlobalLoopGame.Asteroid
 
         public static void ModifyDifficulty(int difficultyModification)
         {
-            Difficulty = MathHelper.Clamp(Difficulty + difficultyModification, 0, 11);
+            Difficulty = MathHelper.Clamp(Difficulty + difficultyModification, 0, 12);
 
             // Console.WriteLine("new difficulty " + Difficulty);
 
@@ -380,7 +381,7 @@ namespace GlobalLoopGame.Asteroid
         {
             // Console.WriteLine("Reset game");
             active = true;
-            //ModifyDifficulty(10);
+            // ModifyDifficulty(10);
             Difficulty = 0;
             WaveNumber = 0;
             Points = 0;
@@ -401,6 +402,7 @@ namespace GlobalLoopGame.Asteroid
             285f, 300f, 315f, 330f, 345f
             );
 
+        /*
         private BucketRandom<int> placementNumbers = new BucketRandom<int>(
             Random.Shared,
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -415,7 +417,8 @@ namespace GlobalLoopGame.Asteroid
             3, 3, 3, 3, 3, 3, 3,
             4, 4, 4, 4,
             5, 5
-            );
+            )
+        */
 
         public AsteroidWave GenerateWave(int difficulty)
         {
@@ -425,7 +428,7 @@ namespace GlobalLoopGame.Asteroid
 
             int totalActualHealth = 0;
 
-            Console.WriteLine($"{difficulty}, total predicted health {totalPredictedHealth}");
+            // Console.WriteLine($"{difficulty}, {WaveNumber}, total predicted health {totalPredictedHealth}");
 
             int placementNumber = MathHelper.Clamp((int)MathF.Round(Random.Shared.NextSingle() * (difficulty / 3f)), 1, 3);
 
@@ -460,7 +463,7 @@ namespace GlobalLoopGame.Asteroid
                 //{
                 float rand = Random.Shared.Next();
 
-                Console.WriteLine($"rand {rand} placements {asteroidPlacements.Count}");
+                // Console.WriteLine($"rand {rand} placements {asteroidPlacements.Count}");
 
                 int healthLeft = totalPredictedHealth - totalActualHealth;
 
@@ -470,7 +473,7 @@ namespace GlobalLoopGame.Asteroid
 
                 //float randTheta = placementThetas[Random.Shared.Next(0, placementThetas.Count)];
 
-                int thetaVariance = difficulty * 10;
+                int thetaVariance = MathHelper.Clamp(difficulty * 10, 0, 45);
 
                 // Calculate starting theta
                 float startingTheta = randTheta + Random.Shared.Next(-thetaVariance, 0);
@@ -561,7 +564,7 @@ namespace GlobalLoopGame.Asteroid
                 // totalActualHealth += totalPredictedHealth;
             }
 
-            Console.WriteLine($"total actual health {totalActualHealth}");
+            // Console.WriteLine($"total actual health {totalActualHealth}");
 
             waveToReturn = new AsteroidWave(asteroidPlacements, Difficulty, placementThetas);
 

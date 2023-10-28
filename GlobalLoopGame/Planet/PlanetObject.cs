@@ -55,7 +55,7 @@ namespace GlobalLoopGame.Planet
         {
             health = MathHelper.Clamp(health + healthModification, 0, maxHealth);
 
-            Console.WriteLine("health " + health.ToString());
+            // Console.WriteLine("health " + health.ToString());
 
             if (healthModification < 0)
             {
@@ -63,10 +63,10 @@ namespace GlobalLoopGame.Planet
 
                 GameSounds.PlaySound(GameSounds.planetHurtSound, 2);
 
-                if (AsteroidManager.Difficulty > 3)
-                {
-                    AsteroidManager.ModifyDifficulty(-1);
-                }
+                //if (AsteroidManager.Difficulty > 3)
+                //{
+                //    AsteroidManager.ModifyDifficulty(-1);
+                //}
             }
 
             HealthChange?.Invoke(health);
