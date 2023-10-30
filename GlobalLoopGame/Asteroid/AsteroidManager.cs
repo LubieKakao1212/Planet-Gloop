@@ -180,7 +180,7 @@ namespace GlobalLoopGame.Asteroid
         {
             var shieldHpMissing = _planetShield.TotalSegmentHealth - _planetShield.TotalHealthLeft;
 
-            var rolls = (1 + shieldHpMissing) / 2;
+            var rolls = (1 + shieldHpMissing) / 1.5f;
             rolls = MathHelper.Min(rolls, maxRechargeRolls);
             //rolls = 20;
 
@@ -305,7 +305,7 @@ namespace GlobalLoopGame.Asteroid
                 Points = 0;
             }
 
-            Console.WriteLine("points " + Points.ToString());
+            // Console.WriteLine("points " + Points.ToString());
         }
 
         public void SetInterval(float interval, float warningTime)
