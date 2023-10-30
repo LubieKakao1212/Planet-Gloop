@@ -92,7 +92,7 @@ namespace GlobalLoopGame.Spaceship
             magnetPivot = new HierarchyObject();
             magnetPivot.Parent = this;
             magnetPivot.Transform.LocalPosition = Vector2.Zero;
-            magnetPivot.Transform.LocalRotation = MathHelper.ToRadians(180f);
+            magnetPivot.Transform.LocalRotation = MathHelper.ToRadians(0f);
 
             // add magnet
             magnetObject = new DrawableObject(Color.White, 1f);

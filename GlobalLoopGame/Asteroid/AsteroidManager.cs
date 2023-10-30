@@ -273,40 +273,40 @@ namespace GlobalLoopGame.Asteroid
                 //default:
                 //    break;
 
-                case 1:
+                case 2:
                     MusicManager.SetIntensity(0);
                     break;
-                case 2:
+                case 4:
                     MusicManager.SetIntensity(1);
                     break;
-                case 3:
+                case 6:
                     MusicManager.SetIntensity(2);
                     break;
-                case 4:
+                case 8:
                     MusicManager.SetIntensity(3);
                     break;
-                case 5:
+                case 9:
                     MusicManager.SetIntensity(4);
                     break;
-                case 6:
+                case 11:
                     MusicManager.SetIntensity(5);
                     break;
-                case 7:
+                case 12:
                     MusicManager.SetIntensity(6);
                     break;
-                case 8:
+                case 14:
                     MusicManager.SetIntensity(7);
                     break;
-                case 9:
+                case 15:
                     MusicManager.SetIntensity(8);
                     break;
-                case 10:
+                case 17:
                     MusicManager.SetIntensity(9);
                     break;
-                case 11:
+                case 18:
                     MusicManager.SetIntensity(10);
                     break;
-                case 12:
+                case 20:
                     MusicManager.SetIntensity(11);
                     break;
                 default:
@@ -501,7 +501,7 @@ namespace GlobalLoopGame.Asteroid
 
                     placementToAdd.size = Vector2.One * size;
 
-                    float speed = MathHelper.Clamp(16f - (size / 1.5f), 5, 10);
+                    float speed = MathHelper.Clamp(16f - (size / 1f), 5, 10);
 
                     placementToAdd.speed = speed;
 
@@ -511,6 +511,8 @@ namespace GlobalLoopGame.Asteroid
                     }
 
                     asteroidPlacements.Add(placementToAdd);
+
+                    Console.WriteLine($"speed {placementToAdd.speed}");
 
                     // Console.WriteLine($"adding asteroid with {health} health");
                 }
@@ -534,7 +536,7 @@ namespace GlobalLoopGame.Asteroid
 
                     placementToAdd.size = Vector2.One * size;
 
-                    float speed = MathHelper.Clamp(16f - (size / 1.5f), 5, 10);
+                    float speed = MathHelper.Clamp(16f - (size / 1f), 5, 10);
 
                     placementToAdd.speed = speed;
 
@@ -545,6 +547,8 @@ namespace GlobalLoopGame.Asteroid
                     {
                         placementThetas.Add(randTheta);
                     }
+
+                    Console.WriteLine($"speed {placementToAdd.speed}");
 
                     // Console.WriteLine($"adding asteroid with {health} health");
                 }
@@ -559,9 +563,11 @@ namespace GlobalLoopGame.Asteroid
 
                     randPlacement.size += Vector2.One * healthToAdd / 30;
 
+                    randPlacement.speed = MathHelper.Clamp(16f - (randPlacement.size.X / 1f), 4.5f, 10);
+
                     totalActualHealth += healthToAdd;
 
-                    // Console.WriteLine($"increasing random asteroid health by {healthToAdd}");
+                    Console.WriteLine($"speed {randPlacement.speed}");
                 }
                 //}
 

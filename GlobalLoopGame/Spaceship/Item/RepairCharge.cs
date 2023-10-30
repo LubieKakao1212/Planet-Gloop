@@ -73,7 +73,7 @@ namespace GlobalLoopGame.Spaceship.Item
 
             if (spaceship != null)
             {
-                spaceship.magnetPivot.Transform.LocalRotation = MathHelper.ToRadians(180f);
+                spaceship.magnetPivot.Transform.LocalRotation = MathHelper.ToRadians(0f);
             }
 
             circle.Color = Color.Transparent;

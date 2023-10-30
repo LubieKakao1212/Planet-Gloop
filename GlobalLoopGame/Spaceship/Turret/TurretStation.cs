@@ -358,7 +358,7 @@ namespace GlobalLoopGame.Spaceship.Turret
                 spaceship.magnetObject.Sprite = GameSprites.SpaceshipMagnet;
                 spaceship.magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSize;
 
-                spaceship.magnetPivot.Transform.LocalRotation = MathHelper.ToRadians(180f);
+                spaceship.magnetPivot.Transform.LocalRotation = MathHelper.ToRadians(0f);
 
                 spaceship.magnetObject.Transform.LocalPosition = new Vector2(0f, 2f);
                 spaceship.magnetObject.Color = Color.White;
