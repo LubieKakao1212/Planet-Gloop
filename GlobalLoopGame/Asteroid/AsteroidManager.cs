@@ -180,14 +180,16 @@ namespace GlobalLoopGame.Asteroid
                 CreateAsteroid(aPlacement);
             }
 
-            if (Difficulty < 2 || WaveNumber % 2 == 0)
+            if (Difficulty < 2 || WaveNumber % 4 == 0)
             {
                 ModifyDifficulty(1);
             }
 
             SpawnPowerups();
 
-            SetInterval(MathHelper.Clamp(Difficulty, 6, 10), 7);
+            // SetInterval(MathHelper.Clamp(Difficulty, 6, 10), 7);
+
+            SetInterval(MathHelper.Clamp(wave.asteroidPlacements.Count, 3, 10), 7);
         }
 
         private void SpawnPowerups()
@@ -251,9 +253,11 @@ namespace GlobalLoopGame.Asteroid
 
         public static void ModifyDifficulty(int difficultyModification)
         {
-            Difficulty = MathHelper.Clamp(Difficulty + difficultyModification, 0, 12);
+            // Difficulty = MathHelper.Clamp(Difficulty + difficultyModification, 0, 12);
 
-            // Console.WriteLine("new difficulty " + Difficulty);
+            Difficulty += difficultyModification;
+
+            Console.WriteLine("new difficulty " + Difficulty);
 
             switch (Difficulty)
             {
@@ -298,11 +302,9 @@ namespace GlobalLoopGame.Asteroid
                     break;
                 case 10:
                     MusicManager.SetIntensity(9);
-
                     break;
                 case 11:
                     MusicManager.SetIntensity(10);
-                    
                     break;
                 case 12:
                     MusicManager.SetIntensity(11);
