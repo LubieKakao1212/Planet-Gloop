@@ -31,7 +31,7 @@ namespace GlobalLoopGame.Asteroid
         private bool isDead = false;
 
         private float maxHealth = 100f;
-        private int damage = 1;
+        public int damage = 1;
 
         private AutoTimeMachine despawner;
         private Bar healthBar;
@@ -103,7 +103,7 @@ namespace GlobalLoopGame.Asteroid
             healthBar.Parent = this;
             healthBar.ToggleVisibility(false);
 
-            if (health > 200)
+            if (health > 300)
             {
                 damage = 2;
             }
@@ -135,9 +135,9 @@ namespace GlobalLoopGame.Asteroid
             if (health <= 0)
             {
                 // score modification is based on maxHealth and speed
-                int pointModification = (int)MathF.Round(maxHealth * (20f - speed)/2);
+                //int pointModification = (int)MathF.Round(maxHealth * (20f - speed)/2);
 
-                manager.ModifyPoints(pointModification);
+                manager.ModifyPoints((int)MathF.Round(maxHealth));
 
                 Die();
             }

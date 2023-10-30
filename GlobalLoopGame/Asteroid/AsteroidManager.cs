@@ -189,7 +189,7 @@ namespace GlobalLoopGame.Asteroid
 
             // SetInterval(MathHelper.Clamp(Difficulty, 6, 10), 7);
 
-            SetInterval(MathHelper.Clamp(wave.asteroidPlacements.Count, 3, 10), 7);
+            SetInterval(MathHelper.Clamp(wave.asteroidPlacements.Count * 2f, 3.5f, 12), 7);
         }
 
         private void SpawnPowerups()
@@ -204,7 +204,7 @@ namespace GlobalLoopGame.Asteroid
             {
                 if (shieldRechargeRandom.GetRandom())
                 {
-                    Console.WriteLine($"Spawning Recharge");
+                    // Console.WriteLine($"Spawning Recharge");
 
                     SpawnShieldRecharge();
                 }
@@ -253,9 +253,9 @@ namespace GlobalLoopGame.Asteroid
 
         public static void ModifyDifficulty(int difficultyModification)
         {
-            // Difficulty = MathHelper.Clamp(Difficulty + difficultyModification, 0, 12);
+             Difficulty = MathHelper.Clamp(Difficulty + difficultyModification, 0, 24);
 
-            Difficulty += difficultyModification;
+            //Difficulty += difficultyModification;
 
             Console.WriteLine("new difficulty " + Difficulty);
 
@@ -331,6 +331,8 @@ namespace GlobalLoopGame.Asteroid
             waveInterval = interval;
 
             waveWarningTime = warningTime;
+
+            Console.WriteLine($"new interval {waveInterval}");
 
             dirty = true;
         }

@@ -72,6 +72,14 @@ namespace GlobalLoopGame.Planet
                     if (otherFixture.CollisionCategories.HasFlag(CollisionCats.Asteroids) && !hitBy.Contains(otherFixture.Body))
                     {
                         hitBy.Add(otherFixture.Body);
+
+                        //AsteroidObject otherAsteroid = otherFixture.Body.Tag as AsteroidObject;
+
+                        //if (otherAsteroid != null)
+                        //{
+                        //    ModifySegment(i1, -otherAsteroid.damage);
+                        //}
+
                         ModifySegment(i1, -1);
                     }
                     return true;
