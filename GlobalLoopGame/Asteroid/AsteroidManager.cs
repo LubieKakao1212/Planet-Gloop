@@ -257,7 +257,7 @@ namespace GlobalLoopGame.Asteroid
 
             //Difficulty += difficultyModification;
 
-            Console.WriteLine("new difficulty " + Difficulty);
+            // Console.WriteLine("new difficulty " + Difficulty);
 
             switch (Difficulty)
             {
@@ -332,7 +332,7 @@ namespace GlobalLoopGame.Asteroid
 
             waveWarningTime = warningTime;
 
-            Console.WriteLine($"new interval {waveInterval}");
+            // Console.WriteLine($"new interval {waveInterval}");
 
             dirty = true;
         }
@@ -512,7 +512,7 @@ namespace GlobalLoopGame.Asteroid
 
                     asteroidPlacements.Add(placementToAdd);
 
-                    Console.WriteLine($"speed {placementToAdd.speed}");
+                    // Console.WriteLine($"speed {placementToAdd.speed}");
 
                     // Console.WriteLine($"adding asteroid with {health} health");
                 }
@@ -548,7 +548,7 @@ namespace GlobalLoopGame.Asteroid
                         placementThetas.Add(randTheta);
                     }
 
-                    Console.WriteLine($"speed {placementToAdd.speed}");
+                    // Console.WriteLine($"speed {placementToAdd.speed}");
 
                     // Console.WriteLine($"adding asteroid with {health} health");
                 }
@@ -563,11 +563,11 @@ namespace GlobalLoopGame.Asteroid
 
                     randPlacement.size += Vector2.One * healthToAdd / 30;
 
-                    randPlacement.speed = MathHelper.Clamp(16f - (randPlacement.size.X / 1f), 4.5f, 10);
+                    randPlacement.speed = MathHelper.Clamp(16f - (randPlacement.size.X / 1f), 5f, 10);
 
                     totalActualHealth += healthToAdd;
 
-                    Console.WriteLine($"speed {randPlacement.speed}");
+                    // Console.WriteLine($"speed {randPlacement.speed}");
                 }
                 //}
 
