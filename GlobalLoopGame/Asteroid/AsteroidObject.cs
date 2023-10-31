@@ -2,17 +2,12 @@ using GlobalLoopGame.Globals;
 using GlobalLoopGame.Planet;
 using GlobalLoopGame.Spaceship.Turret;
 using GlobalLoopGame.UI;
-using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using MonoEngine.Physics;
-using MonoEngine.Scenes;
-using MonoEngine.Util;
+using Custom2D_Engine.Scenes;
+using Custom2D_Engine.Physics;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
-using System.Collections.Generic;
-using System.Net.Mime;
-using static System.Net.Mime.MediaTypeNames;
+using Custom2D_Engine.Util.Ticking;
 
 namespace GlobalLoopGame.Asteroid
 {

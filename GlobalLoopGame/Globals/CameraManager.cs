@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
-using MonoEngine.Scenes;
-using MonoEngine.Util;
+using Custom2D_Engine.Scenes;
+using Custom2D_Engine.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Custom2D_Engine.Util.Ticking;
 
 namespace GlobalLoopGame.Globals
 {

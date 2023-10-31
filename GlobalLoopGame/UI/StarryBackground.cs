@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using GlobalLoopGame.Globals;
 using Microsoft.Xna.Framework;
-using MonoEngine.Rendering.Sprites;
-using MonoEngine.Scenes;
+using Custom2D_Engine.Rendering.Sprites;
+using Custom2D_Engine.Scenes;
 
 namespace GlobalLoopGame.UI
 {
