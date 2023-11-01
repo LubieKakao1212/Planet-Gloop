@@ -78,7 +78,7 @@ namespace GlobalLoopGame
 
         public List<IResettable> AdditionalResettables { get; private set; } = new List<IResettable>();
 
-        CompoundAxixBindingInput accelerate, decelerate, rotLeft, rotRight;
+        //CompoundAxixBindingInput accelerate, decelerate, rotLeft, rotRight;
 
         public GlobalLoopGame()
         {
@@ -754,11 +754,71 @@ namespace GlobalLoopGame
 
         private void CreateBindings()
         {
-            accelerate = inputManager.CreateSimpleKeysBinding("accelerate", new Keys[2] { Keys.W, Keys.Up });
-            decelerate = inputManager.CreateSimpleKeysBinding("decelerate", new Keys[2] { Keys.S, Keys.Down });
-            rotLeft = inputManager.CreateSimpleKeysBinding("rotLeft", new Keys[2] { Keys.A, Keys.Left });
-            rotRight = inputManager.CreateSimpleKeysBinding("rotRight", new Keys[2] { Keys.D, Keys.Right });
+            var gamePad = inputManager.GetGamePad(PlayerIndex.One);
+
+            //var rotLeft = inputManager.CreateSimpleKeysBinding("rotLeft", new Keys[2] { Keys.A, Keys.Left });
+            //var rotRight = inputManager.CreateSimpleKeysBinding("rotRight", new Keys[2] { Keys.D, Keys.Right });
+
+            //Register call is required when using CompoundAxixBindingInput with Performed callback
+            var wasdThrottle = inputManager.CreateSimpleAxisBinding("Vertical", Keys.S, Keys.W).Register(inputManager);
+            var arrowThrottle = inputManager.CreateSimpleAxisBinding("Vertical", Keys.Down, Keys.Up).Register(inputManager);
+
+            var throttle = new CompoundAxixBindingInput("Throttle")
+                .Bind(wasdThrottle).Bind(arrowThrottle)
+                .Bind(gamePad.GetAnalogAxis(Side.Left, AnalogAxis.Vertical))
+                .Register(inputManager)
+                .Clamp(-1f, 1f).AddDeadzone(0.1f);
+
+            var wasdRot = inputManager.CreateSimpleAxisBinding("Horizontal", Keys.A, Keys.D).Register(inputManager);
+            var arrowRot = inputManager.CreateSimpleAxisBinding("Horizontal", Keys.Left, Keys.Right).Register(inputManager);
             
+            var rotation = new CompoundAxixBindingInput("Spin")
+                .Bind(wasdRot).Bind(arrowRot)
+                //0 on idle -1 on active
+                .Bind(gamePad.GetTrigger(Side.Left).AddProcessor((value) => -value))
+                .Bind(gamePad.GetTrigger(Side.Right))
+                .Register(inputManager)
+                .Clamp(-1f, 1f);
+
+            var throttleP = throttle.Clamp(0f, 1f);
+            var throttleN = throttle.AddProcessor((value) => -value).Clamp(0f, 1f);
+            var rotationP = rotation.Clamp(0f, 1f);
+            var rotationN = rotation.AddProcessor((value) => -value).Clamp(0f, 1f);
+
+            //BL Forward + Spin Right
+            var thruster0 = new CompoundAxixBindingInput("")
+                .Bind(throttleP)
+                .Bind(rotationP)
+                .Register(inputManager);
+
+            //BR Forward + Spin Left
+            var thruster1 = new CompoundAxixBindingInput("")
+                .Bind(throttleP)
+                .Bind(rotationN)
+                .Register(inputManager);
+            //TL Backwards + Spin Left
+            var thruster2 = new CompoundAxixBindingInput("")
+                .Bind(throttleN)
+                .Bind(rotationN)
+                .Register(inputManager);
+            //TR Backwards + Spin Right
+            var thruster3 = new CompoundAxixBindingInput("")
+                .Bind(throttleN)
+                .Bind(rotationP)
+                .Register(inputManager);
+
+            thruster0.Performed += (input) => Spaceship.SetThrust(0, input.GetCurrentValue<float>());
+            thruster0.Canceled += (input) => Spaceship.SetThrust(0, 0f);
+            thruster1.Performed += (input) => Spaceship.SetThrust(1, input.GetCurrentValue<float>());
+            thruster1.Canceled += (input) => Spaceship.SetThrust(1, 0f);
+            thruster2.Performed += (input) => Spaceship.SetThrust(2, input.GetCurrentValue<float>());
+            thruster2.Canceled += (input) => Spaceship.SetThrust(2, 0f);
+            thruster3.Performed += (input) => Spaceship.SetThrust(3, input.GetCurrentValue<float>());
+            thruster3.Canceled += (input) => Spaceship.SetThrust(3, 0f);
+
+            throttle.Performed += (input) => input.GetCurrentValue<float>().LogThis("Throttle: ");
+            rotation.Performed += (input) => input.GetCurrentValue<float>().LogThis("Rotation: ");
+
             var toggleDrag = inputManager.CreateSimpleKeysBinding("toggleDrag", new Keys[1] { Keys.Space });
             var restart = inputManager.CreateSimpleKeysBinding("restart", new Keys[1] { Keys.R });
             var boost = inputManager.CreateSimpleKeysBinding("boost", new Keys[2] { Keys.LeftShift, Keys.RightShift });
@@ -767,11 +827,11 @@ namespace GlobalLoopGame
             var pauseGame = inputManager.CreateSimpleKeysBinding("pauseGame", new Keys[1] { Keys.Escape });
             var exitGame = inputManager.CreateSimpleKeysBinding("exitGame", new Keys[1] { Keys.X });
             var enterInput = inputManager.CreateSimpleKeysBinding("confirm", new Keys[1] { Keys.Enter });
-
-            ThrusterBinding(accelerate, 0, 1);
-            ThrusterBinding(decelerate, 2, 3);
-            ThrusterBinding(rotLeft, 1, 2);
-            ThrusterBinding(rotRight, 0, 3);
+            
+            //ThrusterBinding(accelerate, 0, 1);
+            //ThrusterBinding(decelerate, 2, 3);
+            //ThrusterBinding(rotLeft, 1, 2);
+            //ThrusterBinding(rotRight, 0, 3);
             ThrusterBoostBinding(boost, 0, 1);
 
             toggleDrag.Started += (_) =>
@@ -835,7 +895,7 @@ namespace GlobalLoopGame
             Components.Add(cameraManager);
         }
 
-        private void ThrusterBinding(IInput input, int one, int two)
+        /*private void ThrusterBinding(IInput input, int one, int two)
         {
             input.Started += (input) =>
             {
@@ -848,7 +908,7 @@ namespace GlobalLoopGame
                 Spaceship.DecrementThruster(one);
                 Spaceship.DecrementThruster(two);
             };
-        }
+        }*/
 
         private void ThrusterBoostBinding(IInput input, int one, int two)
         {

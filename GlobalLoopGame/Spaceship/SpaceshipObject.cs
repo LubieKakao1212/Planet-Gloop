@@ -47,7 +47,7 @@ namespace GlobalLoopGame.Spaceship
         /// </summary>
         private List<HierarchyObject> thrusters = new List<HierarchyObject>();
 
-        private List<int> thrust = new List<int>();
+        private List<float> thrust = new List<float>();
         private List<bool> boost = new List<bool>();
 
         public HierarchyObject magnetPivot;
@@ -101,8 +101,8 @@ namespace GlobalLoopGame.Spaceship
             magnetObject.Transform.LocalScale = GameSprites.SpaceshipMagnetSize;
             magnetObject.Transform.LocalPosition = new Vector2(0f, 2f);
         }
-        
-        public void IncrementThruster(int idx)
+    
+        /*public void IncrementThruster(int idx)
         {
             if (movable)
             {
@@ -120,6 +120,16 @@ namespace GlobalLoopGame.Spaceship
 
                 UpdateThruster(idx);
             }
+        }*/
+
+        public void SetThrust(int thrusterIdx, float value)
+        {
+            if (!movable)
+            {
+                return;
+            }
+            thrust[thrusterIdx] = value;
+            UpdateThruster(thrusterIdx);
         }
 
         public void AddThruster(Vector2 pos, float rotation)
