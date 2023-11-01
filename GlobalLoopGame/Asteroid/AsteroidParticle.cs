@@ -1,6 +1,6 @@
-﻿using Custom2D_Engine.Physics;
-using Custom2D_Engine.Scenes;
-using Custom2D_Engine.Util.Ticking;
+﻿using Custom2d_Engine.Physics;
+using Custom2d_Engine.Scenes;
+using Custom2d_Engine.Util.Ticking;
 using Microsoft.Xna.Framework;
 using nkast.Aether.Physics2D.Dynamics;
 using System;

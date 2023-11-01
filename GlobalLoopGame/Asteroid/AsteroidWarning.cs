@@ -1,16 +1,16 @@
-﻿using Custom2D_Engine.Scenes;
+﻿using Custom2d_Engine.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using Custom2D_Engine.Scenes.Events;
-using Custom2D_Engine.Util;
-using Custom2D_Engine.Physics;
+using Custom2d_Engine.Scenes.Events;
+using Custom2d_Engine.Util;
+using Custom2d_Engine.Physics;
 using nkast.Aether.Physics2D.Dynamics;
 using GlobalLoopGame.Globals;
-using Custom2D_Engine.Util.Ticking;
+using Custom2d_Engine.Util.Ticking;
 
 namespace GlobalLoopGame.Asteroid
 {

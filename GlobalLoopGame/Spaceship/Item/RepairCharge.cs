@@ -2,9 +2,9 @@
 using GlobalLoopGame.Planet;
 using GlobalLoopGame.Spaceship.Dragging;
 using Microsoft.Xna.Framework;
-using Custom2D_Engine.Physics;
+using Custom2d_Engine.Physics;
 using nkast.Aether.Physics2D.Dynamics;
-using Custom2D_Engine.Scenes;
+using Custom2d_Engine.Scenes;
 
 namespace GlobalLoopGame.Spaceship.Item
 {

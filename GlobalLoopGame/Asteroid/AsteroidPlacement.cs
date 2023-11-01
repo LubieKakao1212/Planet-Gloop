@@ -1,4 +1,4 @@
-﻿using Custom2D_Engine.Rendering.Sprites;
+﻿using Custom2d_Engine.Rendering.Sprites;
 using System;
 using System.Collections.Generic;
 using System.Linq;

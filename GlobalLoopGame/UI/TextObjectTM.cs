@@ -1,12 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
-using Custom2D_Engine.Scenes.Events;
-using Custom2D_Engine.Util;
+using Custom2d_Engine.Scenes.Events;
+using Custom2d_Engine.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Custom2D_Engine.Util.Ticking;
+using Custom2d_Engine.Util.Ticking;
 
 namespace GlobalLoopGame.UI
 {

@@ -7,22 +7,22 @@ using GlobalLoopGame.Audio;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Custom2D_Engine.Input;
-using Custom2D_Engine.Rendering;
-using Custom2D_Engine.Rendering.Sprites;
-using Custom2D_Engine.Rendering.Sprites.Atlas;
-using Custom2D_Engine.Scenes;
-using Custom2D_Engine.Scenes.Events;
+using Custom2d_Engine.Input;
+using Custom2d_Engine.Rendering;
+using Custom2d_Engine.Rendering.Sprites;
+using Custom2d_Engine.Rendering.Sprites.Atlas;
+using Custom2d_Engine.Scenes;
+using Custom2d_Engine.Scenes.Events;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
 using System.Collections.Generic;
 using GlobalLoopGame.UI;
 using Microsoft.Xna.Framework.Audio;
-using Custom2D_Engine.Input.Binding;
+using Custom2d_Engine.Input.Binding;
 using nkast.Aether.Physics2D.Diagnostics;
 using GlobalLoopGame.Globals;
 using GlobalLoopGame.Spaceship.Turret;
-using Custom2D_Engine.Util.Debug;
+using Custom2d_Engine.Util.Debugging;
 
 namespace GlobalLoopGame
 {
@@ -45,7 +45,7 @@ namespace GlobalLoopGame
         private Hierarchy hierarchyGameOver;
         private Hierarchy hierarchyPressEnter;
         private Hierarchy hierarchyPaused;
-        private Hierarchy hierarchyStarrySky;
+        //private Hierarchy hierarchyStarrySky;
 
         private InputManager inputManager;
 

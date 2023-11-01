@@ -1,13 +1,13 @@
+using Custom2d_Engine.Physics;
+using Custom2d_Engine.Scenes;
+using Custom2d_Engine.Util.Ticking;
 using GlobalLoopGame.Globals;
 using GlobalLoopGame.Planet;
 using GlobalLoopGame.Spaceship.Turret;
 using GlobalLoopGame.UI;
 using Microsoft.Xna.Framework;
-using Custom2D_Engine.Scenes;
-using Custom2D_Engine.Physics;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
-using Custom2D_Engine.Util.Ticking;
 
 namespace GlobalLoopGame.Asteroid
 {

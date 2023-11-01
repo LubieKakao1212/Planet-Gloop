@@ -1,8 +1,8 @@
 ﻿using GlobalLoopGame.Globals;
 using GlobalLoopGame.Asteroid;
 using Microsoft.Xna.Framework;
-using Custom2D_Engine.Physics;
-using Custom2D_Engine.Rendering;
+using Custom2d_Engine.Physics;
+using Custom2d_Engine.Rendering;
 using nkast.Aether.Physics2D.Common;
 using nkast.Aether.Physics2D.Dynamics;
 using System;

@@ -1,8 +1,8 @@
 ﻿using GlobalLoopGame.Globals;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Custom2D_Engine.Rendering;
-using Custom2D_Engine.Scenes;
+using Custom2d_Engine.Rendering;
+using Custom2d_Engine.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

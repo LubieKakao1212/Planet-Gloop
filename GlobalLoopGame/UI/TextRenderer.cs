@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Custom2D_Engine.Math;
-using Custom2D_Engine.Scenes;
+using Custom2d_Engine.Math;
+using Custom2d_Engine.Scenes;
 using nkast.Aether.Physics2D.Common;
 using System;
 using System.Collections.Generic;
