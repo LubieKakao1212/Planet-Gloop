@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoEngine.Math;
-using MonoEngine.Rendering.Data;
+using Custom2d_Engine.Math;
+using Custom2d_Engine.Rendering.Data;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
 

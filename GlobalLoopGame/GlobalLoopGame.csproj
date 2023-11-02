@@ -27,8 +27,8 @@
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MonoEngine\MonoEngine.csproj" />
-    <ProjectReference Include="..\Physics\Physics.csproj" />
+    <ProjectReference Include="..\Custom2D-Engine\Custom2d_Engine\Custom2d_Engine.csproj" />
+    <ProjectReference Include="..\Custom2D-Engine\Physics\Physics.csproj" />
   </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
     <Message Text="Restoring dotnet tools" Importance="High" />

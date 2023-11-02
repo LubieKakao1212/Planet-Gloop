@@ -14,5 +14,7 @@ namespace GlobalLoopGame.Globals
         public static Effect Shield;
 
         public static DepthStencilState DSS;
+
+        public static string Falloffs = "Falloffs";
     }
 }

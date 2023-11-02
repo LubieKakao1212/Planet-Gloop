@@ -1,7 +1,7 @@
 ﻿using GlobalLoopGame.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoEngine.Rendering.Sprites;
+using Custom2d_Engine.Rendering.Sprites;
 
 namespace GlobalLoopGame.Globals
 {
