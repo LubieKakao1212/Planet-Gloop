@@ -763,20 +763,25 @@ namespace GlobalLoopGame
             var wasdThrottle = inputManager.CreateSimpleAxisBinding("Vertical", Keys.S, Keys.W).Register(inputManager);
             var arrowThrottle = inputManager.CreateSimpleAxisBinding("Vertical", Keys.Down, Keys.Up).Register(inputManager);
 
+            var analog = gamePad.GetAnalog(Side.Left).AddDeadzone(0.75f);
+
             var throttle = new CompoundAxixBindingInput("Throttle")
                 .Bind(wasdThrottle).Bind(arrowThrottle)
-                .Bind(gamePad.GetAnalogAxis(Side.Left, AnalogAxis.Vertical))
+                //.Bind(gamePad.GetAnalogAxis(Side.Left, AnalogAxis.Vertical).AddDeadzone(0.5f))
+                .Bind(analog.Y())
                 .Register(inputManager)
-                .Clamp(-1f, 1f).AddDeadzone(0.1f);
+                .Clamp(-1f, 1f);
 
             var wasdRot = inputManager.CreateSimpleAxisBinding("Horizontal", Keys.A, Keys.D).Register(inputManager);
             var arrowRot = inputManager.CreateSimpleAxisBinding("Horizontal", Keys.Left, Keys.Right).Register(inputManager);
             
             var rotation = new CompoundAxixBindingInput("Spin")
                 .Bind(wasdRot).Bind(arrowRot)
-                //0 on idle -1 on active
+                .Bind(analog.X())
+                //.Bind(gamePad.GetAnalogAxis(Side.Left, AnalogAxis.Horizontal).AddDeadzone(0.1f))
+                /*//0 on idle -1 on active
                 .Bind(gamePad.GetTrigger(Side.Left).AddProcessor((value) => -value))
-                .Bind(gamePad.GetTrigger(Side.Right))
+                .Bind(gamePad.GetTrigger(Side.Right))*/
                 .Register(inputManager)
                 .Clamp(-1f, 1f);
 
