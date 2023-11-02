@@ -14,6 +14,9 @@ namespace GlobalLoopGame.Spaceship
 {
     public class SpaceshipObject : PhysicsBodyObject, IDragger, IResettable
     {
+        public const float DragDistance = 10f;
+        public const float DragInteractionDistance = 15f;
+
         public float ThrustMultiplier { get; set; }
 
         public Joint CurrentDrag { get; set; }
@@ -257,8 +260,9 @@ namespace GlobalLoopGame.Spaceship
             ProcessSounds();
 
             // fade engine sound
-            GameSounds.thrusterEmitter.Volume = GameSounds.thrusterEmitter.Volume + MathF.Sign(targetThrusterVolume - GameSounds.thrusterEmitter.Volume) * (float)time.ElapsedGameTime.TotalSeconds / 2f;
+            /*GameSounds.thrusterEmitter.Volume = GameSounds.thrusterEmitter.Volume + MathF.Sign(targetThrusterVolume - GameSounds.thrusterEmitter.Volume) * (float)time.ElapsedGameTime.TotalSeconds / 2f;
             GameSounds.sideThrusterEmitter.Volume = GameSounds.sideThrusterEmitter.Volume + MathF.Sign(targetSideThrusterVolume - GameSounds.sideThrusterEmitter.Volume) * (float)time.ElapsedGameTime.TotalSeconds / 2f;
+            */
             GameSounds.boostEmitter.Volume = GameSounds.boostEmitter.Volume + MathF.Sign(targetBoosterVolume - GameSounds.boostEmitter.Volume) * (float)time.ElapsedGameTime.TotalSeconds / 2f;
             
             base.Update(time);
@@ -340,21 +344,25 @@ namespace GlobalLoopGame.Spaceship
 
         private void ProcessSounds()
         {
-            if (thrusters.Count < 4)
+            /*if (thrusters.Count < 4)
             {
                 return;
-            }
-
+            }*/
             PlayThrusterSound(0, 1, GameSounds.thrusterEmitter);
 
             PlayThrusterSound(2, 3, GameSounds.sideThrusterEmitter);
         }
 
-        private void PlayThrusterSound(int thrusterOne, int thrusterTwo, SoundEffectInstance sound)
+        private void PlayThrusterSound(int thrusterOne, int thrusetTwo, SoundEffectInstance sound)
         {
-            if (sound.State == SoundState.Playing)
+            var volumeMul = 1f / 16;
+            float volume = MathF.Sqrt(thrust[thrusterOne] + thrust[thrusetTwo]) * volumeMul;
+            sound.Volume = MathHelper.Clamp(volume, 0f, 1f);
+            sound.Play();
+            
+            /*if (sound.State == SoundState.Playing)
             {
-                if (thrust[thrusterOne] < 1 && thrust[thrusterTwo] < 1)
+                if (thrust[thrusterOne] == 0 && thrust[thrusterTwo] == 0)
                 {
                     sound.Pause();
                     
@@ -383,7 +391,7 @@ namespace GlobalLoopGame.Spaceship
                         targetSideThrusterVolume = 0.15f;
                     }
                 }
-            }
+            }*/
         }
     }
 }

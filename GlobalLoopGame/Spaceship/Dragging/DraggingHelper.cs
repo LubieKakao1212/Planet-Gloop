@@ -30,25 +30,27 @@ namespace GlobalLoopGame.Spaceship.Dragging
             }
         }
 
+        public static void ToggleDragging(this IDragger dragger, float distance, float interactionDistance)
+        {
+            if (dragger.CurrentDrag == null)
+            {
+                TryInitDragging(dragger, distance, interactionDistance);
+            }
+            else
+            {
+                StopDragging(dragger);   
+            }
+        }
+
         public static void TryInitDragging(this IDragger dragger, float distance, float interactionDistance)
         {
-            var obj = dragger.ThisObject;
-
             if (dragger.CurrentDrag != null)
             {
-                IDraggable iDraggable = dragger.CurrentDrag.BodyB.Tag as IDraggable;
-                if (iDraggable != null)
-                {
-                    iDraggable.OnBecomeDropped(dragger);
-                }
-
-                if (!iDraggable.IsDestroyed)
-                {
-                    obj.PhysicsBody.World.Remove(dragger.CurrentDrag);
-                }
-                dragger.CurrentDrag = null;
                 return;
             }
+            var obj = dragger.ThisObject;
+
+            
             var world = obj.PhysicsBody.World;
             var pos1 = obj.Transform.GlobalPosition;
             var pos2 = obj.Transform.Up * interactionDistance + pos1;
@@ -88,6 +90,26 @@ namespace GlobalLoopGame.Spaceship.Dragging
             {
                 var pbo = result.Tag as PhysicsBodyObject;
                 dragger.ConnectForDragging(pbo, distance);
+            }
+        }
+
+        public static void StopDragging(this IDragger dragger)
+        {
+            if (dragger.CurrentDrag != null)
+            {
+                var obj = dragger.ThisObject;
+                IDraggable iDraggable = dragger.CurrentDrag.BodyB.Tag as IDraggable;
+                if (iDraggable != null)
+                {
+                    iDraggable.OnBecomeDropped(dragger);
+                }
+
+                if (!iDraggable.IsDestroyed)
+                {
+                    obj.PhysicsBody.World.Remove(dragger.CurrentDrag);
+                }
+                dragger.CurrentDrag = null;
+                return;
             }
         }
     }

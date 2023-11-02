@@ -92,7 +92,7 @@ namespace GlobalLoopGame
         protected override void Initialize()
         {
             Profiler.unitScale = 1f / 60f;
-            Profiler.enabled = true;
+            Profiler.enabled = false;
             base.Initialize();
         }
 
@@ -755,19 +755,15 @@ namespace GlobalLoopGame
         private void CreateBindings()
         {
             var gamePad = inputManager.GetGamePad(PlayerIndex.One);
-
-            //var rotLeft = inputManager.CreateSimpleKeysBinding("rotLeft", new Keys[2] { Keys.A, Keys.Left });
-            //var rotRight = inputManager.CreateSimpleKeysBinding("rotRight", new Keys[2] { Keys.D, Keys.Right });
-
+            
             //Register call is required when using CompoundAxixBindingInput with Performed callback
             var wasdThrottle = inputManager.CreateSimpleAxisBinding("Vertical", Keys.S, Keys.W).Register(inputManager);
             var arrowThrottle = inputManager.CreateSimpleAxisBinding("Vertical", Keys.Down, Keys.Up).Register(inputManager);
 
-            var analog = gamePad.GetAnalog(Side.Left).AddDeadzone(0.75f);
+            var analog = gamePad.GetAnalog(Side.Left).AddDeadzone(0.25f);
 
             var throttle = new CompoundAxixBindingInput("Throttle")
                 .Bind(wasdThrottle).Bind(arrowThrottle)
-                //.Bind(gamePad.GetAnalogAxis(Side.Left, AnalogAxis.Vertical).AddDeadzone(0.5f))
                 .Bind(analog.Y())
                 .Register(inputManager)
                 .Clamp(-1f, 1f);
@@ -778,17 +774,13 @@ namespace GlobalLoopGame
             var rotation = new CompoundAxixBindingInput("Spin")
                 .Bind(wasdRot).Bind(arrowRot)
                 .Bind(analog.X())
-                //.Bind(gamePad.GetAnalogAxis(Side.Left, AnalogAxis.Horizontal).AddDeadzone(0.1f))
-                /*//0 on idle -1 on active
-                .Bind(gamePad.GetTrigger(Side.Left).AddProcessor((value) => -value))
-                .Bind(gamePad.GetTrigger(Side.Right))*/
                 .Register(inputManager)
                 .Clamp(-1f, 1f);
 
             var throttleP = throttle.Clamp(0f, 1f);
-            var throttleN = throttle.AddProcessor((value) => -value).Clamp(0f, 1f);
+            var throttleN = throttle.Negate().Clamp(0f, 1f);
             var rotationP = rotation.Clamp(0f, 1f);
-            var rotationN = rotation.AddProcessor((value) => -value).Clamp(0f, 1f);
+            var rotationN = rotation.Negate().Clamp(0f, 1f);
 
             //BL Forward + Spin Right
             var thruster0 = new CompoundAxixBindingInput("")
@@ -824,9 +816,11 @@ namespace GlobalLoopGame
             throttle.Performed += (input) => input.GetCurrentValue<float>().LogThis("Throttle: ");
             rotation.Performed += (input) => input.GetCurrentValue<float>().LogThis("Rotation: ");
 
+            var gamePadDrag = gamePad.GetTrigger(Side.Left);
             var toggleDrag = inputManager.CreateSimpleKeysBinding("toggleDrag", new Keys[1] { Keys.Space });
             var restart = inputManager.CreateSimpleKeysBinding("restart", new Keys[1] { Keys.R });
-            var boost = inputManager.CreateSimpleKeysBinding("boost", new Keys[2] { Keys.LeftShift, Keys.RightShift });
+            var boost = 
+                inputManager.CreateSimpleKeysBinding("boost", new Keys[2] { Keys.LeftShift, Keys.RightShift }).Bind(gamePad.GetTrigger(Side.Right));
             var confirm = inputManager.CreateSimpleKeysBinding("confirm", new Keys[1] { Keys.Y });
             var cancel = inputManager.CreateSimpleKeysBinding("cancel", new Keys[1] { Keys.N });
             var pauseGame = inputManager.CreateSimpleKeysBinding("pauseGame", new Keys[1] { Keys.Escape });
@@ -838,6 +832,10 @@ namespace GlobalLoopGame
             //ThrusterBinding(rotLeft, 1, 2);
             //ThrusterBinding(rotRight, 0, 3);
             ThrusterBoostBinding(boost, 0, 1);
+
+            gamePadDrag.Started += (input) => Spaceship.TryInitDragging(SpaceshipObject.DragDistance, SpaceshipObject.DragInteractionDistance);
+
+            gamePadDrag.Canceled += (input) => Spaceship.StopDragging();
 
             toggleDrag.Started += (_) =>
             {
@@ -852,7 +850,7 @@ namespace GlobalLoopGame
                 }
                 else
                 {
-                    Spaceship.TryInitDragging(10f, 15f);
+                    Spaceship.ToggleDragging(SpaceshipObject.DragDistance, SpaceshipObject.DragInteractionDistance);
                 }
             };
 
