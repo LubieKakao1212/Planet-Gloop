@@ -181,7 +181,7 @@ namespace GlobalLoopGame.Asteroid
                 CreateAsteroid(aPlacement);
             }
 
-            if (Difficulty < 2 || WaveNumber % 4 == 0)
+            if (Difficulty < 2 || WaveNumber % 3 == 0)
             {
                 ModifyDifficulty(1);
             }
@@ -474,9 +474,10 @@ namespace GlobalLoopGame.Asteroid
 
                 float randTheta = wavePlacements.GetRandom();
 
-                // Console.WriteLine($"placing asteroids at {randTheta}");
-
-                //float randTheta = placementThetas[Random.Shared.Next(0, placementThetas.Count)];
+                if (placementThetas.Count > 0 && placementThetas.Count >= placementNumber)
+                {
+                    randTheta = placementThetas[Random.Shared.Next(0, placementThetas.Count)];
+                }
 
                 int thetaVariance = MathHelper.Clamp(difficulty * 10, 0, 45);
 
@@ -492,6 +493,7 @@ namespace GlobalLoopGame.Asteroid
 
                 if (asteroidPlacements.Count == 0)
                 {
+                    // Always place at least one asteroid in the wave
                     int health = healthLeft / asteroidNumber;
 
                     totalActualHealth += health;
@@ -517,12 +519,9 @@ namespace GlobalLoopGame.Asteroid
 
                     // Console.WriteLine($"adding asteroid with {health} health");
                 }
-                else if (rand % 2 == 0 && asteroidPlacements.Count <= asteroidNumber && placementThetas.Count < placementNumber)
+                else if (rand % 2 == 0 && asteroidPlacements.Count <= asteroidNumber/* && placementThetas.Count < placementNumber*/)
                 {
-                    //int asteroidVariable = MathHelper.Clamp(Random.Shared.Next(0, difficulty), 1, 10);
-
-                    // Calculate size
-                    //int size = asteroidVariable * 2;
+                    // Chance to place another asteroid into the wave
 
                     // Calculate health
                     int health = 0;
@@ -582,80 +581,6 @@ namespace GlobalLoopGame.Asteroid
             waveToReturn.asteroidPlacements = asteroidPlacements;
 
             return waveToReturn;
-
-            /*
-            AsteroidWave waveToReturn = null;
-
-            List<AsteroidPlacement> asteroidPlacements = new List<AsteroidPlacement>();
-
-            int placementNumber = MathHelper.Clamp((int)MathF.Round(Random.Shared.NextSingle() * (difficulty / 3f)), 1, 3);
-
-            Console.WriteLine($"placing asteroids in {placementNumber} places");
-
-            // Calculate angles of attack for waves
-            List<float> placementThetas = new List<float>();
-
-            for (int i = 0; i < placementNumber; i++)
-            {
-                float randTheta = wavePlacements.GetRandom();
-
-                Console.WriteLine($"placing asteroids at {randTheta}");
-
-                placementThetas.Add(randTheta);
-            }
-
-            int asteroidNumber = Random.Shared.Next(1, difficulty - 1);
-
-            for (int i = 0; i < asteroidNumber; i++)
-            {
-                int asteroidVariable = MathHelper.Clamp(Random.Shared.Next(0, difficulty), 1, 10);
-
-                // Calculate size
-                int size = asteroidVariable * 2;
-
-                Console.WriteLine($"size {size}");
-
-                // Gaussian distribution
-                
-                Random rand = new Random(); //reuse this if you are generating many
-                double u1 = 1.0 - rand.NextDouble(); //uniform(0,1] random doubles
-                double u2 = 1.0 - rand.NextDouble();
-                double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2); //random normal(0,1)
-                double randNormal = mean + stdDev * randStdNormal; //random normal(mean, stdDev^2)
-                
-                float randTheta = placementThetas[Random.Shared.Next(0, placementThetas.Count)];
-
-                int thetaVariance = difficulty * 10;
-
-                // Calculate starting theta
-                float startingTheta = randTheta + Random.Shared.Next(-thetaVariance, 0);
-
-                // Caculate ending theta
-                float endingTheta = randTheta + Random.Shared.Next(0, thetaVariance);
-
-                Console.WriteLine($"between {startingTheta} and {endingTheta}");
-
-                // Calculate speed - should be clamped
-                float speed = MathHelper.Clamp(16f - (asteroidVariable * 1.5f) + (float)(Random.Shared.Next(-10, 10) * 1f / 10f), 5, 11);
-
-                Console.WriteLine($"speed {speed}");
-
-                // Calculate health
-                int health = (27 * size); // + (int)MathF.Round(Random.Shared.NextSingle() * 100);
-
-                Console.WriteLine($"health {health}");
-
-                AsteroidPlacement placementToAdd = new AsteroidPlacement(Vector2.One * size, startingTheta, endingTheta, speed, health);
-
-                asteroidPlacements.Add(placementToAdd);
-            }
-
-            waveToReturn = new AsteroidWave(asteroidPlacements, Difficulty, placementThetas);
-            
-            waveToReturn.asteroidPlacements = asteroidPlacements;
-
-            return waveToReturn;
-            */
         }
 
         public List<AsteroidWave> waves = new List<AsteroidWave>()
