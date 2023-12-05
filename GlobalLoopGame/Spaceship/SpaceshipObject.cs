@@ -260,9 +260,6 @@ namespace GlobalLoopGame.Spaceship
             ProcessSounds();
 
             // fade engine sound
-            /*GameSounds.thrusterEmitter.Volume = GameSounds.thrusterEmitter.Volume + MathF.Sign(targetThrusterVolume - GameSounds.thrusterEmitter.Volume) * (float)time.ElapsedGameTime.TotalSeconds / 2f;
-            GameSounds.sideThrusterEmitter.Volume = GameSounds.sideThrusterEmitter.Volume + MathF.Sign(targetSideThrusterVolume - GameSounds.sideThrusterEmitter.Volume) * (float)time.ElapsedGameTime.TotalSeconds / 2f;
-            */
             GameSounds.boostEmitter.Volume = GameSounds.boostEmitter.Volume + MathF.Sign(targetBoosterVolume - GameSounds.boostEmitter.Volume) * (float)time.ElapsedGameTime.TotalSeconds / 2f;
             
             base.Update(time);
@@ -359,39 +356,6 @@ namespace GlobalLoopGame.Spaceship
             float volume = MathF.Sqrt(thrust[thrusterOne] + thrust[thrusetTwo]) * volumeMul;
             sound.Volume = MathHelper.Clamp(volume, 0f, 1f);
             sound.Play();
-            
-            /*if (sound.State == SoundState.Playing)
-            {
-                if (thrust[thrusterOne] == 0 && thrust[thrusterTwo] == 0)
-                {
-                    sound.Pause();
-                    
-                    if (thrusterOne == 0)
-                    {
-                        targetThrusterVolume = 0f;
-                    }
-                    else if (thrusterOne == 2)
-                    {
-                        targetSideThrusterVolume = 0f;
-                    }
-                }
-            }
-            else
-            {
-                if (thrust[thrusterOne] >= 1 || thrust[thrusterTwo] >= 1)
-                {
-                    sound.Play();
-
-                    if (thrusterOne == 0)
-                    {
-                        targetThrusterVolume = 0.15f;
-                    }
-                    else if (thrusterOne == 2)
-                    {
-                        targetSideThrusterVolume = 0.15f;
-                    }
-                }
-            }*/
         }
     }
 }
