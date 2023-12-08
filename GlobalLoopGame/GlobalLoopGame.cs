@@ -13,6 +13,8 @@ using Custom2d_Engine.Rendering.Sprites;
 using Custom2d_Engine.Rendering.Sprites.Atlas;
 using Custom2d_Engine.Scenes;
 using Custom2d_Engine.Scenes.Events;
+using Custom2d_Engine.Util.Debugging;
+using Custom2d_Engine.Ticking;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
 using System.Collections.Generic;
@@ -22,7 +24,6 @@ using Custom2d_Engine.Input.Binding;
 using nkast.Aether.Physics2D.Diagnostics;
 using GlobalLoopGame.Globals;
 using GlobalLoopGame.Spaceship.Turret;
-using Custom2d_Engine.Util.Debugging;
 
 namespace GlobalLoopGame
 {
@@ -46,6 +47,8 @@ namespace GlobalLoopGame
         private Hierarchy hierarchyPressEnter;
         private Hierarchy hierarchyPaused;
         //private Hierarchy hierarchyStarrySky;
+
+        private TickManager tickManager;
 
         private InputManager inputManager;
 
@@ -103,6 +106,8 @@ namespace GlobalLoopGame
             renderPipeline.Init(GraphicsDevice);
             inputManager = new InputManager(Window);
             textRenderer = new SpriteBatch(GraphicsDevice);
+
+            CreateSystems();
 
             LoadSounds();
 
@@ -244,6 +249,11 @@ namespace GlobalLoopGame
             }
 
             base.Draw(gameTime);
+        }
+
+        private void CreateSystems()
+        {
+            tickManager = new TickManager();
         }
 
         private void LoadSounds()
@@ -473,7 +483,7 @@ namespace GlobalLoopGame
 
         private void CreateScene()
         {
-            hierarchyGame = new Hierarchy();
+            hierarchyGame = new Hierarchy(tickManager);
 
             gameCamera = new Camera() { ViewSize = MapRadius + 4f };
             hierarchyGame.AddObject(gameCamera);
@@ -543,7 +553,7 @@ namespace GlobalLoopGame
 
         private void CreateUI()
         {
-            hierarchyUI = new Hierarchy();
+            hierarchyUI = new Hierarchy(tickManager);
 
             uiCamera = new Camera() { ViewSize = MapRadius + 4f };
             hierarchyUI.AddObject(uiCamera);
@@ -624,7 +634,7 @@ namespace GlobalLoopGame
 
         private void CreateMenuScene()
         {
-            hierarchyMenu = new Hierarchy();
+            hierarchyMenu = new Hierarchy(tickManager);
 
             /*
             //obs recording menu
@@ -685,7 +695,7 @@ namespace GlobalLoopGame
                 "for Spelkollektivet Halloween Gamejam 2023";
             hierarchyMenu.AddObject(footnote);
 
-            hierarchyPressEnter = new Hierarchy();
+            hierarchyPressEnter = new Hierarchy(tickManager);
 
             var pressEnterText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.25f);
             pressEnterText.Transform.GlobalPosition = new Vector2(0, 8);
@@ -694,7 +704,7 @@ namespace GlobalLoopGame
             pressEnterText.Text = "Press [Enter] to play";
             hierarchyPressEnter.AddObject(pressEnterText);
 
-            hierarchyPaused = new Hierarchy();
+            hierarchyPaused = new Hierarchy(tickManager);
 
             var gamePausedText = new TextObjectTM(Color.White, Color.White * 0.5f, 0.8f);
             gamePausedText.Transform.GlobalPosition = new Vector2(0, 8);
@@ -706,7 +716,7 @@ namespace GlobalLoopGame
 
         private void CreateGameOverScene()
         {
-            hierarchyGameOver = new Hierarchy();
+            hierarchyGameOver = new Hierarchy(tickManager);
 
             var accent = new DrawableObject(Color.Red, 2f);
             accent.Transform.LocalScale = new Vector2(136f, 136f);
