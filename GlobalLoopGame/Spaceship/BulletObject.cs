@@ -11,7 +11,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using Custom2d_Engine.Util.Ticking;
+using Custom2d_Engine.Ticking;
 
 namespace GlobalLoopGame.Spaceship
 {

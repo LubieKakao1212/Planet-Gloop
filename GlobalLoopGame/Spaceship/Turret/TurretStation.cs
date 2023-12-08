@@ -16,7 +16,7 @@ using Custom2d_Engine.Util;
 using nkast.Aether.Physics2D.Collision;
 using nkast.Aether.Physics2D.Dynamics;
 using System;
-using Custom2d_Engine.Util.Ticking;
+using Custom2d_Engine.Ticking;
 
 namespace GlobalLoopGame.Spaceship.Turret
 {

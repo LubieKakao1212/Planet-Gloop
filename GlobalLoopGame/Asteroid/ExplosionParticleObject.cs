@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Custom2d_Engine.Util.Ticking;
+using Custom2d_Engine.Ticking;
 
 namespace GlobalLoopGame.Asteroid
 {
