@@ -10,7 +10,7 @@ using Custom2d_Engine.Util;
 using Custom2d_Engine.Physics;
 using nkast.Aether.Physics2D.Dynamics;
 using GlobalLoopGame.Globals;
-using Custom2d_Engine.Util.Ticking;
+using Custom2d_Engine.Ticking;
 
 namespace GlobalLoopGame.Asteroid
 {

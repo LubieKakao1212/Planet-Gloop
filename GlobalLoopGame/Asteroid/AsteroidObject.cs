@@ -1,6 +1,6 @@
 using Custom2d_Engine.Physics;
 using Custom2d_Engine.Scenes;
-using Custom2d_Engine.Util.Ticking;
+using Custom2d_Engine.Ticking;
 using GlobalLoopGame.Globals;
 using GlobalLoopGame.Planet;
 using GlobalLoopGame.Spaceship.Turret;
