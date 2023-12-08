@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalLoopGame", "GlobalLoo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Custom2d_Engine", "Custom2D-Engine\Custom2d_Engine\Custom2d_Engine.csproj", "{6D033EBE-861D-4676-88A1-1D64BDA4A002}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Custom2d_Engine.Physics", "..\Custom2D-Engine\Custom2d_Engine.Physics\Custom2d_Engine.Physics.csproj", "{F2FDFB9A-DC15-4AD8-A5A2-F997EC7A782B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Custom2d_Engine.FMOD_Audio", "Custom2D-Engine\Custom2d_Engine.FMOD\Custom2d_Engine.FMOD_Audio.csproj", "{E9549795-FC70-4311-A099-E264854257A0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Custom2d_Engine.FMOD_Audio", "..\Custom2D-Engine\Custom2d_Engine.FMOD\Custom2d_Engine.FMOD_Audio.csproj", "{5591276E-2CCD-4E89-8BF4-363CC6397150}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Custom2d_Engine.Physics", "Custom2D-Engine\Custom2d_Engine.Physics\Custom2d_Engine.Physics.csproj", "{E20E39E3-F001-4F9B-9E95-F0E1B46B46EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +25,14 @@ Global
 		{6D033EBE-861D-4676-88A1-1D64BDA4A002}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D033EBE-861D-4676-88A1-1D64BDA4A002}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D033EBE-861D-4676-88A1-1D64BDA4A002}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F2FDFB9A-DC15-4AD8-A5A2-F997EC7A782B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F2FDFB9A-DC15-4AD8-A5A2-F997EC7A782B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F2FDFB9A-DC15-4AD8-A5A2-F997EC7A782B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F2FDFB9A-DC15-4AD8-A5A2-F997EC7A782B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5591276E-2CCD-4E89-8BF4-363CC6397150}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5591276E-2CCD-4E89-8BF4-363CC6397150}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5591276E-2CCD-4E89-8BF4-363CC6397150}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5591276E-2CCD-4E89-8BF4-363CC6397150}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9549795-FC70-4311-A099-E264854257A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9549795-FC70-4311-A099-E264854257A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9549795-FC70-4311-A099-E264854257A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9549795-FC70-4311-A099-E264854257A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E20E39E3-F001-4F9B-9E95-F0E1B46B46EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E20E39E3-F001-4F9B-9E95-F0E1B46B46EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E20E39E3-F001-4F9B-9E95-F0E1B46B46EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E20E39E3-F001-4F9B-9E95-F0E1B46B46EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
